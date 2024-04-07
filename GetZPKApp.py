@@ -302,7 +302,7 @@ class GetZPKApp(App):
         """Initialize the app."""
         self.folder_container = self.query_one(FolderContainer)
         self.ui_view = self.query_one(UIView)
-        self.note = self.query_one(Note)
+        self.note = self.query_one("#note")
         self.downloadDesc = self.query_one(DownloadDesc)
         self.downloadDesc.country = get_open_country()
 
@@ -319,7 +319,7 @@ class GetZPKApp(App):
         """Get ZPK."""
         # if self.remote_floder and self.ui_file:
             # self.ui_view.mount(Static("请先选择目录和对应的ui文件后，再进行打包！", classes="error_message"))
-        self.desc.text = f"{self.remote_floder}\r\n{self.ui_file}"
+        self.note.text = f"{self.remote_floder}\r\n{self.ui_file}"
         pass
 
     def action_toggle_dark(self):
