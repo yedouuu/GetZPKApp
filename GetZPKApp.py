@@ -1,17 +1,44 @@
 import time
 import asyncio
-from rich import inspect
+
+from colorama import Fore, Style, init
+
 from rich.text import Text
+from rich.markdown import Markdown
+
+
 from textual import events, on
 from textual.app import App, ComposeResult
-from textual.containers import Container, Center, Middle, VerticalScroll
+from textual.containers import Container, Center, Middle, VerticalScroll, Horizontal, ScrollableContainer
 from textual.reactive import reactive
 from textual.timer import Timer
 from textual.message import Message
 from textual.widget import Widget
-from textual.widgets import Static, Pretty, Button, Footer, Header, TextArea, ProgressBar, Input, OptionList, Label, Placeholder, DataTable
-from Get_ZPK_OLD import Get_ZPK_OLD_main, get_country_code
-from xml_Utils import get_open_country, scan_ui_files, get_text, get_remote_directorys, get_remote_directory_version
+from Get_ZPK_OLD import Get_ZPK_OLD_main
+from xml_Utils import (
+    get_open_country,
+     scan_ui_files,
+     get_text,
+     get_remote_directorys,
+     get_remote_directory_version,
+     get_ui_file_time,
+     get_open_country,
+)
+from textual.widgets import (
+    Static, 
+    Pretty, 
+    Button, 
+    Footer, 
+    Header, 
+    TextArea, 
+    ProgressBar, 
+    Input, 
+    OptionList, 
+    Label, 
+    Placeholder, 
+    DataTable,
+    
+)
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -110,27 +137,11 @@ ROWS = [
         ("2024-01-01", "UN60_NEW_聚龙", "22222222"),
         ("2024-01-01", "UN60_NEW_聚龙", ""),
     ]
-
-ROWS2 = [
-        ("Date", "Title", "Note"),
-        ("2024-01-01", "WLGL20", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-        ("2024-01-01", "ui_resourse_聚龙", ""),
-    ]
-
-CODES = [
-        "USD","EUR","CNY"
-    ]
-
-
 class UIView(DataTable):
     
     def compose(self) -> ComposeResult:
         yield Static("当前文件夹下没有ui文件", id="ui_message", classes="error_message hidden")
+        
     ui_files = []
     origin_rows = []
     ui_file_idx = 0
@@ -150,10 +161,10 @@ class UIView(DataTable):
         """Add rows to table."""
         for number, row in enumerate(rows, start=1):
             label = Text(str(number), style="#B0FC38 italic")
-            styled_row = [
-                Text(str(cell), style="italic #03AC13;", justify="") for cell in row
-            ]
-            self.add_row(*styled_row, label=label, height=1, key=f"row_{number}")
+            # styled_row = [
+            #     Text(str(cell), style="padding=1 0 0 0; height=2;", justify="center") for cell in row
+            # ]
+            self.add_row(*row, label=label, height=1, key=f"row_{number}")
 
     class Selected(Message):
         """pass selected message."""
@@ -168,10 +179,10 @@ class UIView(DataTable):
 
     def get_date(self, ui):
         """Get date from ui file."""
-        return time.strftime("%Y-%m-%d", time.localtime())
-
-    def get_desc(self, ui):
-        """Get desc from ui file."""
+        return get_ui_file_time(ui)
+    
+    def get_ui_note(self, ui):
+        """Get note from ui filename"""
         return ui.split("_")[-1]
 
     def list2view(self, list):
@@ -196,21 +207,35 @@ class UIView(DataTable):
         else:
             self.query_one("#ui_message").add_class("hidden")
             self.post_message(self.Selected(self.origin_rows[0]))
-        
-class Information(Static):
 
-    code = reactive([])
+class DownloadDesc(Widget):
+    """A widget to display download desc."""
+    country = reactive([])
     remote_folder = reactive("")
     ui_file = reactive("")
-
     def render(self) -> str:
-        return f"Hello, {self.remote_folder}!"
+        return f"Folder:   {self.remote_folder}\r\n" + \
+                f"UI:       {self.ui_file}\r\n" + \
+                f"Country:  {", ".join(self.country)}"
 
-    def compose(self) -> ComposeResult:
-        yield Static("Inforamtion", id="title")
-        yield Widget()
+class Information(Container):
+    country = reactive(["AUT", "MIX"], recompose=True)
+    remote_folder = reactive("")
+    ui_file = reactive("")
         
 
+    def compose(self) -> ComposeResult:
+        yield Static("Inforamtion", classes="title")
+        yield DownloadDesc()
+
+
+
+class Note(Container):
+    """A widget to display note."""
+    def compose(self) -> ComposeResult:
+        yield Static("Note", classes="title")
+        yield TextArea(id="note")
+    pass
 
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
@@ -237,12 +262,15 @@ class GetZPKApp(App):
                 id="sider_container",
             ),
             Container(
-                VerticalScroll(
+                ScrollableContainer(
+                    # Static(example_table, classes="table pad"),
                     UIView(
+                        cell_padding = 2,
+                        show_header=True,
+                        show_cursor=True,
                         id="top"
                     ),
-                    TextArea(
-                        "备注信息",
+                    Note(
                         id="mid"
                     ),
                     Information(
@@ -261,21 +289,22 @@ class GetZPKApp(App):
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
         self.remote_floder = message.selected
-        self.query_one(Information).remote_folder = message.selected
+        self.query_one(DownloadDesc).remote_folder = message.selected
         self.ui_view.update_by_folder(message.selected)
 
     @on(UIView.Selected)
     def handle_ui_view_selected(self, message:UIView.Selected) -> None:
         """ ui_resource_UN60_NEW.bin """
         self.ui_file = message.selected
-        self.query_one(Information).ui_file = message.selected
+        self.query_one(DownloadDesc).ui_file = message.selected
 
     def on_mount(self) -> None:
         """Initialize the app."""
         self.folder_container = self.query_one(FolderContainer)
         self.ui_view = self.query_one(UIView)
-        self.desc = self.query_one(TextArea)
-        # self.folder_container.folder_mount(get_remote_folders())
+        self.note = self.query_one(Note)
+        self.downloadDesc = self.query_one(DownloadDesc)
+        self.downloadDesc.country = get_open_country()
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
