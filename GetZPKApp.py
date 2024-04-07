@@ -11,7 +11,7 @@ from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import Static, Pretty, Button, Footer, Header, TextArea, ProgressBar, Input, OptionList, Label, Placeholder, DataTable
 from Get_ZPK_OLD import Get_ZPK_OLD_main, get_country_code
-from utils import get_open_country, scan_ui_files, get_text, get_remote_directorys
+from xml_Utils import get_open_country, scan_ui_files, get_text, get_remote_directorys, get_remote_directory_version
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -37,7 +37,8 @@ class FolderContainer(VerticalScroll):
 
     def on_mount(self) -> None:
         """Initialize the container."""
-        self.folder_list = get_remote_directorys()
+        self.folder_path_list = get_remote_directorys()
+        self.folder_list = [ get_remote_directory_version(folder, "full") for folder in self.folder_path_list ]
         self.folder_mount(self.folder_list)
         self.select(self.folder_list[0])
 

@@ -8,6 +8,12 @@ from colorama import Fore, Style, init
 from tqdm import tqdm
 import time
 
+def print_red_text(text):
+    print(Fore.RED + text + Style.RESET_ALL)
+
+def print_green_text(text):
+    print(Fore.GREEN + text + Style.RESET_ALL)
+
 def open_xml(filename):
     try:
         tree = ET.parse(filename)
@@ -43,15 +49,17 @@ def get_text(tag, type="one"):
 	all:以List返回所有查找到的元素的text
     """
     try:
-    	if type == "one":
-        	return config_tree.find(tag).text
-        elif type == "all"
-        	return [ dir.text for dir in config_tree.findall(tag)]
+        if type == "one":
+            return config_tree.find(tag).text
+        elif type == "all":
+            return [ dir.text for dir in config_tree.findall(tag)]
     except AttributeError as e:
         print_red_text(f"【ERROR】文件读取错误：{e}")
         print_red_text(f"【ERROR】文件读取错误：{tag}")
         input("按任意键退出...")
         exit()
+
+
 
 
 def map_ui_file_name(remote_directory):
@@ -70,7 +78,7 @@ def map_ui_file_name(remote_directory):
     """
 
     # /home/lin/Desktop/UN60_OLD/ -> UN60_OLD
-    directory_ver = get_remote_directory_version(remote_directory, "full")
+    directory_ver = remote_directory
     ui_file_name = "ui_resource_"
 
     if ("OLD" in directory_ver) and ("UN60" in directory_ver):
@@ -90,25 +98,25 @@ def scan_ui_files(remote_directory):
     3. UN200_XXX    --> ui_resource_UN200_XXX.bin
     """
     # 获取当前文件夹下的所有文件
-    current_folder = config_tree.get_text("local_ui_file_path")
+    current_folder = get_text("local_ui_file_path")
     contents = os.listdir(current_folder)
     ui_file_name = map_ui_file_name(remote_directory)
     ret = [content for content in contents if '.bin' in content and f"{ui_file_name}" in content]
     return ret
 
 def get_remote_directorys():
-	dir_list = config_tree.get_text("remote_directory", "all")
+	return get_text("remote_directory", "all")
 
 def get_remote_directory_version(remote_directory, type="ver"):
-    """ 获取远端目录版本 
-    type: "full" 返回完整文件名；"ver" 返回版本号
-    return 
-    ver
+    """ 获取远端目录版本
+    
+    return:
+    type = "ver"
     1. /home/lin/Desktop/UN60_OLD/    -> OLD
     2. /home/lin/Desktop/UN60_NEW/    -> NEW
     3. /home/lin/Desktop/UN60_TOUCH/  -> TOUCH
     
-    full
+    type = "full"
     1. /home/lin/Desktop/UN60_OLD/    -> UN60_OLD
     2. /home/lin/Desktop/UN200_NEW/    -> UN200_NEW
     """
