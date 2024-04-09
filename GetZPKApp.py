@@ -37,8 +37,10 @@ from textual.widgets import (
     Label, 
     Placeholder, 
     DataTable,
-    
 )
+
+from DownloadScreen import DownloadScreen
+from QuitScreen import QuitScreen
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -53,8 +55,10 @@ class RemoteFloder(Button):
 class FolderContainer(VerticalScroll):
     """A container to display remote folders."""
     folder_list = []
+    folder_path_list = []
     filtered_folder_list = []
     selected = ""
+    selected_pat = ""
 
     def compose(self) -> ComposeResult:
         """Create child widgets of a stopwatch."""
@@ -96,8 +100,9 @@ class FolderContainer(VerticalScroll):
 
     class Selected(Message):
         """Color selected message."""
-        def __init__(self, folder:str) -> None:
+        def __init__(self, folder:str, folder_path:str) -> None:
             self.selected = folder
+            self.selected_path = folder_path
             super().__init__()
 
     def select(self, selected):
@@ -107,9 +112,10 @@ class FolderContainer(VerticalScroll):
             self.query_one(f"#{self.selected}").remove_class("selected")
 
         self.selected = selected
+        self.selected_path = self.folder_path_list[self.folder_list.index(str(selected))]
         self.query_one("#current_folder").update(f"当前：{self.selected}")
         self.query_one(f"#{self.selected}").add_class("selected")
-        self.post_message(self.Selected(self.selected))
+        self.post_message(self.Selected(self.selected, self.selected_path))
 
     def folder_mount(self, list):
         """Mount remote folder."""
@@ -228,14 +234,14 @@ class Information(Container):
         yield Static("Inforamtion", classes="title")
         yield DownloadDesc()
 
-
-
 class Note(Container):
     """A widget to display note."""
     def compose(self) -> ComposeResult:
         yield Static("Note", classes="title")
         yield TextArea(id="note")
     pass
+
+
 
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
@@ -246,12 +252,13 @@ class GetZPKApp(App):
     """
 
     BINDINGS = [
-        ("d", "toggle_dark", "Toggle dark mode"),
+        ("q", "request_quit", "Quit"),
         ("a", "get_zpk", "执行打包下载"),
-        ("r", "refresh_floder", "刷新文件夹")
+        ("r", "refresh_floder", "刷新文件夹"),
+        ("b", "push_screen('DownloadScreen')", "BSOD")
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
-    
+    SCREENS = {"DownloadScreen": DownloadScreen()}
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
@@ -288,7 +295,8 @@ class GetZPKApp(App):
         
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
-        self.remote_floder = message.selected
+        self.remote_folder = message.selected
+        self.remote_folder_path = message.selected_path
         self.query_one(DownloadDesc).remote_folder = message.selected
         self.ui_view.update_by_folder(message.selected)
 
@@ -311,15 +319,13 @@ class GetZPKApp(App):
         self.folder_container.folder_refresh()
         # self.ui_view.update_by_folder()
 
-    def on_click(self, event:events.Click) -> None:
-        """Handle click events."""
-        
+    def action_request_quit(self) -> None:
+        self.push_screen(QuitScreen())    
 
-    def action_get_zpk(self):
+    async def action_get_zpk(self):
         """Get ZPK."""
-        # if self.remote_floder and self.ui_file:
-            # self.ui_view.mount(Static("请先选择目录和对应的ui文件后，再进行打包！", classes="error_message"))
-        self.note.text = f"{self.remote_floder}\r\n{self.ui_file}"
+        await self.push_screen("DownloadScreen")
+        self.query_one("DownloadScreen").download(self.remote_folder_path, self.ui_file)
         pass
 
     def action_toggle_dark(self):
