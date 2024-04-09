@@ -15,12 +15,12 @@ from textual.widget import Widget
 from Get_ZPK_OLD import Get_ZPK_OLD_main
 from xml_Utils import (
     get_open_country,
-     scan_ui_files,
-     get_text,
-     get_remote_directorys,
-     get_remote_directory_version,
-     get_ui_file_time,
-     get_open_country,
+    scan_ui_files,
+    get_text,
+    get_remote_directorys,
+    get_remote_directory_version,
+    get_ui_file_time,
+    get_open_country,
 )
 from textual.widgets import (
     Static, 
@@ -323,8 +323,7 @@ class GetZPKApp(App):
     async def action_get_zpk(self):
         """Get ZPK."""
         await self.push_screen("DownloadScreen")
-        self.query_one("DownloadScreen").download(self.remote_folder_path, self.ui_file)
-        pass
+        await self.query_one("DownloadScreen").download(self.remote_folder_path, self.ui_file)
 
     def action_toggle_dark(self):
         """Toggle dark mode."""

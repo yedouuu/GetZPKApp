@@ -1,30 +1,35 @@
 <SSH_Configuration>
-    <hostname>192.168.0.250</hostname>
+    <!-- <hostname>192.168.0.250</hostname>
     <username>lin</username>
     <password>123</password>
-    <port>22</port>
+    <port>222</port> -->
+    
     <local_currencys_xml_path>./new_currencys/</local_currencys_xml_path>
     <local_ui_file_path>./ui/</local_ui_file_path>
     <local_zpk_path>./</local_zpk_path>
 
-    <remote_directory>/home/lin/Desktop/UN60_DEV/</remote_directory>
+    <!-- <remote_directory>/home/lin/Desktop/UN60_DEV/</remote_directory>
     <remote_directory>/home/lin/Desktop/UN60_NEW/</remote_directory>
     <remote_directory>/home/lin/Desktop/UN60_OLD/</remote_directory>
-    <remote_directory>/home/lin/Desktop/UN60_TOUCH/</remote_directory>
+    <remote_directory>/home/lin/Desktop/UN60_TOUCH/</remote_directory> -->
     
     <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
     <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
     <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
     <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
     <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
+
     <!-- 远程主机 -->
-    <!--
-        <hostname>101.201.106.100</hostname>
-        <username>lin</username>
-        <password>rnqylpit</password>
-        <port>222</port>
-        <local_currencys_xml_path>./new/</local_currencys_xml_path>
-        <remote_directory>/home/lin/WL/UN60/</remote_directory>
-        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
-    -->
+    <hostname>git.yedou.top</hostname>
+    <username>lin</username>
+    <password>rnqylpit</password>
+    <port>2233</port>
+
+    <!-- <local_currencys_xml_path>./new/</local_currencys_xml_path> -->
+    <remote_directory>/home/lin/UN60_DEV/</remote_directory>
+    <remote_directory>/home/lin/UN60_NEW/</remote_directory>
+    <remote_directory>/home/lin/UN60_OLD/</remote_directory>
+    <remote_directory>/home/lin/UN60_TOUCH/</remote_directory>
+    <!-- <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script> -->
+   
 </SSH_Configuration>

@@ -1,8 +1,16 @@
+import time
+import asyncio
 from textual.app import App, ComposeResult
-from textual.containers import Grid
+from textual.containers import Grid, Center, Middle, Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Button, Footer, Header, Label, ProgressBar
 
+from xml_Utils import (
+    upload_currencys_xml,
+    upload_ui_file,
+    pack_and_down_zpk,
+    SSH_Client,
+)
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -14,25 +22,61 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 class DownloadScreen(ModalScreen):
     """Screen with a dialog to quit."""
+    ssh_client: SSH_Client | None = None
 
     def compose(self) -> ComposeResult:
         yield Grid(
-            Label("下载中...", id="question"),
-            Button("Quit", variant="error", id="quit"),
-            Button("Cancel", variant="primary", id="cancel"),
+            Label("连接中...", id="question"),
+            ProgressBar(show_eta=False, id="progress"),
+            Button("取消", variant="error", id="quit"),
+            Button("完成", variant="default", id="ok"),
             id="dialog",
         )
 
+    async def on_mount(self) -> None:
+        self.ssh_client = SSH_Client()
+        await self.ssh_client.connect()
+        self.query_one("#question").update(f"连接成功")
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "quit":
-            self.app.exit()
+            if self.ssh_client:
+                self.ssh_client.close()
+            self.app.pop_screen()
         else:
             self.app.pop_screen()
 
-    def download(self, remote_floder, ui_file):
-        self.query_one("#question").update(f"{remote_floder},\r\n {ui_file}")
-        pass
+    def change_status(self, status:str):
+        self.query_one("#question").update(f"{status}")
 
+    async def download(self, remote_folder, ui_file):
+        try:
+            self.change_status("上传currencys.xml...")
+            await upload_currencys_xml(self.ssh_client, remote_folder)
+            self.query_one("#progress").advance(10)
+            self.refresh()
+
+            self.change_status("上传ui_file...")
+            await upload_ui_file(self.ssh_client, remote_folder, ui_file)
+            self.query_one("#progress").advance(20)
+            self.refresh()
+
+            self.change_status("打包zpk...")
+            await pack_and_down_zpk(self.ssh_client, remote_folder, ui_file)
+            self.query_one("#progress").update(total=100, progress=70)
+            self.refresh()
+
+            self.change_status("下载ZPK...")
+            self.query_one("#progress").update(total=100, progress=100)
+            self.query_one("#ok").variant = "success"
+            self.refresh()
+            self.change_status("下载完成...")
+        except Exception as e:
+            # 这里应记录异常或做进一步处理
+            print(f"下载过程中发生错误: {e}")
+        finally:
+            if self.ssh_client:
+                self.ssh_client.close()
 
 class ModalApp(App):
     """An app with a modal dialog."""
