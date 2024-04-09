@@ -1,8 +1,6 @@
 import time
 import asyncio
 
-from colorama import Fore, Style, init
-
 from rich.text import Text
 from rich.markdown import Markdown
 
