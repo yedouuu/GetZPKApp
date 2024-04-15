@@ -8,6 +8,7 @@ from colorama import Fore, Style, init
 from tqdm import tqdm
 import time
 import asyncio
+from SSHClient import SSH_Client
 
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
@@ -146,39 +147,53 @@ def get_open_country():
             country_code.append(e.get("tag"))
     return country_code
 
-async def ssh_connect():
-        """ 连接服务器 """
-        # SSH 连接参数
-        hostname = get_text('hostname')
-        username = get_text('username')
-        port = get_text('port')
-        password = get_text('password')
+def get_ssh_config():
+    """ 获取ssh配置 
+    return hostname, username, port, password
+    """
+    hostname = get_text('hostname')
+    username = get_text('username')
+    port = get_text('port')
+    password = get_text('password')
+    return {'hostname':hostname,    \
+            'port':port,            \
+            'username':username,    \
+            'password':password
+        }
 
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname, port=port, username=username, password=password)
-        sftp = ssh.open_sftp()
-        return ssh, sftp
+# async def ssh_connect():
+#         """ 连接服务器 """
+#         # SSH 连接参数
+#         hostname = get_text('hostname')
+#         username = get_text('username')
+#         port = get_text('port')
+#         password = get_text('password')
 
-class SSH_Client():
-    ssh = None
-    sftp = None
-    ssh_client = None
-    def __init__(self):
-        pass
+#         ssh = paramiko.SSHClient()
+#         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#         ssh.connect(hostname, port=port, username=username, password=password)
+#         sftp = ssh.open_sftp()
+#         return ssh, sftp
+
+# class SSH_Client():
+#     ssh = None
+#     sftp = None
+#     ssh_client = None
+#     def __init__(self):
+#         pass
     
-    async def connect(self):
-        self.ssh, self.sftp = await ssh_connect()
+#     async def connect(self):
+#         self.ssh, self.sftp = await ssh_connect()
 
-    def get_ssh(self):
-        return self.ssh
+#     def get_ssh(self):
+#         return self.ssh
 
-    def get_sftp(self):
-        return self.sftp
+#     def get_sftp(self):
+#         return self.sftp
     
-    def close(self):
-        self.ssh.close()
-        self.sftp.close()
+#     def close(self):
+#         self.ssh.close()
+#         self.sftp.close()
 
 def get_version(current_folder, current_date):
     new_ver = 'A'
@@ -211,7 +226,9 @@ def get_download_zpk_path(remote_directory:str):
 
 
 def generate_new_name(remote_directory:str):
-    """ 获取最新的版本名字 """
+    """ 获取最新的文件名字 
+    return: f'WL_{directory_ver}_{current_date}' + ver
+    """
 
     """ 6.1 获取ZPK版本 """
     directory_ver = get_remote_directory_version(remote_directory, "full")
@@ -229,47 +246,75 @@ def generate_new_name(remote_directory:str):
 
 
 
-async def modify_user_config(ssh_client:SSH_Client, remote_directory:str):
-    """ 修改user_config文件为最新的版本号 """
-    sftp = ssh_client.get_sftp()
+# async def modify_user_config(ssh_client:SSH_Client, remote_directory:str):
+#     """ 修改user_config文件为最新的版本号 """
+#     sftp = ssh_client.get_sftp()
+#     file_name = generate_new_name(remote_directory)
+
+#     user_config_xml_path = get_text('remote_user_config_xml_path')
+#     user_config_xml = sftp.open(remote_directory + user_config_xml_path, 'r')
+#     try:
+#         user_config_tree = LXML_ET.parse(user_config_xml)
+#         # 在这里可以继续处理已解析的XML数据
+#     except LXML_ET.ParseError as e:
+#         print(f"XML解析错误：{e}")
+#         input("按任意键退出...")
+#         exit()
+#     except IOError as e:
+#         print(f"文件读取错误：{e}")
+#         input("按任意键退出...")
+#         exit()
+
+#     element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]  # 获取元素2
+#     element.set('value', file_name)  # 修改value属性
+#     # 调整缩进
+#     LXML_ET.indent(user_config_tree, space="\t", level=0)
+#     # 您可以将修改后的tree写入文件，例如：
+#     modified_xml = LXML_ET.tostring(user_config_tree.getroot(), encoding="utf-8", xml_declaration=True)
+#     sftp.file(remote_directory + user_config_xml_path, 'w').write(modified_xml)
+
+async def modify_user_config(ssh_client, remote_directory):
+    """修改user_config文件为最新的版本号"""
+    sftp = await ssh_client.get_sftp()
     file_name = generate_new_name(remote_directory)
 
     user_config_xml_path = get_text('remote_user_config_xml_path')
-    user_config_xml = sftp.open(remote_directory + user_config_xml_path, 'r')
-    try:
-        user_config_tree = LXML_ET.parse(user_config_xml)
-        # 在这里可以继续处理已解析的XML数据
-    except LXML_ET.ParseError as e:
-        print(f"XML解析错误：{e}")
-        input("按任意键退出...")
-        exit()
-    except IOError as e:
-        print(f"文件读取错误：{e}")
-        input("按任意键退出...")
-        exit()
+    async with sftp.open(remote_directory + user_config_xml_path, 'rb') as user_config_xml:
+        try:
+            # 异步读取文件内容（作为字节序列）
+            xml_content = await user_config_xml.read()
+            # 使用fromstring来解析XML数据，确保输入为字节序列
+            user_config_tree = LXML_ET.fromstring(xml_content)
+        except LXML_ET.XMLSyntaxError as e:
+            print(f"XML解析错误：{e}")
+            return
+        except IOError as e:
+            print(f"文件读取错误：{e}")
+            return
 
-    element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]  # 获取元素2
-    element.set('value', file_name)  # 修改value属性
-    # 调整缩进
-    LXML_ET.indent(user_config_tree, space="\t", level=0)
-    # 您可以将修改后的tree写入文件，例如：
-    modified_xml = LXML_ET.tostring(user_config_tree.getroot(), encoding="utf-8", xml_declaration=True)
-    sftp.file(remote_directory + user_config_xml_path, 'w').write(modified_xml)
+        # 进行 XML 数据的修改操作
+        element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
+        element.set('value', file_name)  # 修改value属性
+        modified_xml = LXML_ET.tostring(user_config_tree, encoding="utf-8", xml_declaration=True)
+
+        # 将修改后的 XML 字节序列写回文件
+        async with sftp.open(remote_directory + user_config_xml_path, 'wb') as modified_file:
+            await modified_file.write(modified_xml)
 
 
 async def upload_currencys_xml(ssh_client:SSH_Client ,remote_directory:str):
     """ 上传货币配置文件 """
     try:
-        sftp = ssh_client.get_sftp()
+        sftp = await ssh_client.get_sftp()
         remote_currencys_xml_path = get_text('remote_currencys_xml_path')
-        sftp.put(local_currencys_xml_path+'currencys.xml', remote_directory+remote_currencys_xml_path+'currencys.xml')
+        await sftp.put(local_currencys_xml_path+'currencys.xml', remote_directory+remote_currencys_xml_path+'currencys.xml')
     except Exception as e:
         print(f"【Error】上传货币配置文件失败：{e}")
 
 async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:str):
     """ 上传ui文件 """
     try:
-        sftp = ssh_client.get_sftp()
+        sftp = await ssh_client.get_sftp()
 
         remote_ui_file_name = get_text('remote_ui_file_name')
         if not remote_ui_file_name.endswith('.bin'):
@@ -279,45 +324,43 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
         remote_ui_file_path = get_text('remote_ui_file_path')
 
         print(f"【Info】上传{ui_file} -> {remote_ui_file_name}")
-        sftp.put(local_ui_file_path+ui_file, remote_directory+remote_ui_file_path+remote_ui_file_name)
+        await sftp.put(local_ui_file_path+ui_file, remote_directory+remote_ui_file_path+remote_ui_file_name)
     except Exception as e:
         print(f"【Error】上传{ui_file}失败：{e}")
 
-
-
-async def pack_and_down_zpk(ssh_client:SSH_Client ,remote_directory:str, ui_file:str):
-    """ 打包zpk文件 """
-    ssh = ssh_client.get_ssh()
-    sftp = ssh_client.get_sftp()
+async def pack_and_down_zpk(ssh_client: SSH_Client, remote_directory: str, ui_file: str):
+    """打包zpk文件并下载"""
+    sftp = await ssh_client.get_sftp()
     
     await modify_user_config(ssh_client, remote_directory)
 
-    cmd_get_file_amount = f'cd {remote_directory}/upgrade; find . | wc -l'
-    stdin, stdout, stderr = ssh.exec_command(cmd_get_file_amount)
-    file_count = int(stdout.read().strip())
+    # 构建并执行命令来获取文件数量
+    cmd_get_file_amount = f'cd {remote_directory}/upgrade; find . -type f | wc -l'
+    file_count = await ssh_client.run_command(cmd_get_file_amount)
+    file_count = int(file_count.strip())  # 转换成整数
+    print(f"file_count={file_count}")
 
-    sftp.chdir(remote_directory)
-    get_latest_file = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
-    remote_run_script = get_text('remote_run_script')
-    
+    # 生成新的文件名
     file_name = generate_new_name(remote_directory)
+    remote_run_script = get_text('remote_run_script')
     command = f"cd {remote_directory}; sh {remote_run_script} {file_name}"
-    
-    # 打开一个SSH的channel
-    channel = ssh.get_transport().open_session()
-    channel.get_pty()
-    channel.exec_command(command)
 
-    """ 9. 等待脚本执行完成, 获取ZPK """
-    if channel.recv_exit_status() != 0:
-        # 脚本执行失败时的错误处理
-        print("【Error】: Remote command execution failed.")
-        print(stderr.read().decode())
-    else:
-        """ 下载ZPK文件 """
-        download_zpk_path = get_download_zpk_path(remote_directory)
-        stdin, stdout, stderr = ssh.exec_command('cd ' + remote_directory + '; ' + get_latest_file)
-        latest_file = stdout.read().decode().strip()
-        local_file_path = download_zpk_path + latest_file
-        remote_file_path = remote_directory + latest_file
-        sftp.get(remote_file_path, local_file_path)
+    # 执行打包脚本
+    await ssh_client.run_command(command)
+    print(f"打包完成")
+
+    # 获取生成后最新的文件名
+    get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
+    latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
+
+    print(f"下载文件：{latest_file}")
+
+    # 构建文件路径
+    download_zpk_path = get_download_zpk_path(remote_directory) 
+    local_file_path = f"{download_zpk_path}{latest_file}"
+    remote_file_path = f"{remote_directory}{latest_file}"
+
+    # 下载文件
+    await sftp.get(remote_file_path, local_file_path)
+
+    print("ZPK文件下载完成：", local_file_path)

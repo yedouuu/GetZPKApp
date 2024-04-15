@@ -243,7 +243,7 @@ class Note(TextArea):
     """A widget to display note."""
 
     def on_mount(self):
-        self.border_title = "Note"
+        self.border_title = "Information"
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
 
