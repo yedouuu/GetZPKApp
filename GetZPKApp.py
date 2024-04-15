@@ -229,15 +229,25 @@ class Information(Container):
         
 
     def compose(self) -> ComposeResult:
-        yield Static("Inforamtion", classes="title")
+        # yield Static("Inforamtion", classes="title")
         yield DownloadDesc()
 
-class Note(Container):
+    def on_mount(self) -> None:
+        """Initialize the container."""
+        # self.styles.border = ("heavy")
+        self.border_title = "Information"
+        # self.border_subtitle = "by Frank Herbert, in “Dune”"
+        self.styles.border_title_align = "center"
+
+class Note(TextArea):
     """A widget to display note."""
-    def compose(self) -> ComposeResult:
-        yield Static("Note", classes="title")
-        yield TextArea(id="note")
-    pass
+
+    def on_mount(self):
+        self.border_title = "Note"
+        # self.border_subtitle = "by Frank Herbert, in “Dune”"
+        self.styles.border_title_align = "center"
+
+    
 
 
 
@@ -308,7 +318,7 @@ class GetZPKApp(App):
         """Initialize the app."""
         self.folder_container = self.query_one(FolderContainer)
         self.ui_view = self.query_one(UIView)
-        self.note = self.query_one("#note")
+        self.note = self.query_one(Note)
         self.downloadDesc = self.query_one(DownloadDesc)
         self.downloadDesc.country = get_open_country()
 

@@ -105,12 +105,12 @@ UIView {
       column-span: 3;
       padding: 0 0 0 0;
       margin: 0 0 0 0;
-      border: panel $primary;
+      border: panel $primary-lighten-2;
     }
     #bot {
       row-span: 4;
       column-span: 8;
-      border: panel $primary;
+      border: panel $primary-lighten-2;
       margin: 0 0 0 0;
       padding: 0 1;
       width: 100%;
@@ -124,13 +124,13 @@ Note {
   margin: 0 0 0 0;
   width: 100%;
   height: 100%;
+
 }
 
 Information {
   margin: 0 0 0 0;
   width: 100%;
   height: 100%;
-  border: round #7e7e7e;
 }
 
 .title {
