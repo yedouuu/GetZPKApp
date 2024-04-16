@@ -48,8 +48,46 @@ class DownloadScreen(ModalScreen):
         else:
             self.app.pop_screen()
 
+
     def change_status(self, status:str):
         self.query_one("#question").update(f"{status}")
+
+
+    def update_progress(self, path, offset, size, _):
+        # Ensure offset and size are integers
+        if not isinstance(offset, int):
+            offset = int.from_bytes(offset, 'big')  # Assuming big-endian byte order if offset is bytes
+
+        if not isinstance(size, int):
+            size = int.from_bytes(size, 'big')  # Adjust according to your data's byte order
+
+        new_progress = 70
+        # Calculate the percentage of completion
+        percentage = float((float(offset) / size) * 30)  # From 70% to 100%
+        new_progress += percentage
+
+        # Update the progress bar
+        # self.query_one("#progress").update(total=100, progress=new_progress)
+        self.query_one("#progress").advance(percentage)
+        self.app.refresh()
+
+
+    def zpk_progress(self, line, total):
+        # Ensure offset and size are integers
+        if not isinstance(line, float):
+            line = float(line)
+
+        new_progress = 20
+
+        # Calculate the percentage of completion
+        percentage = ((line / total) * 50)  # From 20% to 70%
+        new_progress += percentage
+        #print(f"line/total={(line / total)*40}   precentage = {percentage}")
+
+        # Update the progress bar
+        self.query_one("#progress").advance(percentage)
+        self.app.refresh()
+
 
     async def download(self, remote_folder, ui_file):
         try:
@@ -59,14 +97,14 @@ class DownloadScreen(ModalScreen):
 
             self.change_status("上传ui_file...")
             await upload_ui_file(self.ssh_client, remote_folder, ui_file)
-            self.query_one("#progress").advance(20)
+            self.query_one("#progress").advance(10)
 
             self.change_status("打包zpk...")
-            await pack_zpk(self.ssh_client, remote_folder)
+            await pack_zpk(self.ssh_client, remote_folder, self.zpk_progress)
             self.query_one("#progress").update(total=100, progress=70)
 
             self.change_status("下载ZPK...")
-            await download_zpk(self.ssh_client, remote_folder)
+            await download_zpk(self.ssh_client, remote_folder, self.update_progress)
             self.query_one("#progress").update(total=100, progress=100)
             self.query_one("#ok").variant = "success"
             self.change_status("下载完成...")

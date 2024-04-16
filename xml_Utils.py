@@ -267,7 +267,8 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
     except Exception as e:
         print(f"【Error】上传{ui_file}失败：{e}")
 
-async def pack_zpk(ssh_client: SSH_Client, remote_directory: str):
+
+async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, callback):
     """打包zpk文件并下载"""
     sftp = await ssh_client.get_sftp()
     
@@ -285,45 +286,29 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str):
     command = f"cd {remote_directory}; sh {remote_run_script} {file_name}"
 
     # 执行打包脚本
-    await ssh_client.run_command(command)
+    await ssh_client.run_command_with_progress(command, file_count, callback)
     print(f"打包完成")
 
-    # # 获取生成后最新的文件名
-    # get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
-    # latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
 
-    # print(f"下载文件：{latest_file}")
-
-    # # 构建文件路径
-    # download_zpk_path = get_download_zpk_path(remote_directory) 
-    # local_file_path = f"{download_zpk_path}{latest_file}"
-    # remote_file_path = f"{remote_directory}{latest_file}"
-
-    # # 下载文件
-    # await sftp.get(remote_file_path, local_file_path)
-
-    # print("ZPK文件下载完成：", local_file_path)
-
-
-async def download_zpk(ssh_client: SSH_Client, remote_directory: str):
-    """ 下载zpk文件 """
+async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_progress):
+    # 建立 SFTP 客户端连接
     sftp = await ssh_client.get_sftp()
-    
-    # 获取生成后最新的文件名
+
+    # 执行命令获取最新的文件名
     get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
     latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
-    
-    print(f"下载文件：{latest_file}")
-    
-    # 构建文件路径
-    download_zpk_path = get_download_zpk_path(remote_directory)
-    local_file_path = f"{download_zpk_path}{latest_file}"
-    remote_file_path = f"{remote_directory}{latest_file}"
-    
-    def progress_collback(current, total):
-        print(f"下载进度：{current}/{total}")
 
-    # 下载文件
-    await sftp.get(remote_file_path, local_file_path)
-    # await ssh_client.download_file(remote_file_path, local_file_path, progress_callback=progress_collback)
+    remote_file_path = f"{remote_directory}{latest_file}"  # 注意路径分隔符
+    download_zpk_path = get_download_zpk_path(remote_directory)
+    local_file_path = f"{download_zpk_path}{latest_file}"  # 注意路径分隔符
+
+    # 获取远程文件的大小
+    remote_file_stat = await sftp.stat(remote_file_path)
+    total_size = remote_file_stat.size
+
+    # 使用 SFTP 的 get 方法下载文件
+    await sftp.get(remote_file_path, localpath=local_file_path, progress_handler=update_progress)
+    await sftp.remove(remote_file_path)
+    sftp.exit()
+
     print("ZPK文件下载完成：", local_file_path)

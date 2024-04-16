@@ -19,14 +19,35 @@ class SSH_Client:
         result = await self.conn.run(command, check=True)
         return result.stdout.strip()
 
-    async def run_command_with_progress(self, command, progress_callback):
+    async def run_command_with_progress(self, command, total, progress_callback):
         """执行命令并提供实时输出到回调函数，以更新进度条。"""
-        async with self.conn.create_process(command) as process:
-            async for line in process.stdout:
-                progress_callback(line.strip())
+        async with self.conn.create_process(command, term_type='xterm') as process:
+            buffered_updates = 0
+            last_update_time = asyncio.get_event_loop().time()
+            data_buffer = ''
+            async for data_chunk in process.stdout:
+                # print(data_chunk)
+                data_buffer += data_chunk
+                while '\n' in data_buffer:
+                    line, data_buffer = data_buffer.split('\n', 1)
+                    if line.strip():  # 如果处理的行有效
+                        buffered_updates += 1
+                        #print(line.strip())  # 这里可以替换成你想要处理的输出
+
+                # 用时间控制刷新频率，例如每0.5秒刷新一次
+                current_time = asyncio.get_event_loop().time()
+                if current_time - last_update_time >= 0.5:
+                    progress_callback(buffered_updates, total)
+                    # print(f"Processed {buffered_updates} lines so far")
+                    buffered_updates = 0
+                    last_update_time = current_time
+
+            # 确保退出前最后一次更新
+            progress_callback(buffered_updates, total)
+
             if process.exit_status != 0:
                 raise Exception(f"Command failed with exit status {process.exit_status}")
-
+    
     async def upload_file(self, local_path, remote_path):
         await self.conn.put(local_path, remote_path)
 
