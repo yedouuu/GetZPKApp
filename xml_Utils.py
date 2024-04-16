@@ -1,11 +1,8 @@
-import paramiko
 import datetime
 import os
-from os import system
 import xml.etree.ElementTree as ET
 import lxml.etree as LXML_ET
 from colorama import Fore, Style, init
-from tqdm import tqdm
 import time
 import asyncio
 from SSHClient import SSH_Client
@@ -308,7 +305,8 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_pro
 
     # 使用 SFTP 的 get 方法下载文件
     await sftp.get(remote_file_path, localpath=local_file_path, progress_handler=update_progress)
-    await sftp.remove(remote_file_path)
+    if ".ZPK" in latest_file:
+        await sftp.remove(remote_file_path)
     sftp.exit()
 
     print("ZPK文件下载完成：", local_file_path)

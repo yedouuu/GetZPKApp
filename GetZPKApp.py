@@ -12,7 +12,6 @@ from textual.reactive import reactive
 from textual.timer import Timer
 from textual.message import Message
 from textual.widget import Widget
-from Get_ZPK_OLD import Get_ZPK_OLD_main
 from xml_Utils import (
     get_open_country,
     scan_ui_files,
@@ -254,9 +253,235 @@ class Note(TextArea):
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
 
-    CSS_PATH = "./tcss/getzpk_app.tcss"
+    # CSS_PATH = "./tcss/getzpk_app.tcss"
     CSS = """
-    
+    GetZPKApp {
+    layout: vertical;
+    background: $boost;
+    min-width: 50;
+}
+
+FolderContainer {
+    content-align: center middle;
+    width: 100%;
+    height: 100%;
+    column-span: 1;
+    border: round #7e7e7e;
+
+    Label {
+        content-align: center middle;
+        margin: 0 0 1 0;
+    }
+    Input {
+        width: 100%;
+        height: 3;
+        margin: 0 0 1 0;
+        padding: 0;
+    }
+    RemoteFloder {
+      width: 100%;
+      height: 3;
+      margin: 0 0 0 0;
+      padding: 0;
+      border: round #7e7e7e;
+    }
+}
+
+.table {
+  row-span: 1;
+  column-span: 8;
+}
+
+UIView {
+    height: 16;
+    max-height: 16;
+    margin: 0 0 0 0;
+    .table_title {
+    }
+
+    .error_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $error;
+    }
+    .warning_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $warning;
+    }
+    .success_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $success;
+    } 
+
+    .hidden {
+        display: none;
+    }
+
+    .selected {
+        background: $success;
+    }
+}
+
+
+.selected {
+    background: $primary;
+}
+.filtered {
+    display: none;
+}
+
+
+
+#container {
+  layout:grid;
+  grid-size: 4 8;
+}
+#sider_container {
+  row-span: 8;
+}
+#main_container {
+  row-span: 8;
+  column-span: 3;
+
+  #main2_container {
+    layout: grid;
+    grid-size: 8 8;
+    border: round #7e7e7e;
+
+    #top {
+      row-span: 4;
+      column-span: 8;
+    }
+    #mid {
+      row-span: 4;
+      column-span: 3;
+      padding: 0 0 0 0;
+      margin: 0 0 0 0;
+      border: panel $primary-lighten-2;
+    }
+    #bot {
+      row-span: 4;
+      column-span: 8;
+      border: panel $primary-lighten-2;
+      margin: 0 0 0 0;
+      padding: 0 1;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+Note {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  width: 100%;
+  height: 100%;
+
+}
+
+Information {
+  margin: 0 0 0 0;
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  content-align-horizontal: center;
+  color: $warning;
+}
+
+.subtitle {
+  color: $warning;
+}
+
+#info_folder {
+  width: 100%;
+  height: 100%;
+}
+
+#main {
+  layout: grid;
+  grid-size: 8 8;
+}
+
+#main_top{
+  row-span: 4;
+}
+
+OptionList {
+  width: 50%;
+  height: 50%;
+}
+
+DownloadScreen {
+    align: center middle;
+
+    #dialog {
+        grid-size: 2 4;
+        grid-gutter: 1 2;
+        grid-rows: 1fr 3;
+        padding: 0 1;
+        width: 60;
+        height: 16;
+        border: thick $background 80%;
+        background: $surface;
+    }
+
+    #question {
+        column-span: 2;
+        row-span:2;
+        height: 1fr;
+        width: 1fr;
+        content-align: center middle;
+    }
+
+    #progress {
+        column-span: 2;
+        margin-left: 10;
+        content-align: center middle;
+    }
+
+    Button {
+        column-span: 2;
+        width: 100%;
+    }
+
+    .loading {
+      background: $panel;
+    }
+}
+
+
+QuitScreen {
+    align: center middle;
+
+    #dialog {
+        grid-size: 2;
+        grid-gutter: 1 2;
+        grid-rows: 1fr 3;
+        padding: 0 1;
+        width: 60;
+        height: 11;
+        border: thick $background 80%;
+        background: $surface;
+    }
+
+    #question {
+        column-span: 2;
+        height: 1fr;
+        width: 1fr;
+        content-align: center middle;
+    }
+
+    Button {
+        width: 100%;
+    }
+}
     """
 
     BINDINGS = [
