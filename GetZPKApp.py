@@ -266,7 +266,8 @@ class GetZPKApp(App):
         ("b", "push_screen('DownloadScreen')", "BSOD")
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
-    SCREENS = {"DownloadScreen": DownloadScreen()}
+    # SCREENS = {"DownloadScreen": DownloadScreen()}
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
@@ -332,8 +333,8 @@ class GetZPKApp(App):
 
     async def action_get_zpk(self):
         """Get ZPK."""
-        await self.push_screen("DownloadScreen")
-        await self.query_one("DownloadScreen").download(self.remote_folder_path, self.ui_file)
+        await self.push_screen(DownloadScreen())
+        await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file)
 
     def action_toggle_dark(self):
         """Toggle dark mode."""

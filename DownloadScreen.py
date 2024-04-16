@@ -3,13 +3,14 @@ import asyncio
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Center, Middle, Vertical
 from textual.screen import ModalScreen
-from textual.widgets import Button, Footer, Header, Label, ProgressBar
+from textual.widgets import Button, Footer, Header, Label, ProgressBar, Static
 import logging
 
 from xml_Utils import (
     upload_currencys_xml,
     upload_ui_file,
-    pack_and_down_zpk,
+    pack_zpk,
+    download_zpk,
     get_ssh_config,
 )
 from SSHClient import SSH_Client
@@ -61,10 +62,11 @@ class DownloadScreen(ModalScreen):
             self.query_one("#progress").advance(20)
 
             self.change_status("打包zpk...")
-            await pack_and_down_zpk(self.ssh_client, remote_folder, ui_file)
+            await pack_zpk(self.ssh_client, remote_folder)
             self.query_one("#progress").update(total=100, progress=70)
 
             self.change_status("下载ZPK...")
+            await download_zpk(self.ssh_client, remote_folder)
             self.query_one("#progress").update(total=100, progress=100)
             self.query_one("#ok").variant = "success"
             self.change_status("下载完成...")

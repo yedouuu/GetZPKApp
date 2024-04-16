@@ -161,39 +161,6 @@ def get_ssh_config():
             'password':password
         }
 
-# async def ssh_connect():
-#         """ 连接服务器 """
-#         # SSH 连接参数
-#         hostname = get_text('hostname')
-#         username = get_text('username')
-#         port = get_text('port')
-#         password = get_text('password')
-
-#         ssh = paramiko.SSHClient()
-#         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#         ssh.connect(hostname, port=port, username=username, password=password)
-#         sftp = ssh.open_sftp()
-#         return ssh, sftp
-
-# class SSH_Client():
-#     ssh = None
-#     sftp = None
-#     ssh_client = None
-#     def __init__(self):
-#         pass
-    
-#     async def connect(self):
-#         self.ssh, self.sftp = await ssh_connect()
-
-#     def get_ssh(self):
-#         return self.ssh
-
-#     def get_sftp(self):
-#         return self.sftp
-    
-#     def close(self):
-#         self.ssh.close()
-#         self.sftp.close()
 
 def get_version(current_folder, current_date):
     new_ver = 'A'
@@ -244,34 +211,6 @@ def generate_new_name(remote_directory:str):
 
     return file_name
 
-
-
-# async def modify_user_config(ssh_client:SSH_Client, remote_directory:str):
-#     """ 修改user_config文件为最新的版本号 """
-#     sftp = ssh_client.get_sftp()
-#     file_name = generate_new_name(remote_directory)
-
-#     user_config_xml_path = get_text('remote_user_config_xml_path')
-#     user_config_xml = sftp.open(remote_directory + user_config_xml_path, 'r')
-#     try:
-#         user_config_tree = LXML_ET.parse(user_config_xml)
-#         # 在这里可以继续处理已解析的XML数据
-#     except LXML_ET.ParseError as e:
-#         print(f"XML解析错误：{e}")
-#         input("按任意键退出...")
-#         exit()
-#     except IOError as e:
-#         print(f"文件读取错误：{e}")
-#         input("按任意键退出...")
-#         exit()
-
-#     element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]  # 获取元素2
-#     element.set('value', file_name)  # 修改value属性
-#     # 调整缩进
-#     LXML_ET.indent(user_config_tree, space="\t", level=0)
-#     # 您可以将修改后的tree写入文件，例如：
-#     modified_xml = LXML_ET.tostring(user_config_tree.getroot(), encoding="utf-8", xml_declaration=True)
-#     sftp.file(remote_directory + user_config_xml_path, 'w').write(modified_xml)
 
 async def modify_user_config(ssh_client, remote_directory):
     """修改user_config文件为最新的版本号"""
@@ -328,7 +267,7 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
     except Exception as e:
         print(f"【Error】上传{ui_file}失败：{e}")
 
-async def pack_and_down_zpk(ssh_client: SSH_Client, remote_directory: str, ui_file: str):
+async def pack_zpk(ssh_client: SSH_Client, remote_directory: str):
     """打包zpk文件并下载"""
     sftp = await ssh_client.get_sftp()
     
@@ -349,18 +288,42 @@ async def pack_and_down_zpk(ssh_client: SSH_Client, remote_directory: str, ui_fi
     await ssh_client.run_command(command)
     print(f"打包完成")
 
+    # # 获取生成后最新的文件名
+    # get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
+    # latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
+
+    # print(f"下载文件：{latest_file}")
+
+    # # 构建文件路径
+    # download_zpk_path = get_download_zpk_path(remote_directory) 
+    # local_file_path = f"{download_zpk_path}{latest_file}"
+    # remote_file_path = f"{remote_directory}{latest_file}"
+
+    # # 下载文件
+    # await sftp.get(remote_file_path, local_file_path)
+
+    # print("ZPK文件下载完成：", local_file_path)
+
+
+async def download_zpk(ssh_client: SSH_Client, remote_directory: str):
+    """ 下载zpk文件 """
+    sftp = await ssh_client.get_sftp()
+    
     # 获取生成后最新的文件名
     get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
     latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
-
+    
     print(f"下载文件：{latest_file}")
-
+    
     # 构建文件路径
-    download_zpk_path = get_download_zpk_path(remote_directory) 
+    download_zpk_path = get_download_zpk_path(remote_directory)
     local_file_path = f"{download_zpk_path}{latest_file}"
     remote_file_path = f"{remote_directory}{latest_file}"
+    
+    def progress_collback(current, total):
+        print(f"下载进度：{current}/{total}")
 
     # 下载文件
     await sftp.get(remote_file_path, local_file_path)
-
+    # await ssh_client.download_file(remote_file_path, local_file_path, progress_callback=progress_collback)
     print("ZPK文件下载完成：", local_file_path)
