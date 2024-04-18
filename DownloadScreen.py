@@ -32,7 +32,7 @@ class DownloadScreen(ModalScreen):
             Label("连接中...", id="question"),
             ProgressBar(total=100, show_eta=False, id="progress"),
             # Button("取消", variant="error", id="quit"),
-            Button("完成", variant="default", id="ok"),
+            Button("完成", variant="success", disabled=True, id="ok"),
             id="dialog",
         )
 
@@ -61,9 +61,9 @@ class DownloadScreen(ModalScreen):
         if not isinstance(size, int):
             size = int.from_bytes(size, 'big')  # Adjust according to your data's byte order
 
-        new_progress = 70
+        new_progress = 90
         # Calculate the percentage of completion
-        percentage = float((float(offset) / size) * 30)  # From 70% to 100%
+        percentage = float((float(offset) / size) * 10)  # From 90% to 100%
         new_progress += percentage
 
         # Update the progress bar
@@ -80,7 +80,7 @@ class DownloadScreen(ModalScreen):
         new_progress = 20
 
         # Calculate the percentage of completion
-        percentage = ((line / total) * 50)  # From 20% to 70%
+        percentage = ((line / total) * 70)  # From 20% to 90%
         new_progress += percentage
         #print(f"line/total={(line / total)*40}   precentage = {percentage}")
 
@@ -101,12 +101,11 @@ class DownloadScreen(ModalScreen):
 
             self.change_status("打包zpk...")
             await pack_zpk(self.ssh_client, remote_folder, self.zpk_progress)
-            self.query_one("#progress").update(total=100, progress=70)
 
             self.change_status("下载ZPK...")
             await download_zpk(self.ssh_client, remote_folder, self.update_progress)
             self.query_one("#progress").update(total=100, progress=100)
-            self.query_one("#ok").variant = "success"
+            self.query_one("#ok").disabled = False
             self.change_status("下载完成...")
         except Exception as e:
             logging.exception(e)
