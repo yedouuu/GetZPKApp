@@ -21,19 +21,19 @@ from xml_Utils import (
     get_ui_file_time,
     get_open_country,
 )
+from SelectCountry import select_country
 from textual.widgets import (
     Static, 
-    Pretty, 
     Button, 
     Footer, 
     Header, 
     TextArea, 
-    ProgressBar, 
     Input, 
     OptionList, 
     Label, 
     Placeholder, 
     DataTable,
+    Switch,
 )
 
 from DownloadScreen import DownloadScreen
@@ -60,7 +60,7 @@ class FolderContainer(VerticalScroll):
     def compose(self) -> ComposeResult:
         """Create child widgets of a stopwatch."""
         yield Input(placeholder="输入文件夹名称")
-        yield Label("当前：", id="current_folder")
+        # yield Label("当前：", id="current_folder")
         
 
     def on_mount(self) -> None:
@@ -110,7 +110,7 @@ class FolderContainer(VerticalScroll):
 
         self.selected = selected
         self.selected_path = self.folder_path_list[self.folder_list.index(str(selected))]
-        self.query_one("#current_folder").update(f"当前：{self.selected}")
+        # self.query_one("#current_folder").update(f"当前：{self.selected}")
         self.query_one(f"#{self.selected}").add_class("selected")
         self.post_message(self.Selected(self.selected, self.selected_path))
 
@@ -263,257 +263,127 @@ class Note(TextArea):
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
 
-    
+from rich.console import RenderableType
+from importlib.metadata import version
+
+class MyMessage(Static):
+    pass
+
+class Title(Static):
+    pass
+
+class OptionGroup(Container):
+    pass
+
+class ErrorMessage(Static):
+    msg = reactive([])
+
+    # def render(self) -> RenderableType:
+        
+    #     return "\n".join(self.msg)
+    def on_mount(self) -> None:
+        self.border_title = "Information"
+        # self.border_subtitle = "by Frank Herbert, in “Dune”"
+        self.styles.border_title_align = "center"
+
+    def render(self) -> RenderableType:
+        text = Text()
+        styles = {
+            "Error": "bold red",
+            "Success": "bold green",
+            "Warning": "bold yellow",
+            "Info": "bold blue"
+        }
+        max_arrow_pos = 0
+        for seg in self.msg:
+            pos = seg.find("->") + 2
+            if pos > max_arrow_pos:
+                max_arrow_pos = pos
+
+        for seg in self.msg:
+
+            pos = seg.find("->") + 2
+            blank_to_add = max_arrow_pos - pos
+            seg = seg.replace("->", " " * blank_to_add + "->", 1)
+
+            original_seg = seg  # 保存原始段落以用于未标记的文本
+            # 检查是否包含特定标签，并据此应用样式
+            for label, style in styles.items():
+                # 构造标签，如"【Info】"
+                tag = f"【{label}】"
+
+                if tag in seg:
+                    seg = seg.replace(tag, "")  # 移除标签文本
+                    text.append(seg, style=style)
+                    break
+            else:
+                # 如果没有任何标签被应用，添加原始文本
+                text.append(original_seg)
+
+            text.append("\n")  # 每个消息后添加新行
+
+        return text
+
+class DarkSwitch(Horizontal):
+    def compose(self) -> ComposeResult:
+        yield Switch(value=self.app.dark)
+        yield Static("Dark mode toggle", classes="label")
+
+    def on_mount(self) -> None:
+        self.watch(self.app, "dark", self.on_dark_change, init=False)
+
+    def on_dark_change(self) -> None:
+        self.query_one(Switch).value = self.app.dark
+
+    def on_switch_changed(self, event: Switch.Changed) -> None:
+        self.app.dark = event.value
+
+MESSAGE = """
+We hope you enjoy using Textual.
+Here are some links. You can click these!
+Built with ♥  by [@click="app.open_link('https://www.textualize.io')"]Textualize.io[/]
+"""
+
+class Sidebar(Container):
+
+    def compose(self) -> ComposeResult:
+        yield Title("Select Country")
+        yield Input()
+        yield OptionGroup(ErrorMessage())
+        # yield DarkSwitch()
+
+    class Submitted(Message):
+        def __init__(self, value) -> None:
+            self.value = value
+            super().__init__()
+
+    def on_input_submitted(self, event:Input.Submitted) -> None:
+        val = event.control.value
+        self.query_one(Input).value = ""
+        self.post_message(self.Submitted(val))
 
 
 
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
 
-    # CSS_PATH = "./tcss/getzpk_app.tcss"
-    CSS = """
-    GetZPKApp {
-    layout: vertical;
-    background: $boost;
-    min-width: 50;
-}
-
-FolderContainer {
-    content-align: center middle;
-    width: 100%;
-    height: 100%;
-    column-span: 1;
-    border: round #7e7e7e;
-
-    Label {
-        content-align: center middle;
-        margin: 0 0 1 0;
-    }
-    Input {
-        width: 100%;
-        height: 3;
-        margin: 0 0 1 0;
-        padding: 0;
-    }
-    RemoteFloder {
-      width: 100%;
-      height: 3;
-      margin: 0 0 0 0;
-      padding: 0;
-      border: round #7e7e7e;
-    }
-}
-
-.table {
-  row-span: 1;
-  column-span: 8;
-}
-
-UIView {
-    height: 16;
-    max-height: 16;
-    margin: 0 0 0 0;
-    .table_title {
-    }
-
-    .error_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $error;
-    }
-    .warning_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $warning;
-    }
-    .success_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $success;
-    } 
-
-    .hidden {
-        display: none;
-    }
-
-    .selected {
-        background: $success;
-    }
-}
-
-
-.selected {
-    background: $primary;
-}
-.filtered {
-    display: none;
-}
-
-
-
-#container {
-  layout:grid;
-  grid-size: 4 8;
-}
-#sider_container {
-  row-span: 8;
-}
-#main_container {
-  row-span: 8;
-  column-span: 3;
-
-  #main2_container {
-    layout: grid;
-    grid-size: 8 8;
-    border: round #7e7e7e;
-
-    #top {
-      row-span: 4;
-      column-span: 8;
-    }
-    #mid {
-      row-span: 4;
-      column-span: 3;
-      padding: 0 0 0 0;
-      margin: 0 0 0 0;
-      border: panel $primary-lighten-2;
-    }
-    #bot {
-      row-span: 4;
-      column-span: 8;
-      border: panel $primary-lighten-2;
-      margin: 0 0 0 0;
-      padding: 0 1;
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-Note {
-  padding: 0 0 0 0;
-  margin: 0 0 0 0;
-  width: 100%;
-  height: 100%;
-
-}
-
-Information {
-  margin: 0 0 0 0;
-  width: 100%;
-  height: 100%;
-}
-
-.title {
-  content-align-horizontal: center;
-  color: $warning;
-}
-
-.subtitle {
-  color: $warning;
-}
-
-#info_folder {
-  width: 100%;
-  height: 100%;
-}
-
-#main {
-  layout: grid;
-  grid-size: 8 8;
-}
-
-#main_top{
-  row-span: 4;
-}
-
-OptionList {
-  width: 50%;
-  height: 50%;
-}
-
-DownloadScreen {
-    align: center middle;
-
-    #dialog {
-        grid-size: 2 4;
-        grid-gutter: 1 2;
-        grid-rows: 1fr 3;
-        padding: 0 1;
-        width: 60;
-        height: 16;
-        border: thick $background 80%;
-        background: $surface;
-    }
-
-    #question {
-        column-span: 2;
-        row-span:2;
-        height: 1fr;
-        width: 1fr;
-        content-align: center middle;
-    }
-
-    #progress {
-        column-span: 2;
-        margin-left: 10;
-        content-align: center middle;
-    }
-
-    Button {
-        column-span: 2;
-        width: 100%;
-    }
-
-    .loading {
-      background: $panel;
-    }
-}
-
-
-QuitScreen {
-    align: center middle;
-
-    #dialog {
-        grid-size: 2;
-        grid-gutter: 1 2;
-        grid-rows: 1fr 3;
-        padding: 0 1;
-        width: 60;
-        height: 11;
-        border: thick $background 80%;
-        background: $surface;
-    }
-
-    #question {
-        column-span: 2;
-        height: 1fr;
-        width: 1fr;
-        content-align: center middle;
-    }
-
-    Button {
-        width: 100%;
-    }
-}
-    """
+    CSS_PATH = "./tcss/getzpk_app.tcss"
 
     BINDINGS = [
-        ("q", "request_quit", "退出"),
-        ("a", "get_zpk", "执行打包下载"),
-        ("r", "refresh_floder", "刷新"),
+        ("ctrl+b", "toggle_sidebar", "选择币种"),
+        ("ctrl+q", "request_quit", "退出"),
+        ("ctrl+a", "get_zpk", "执行打包下载"),
+        ("ctrl+r", "refresh_floder", "刷新"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
     # SCREENS = {"DownloadScreen": DownloadScreen()}
 
+    show_sidebar = reactive(False)
+
     def compose(self) -> ComposeResult:
-        yield Header()
-        yield Footer()
-        
         yield VerticalScroll(
+            Header(show_clock=True),
+            Sidebar(classes="-hidden"),
             Container(
                 FolderContainer(id="folder_container"),
                 id="sider_container",
@@ -538,24 +408,11 @@ QuitScreen {
                 ),
                 id="main_container"
             ),
+            Footer(),
             id = "container"
         )
         
                 
-        
-    @on(FolderContainer.Selected)
-    def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
-        self.remote_folder = message.selected
-        self.remote_folder_path = message.selected_path
-        self.query_one(Information).set_remote_folder(message.selected) 
-        self.ui_view.update_by_folder(message.selected)
-
-    @on(UIView.Selected)
-    def handle_ui_view_selected(self, message:UIView.Selected) -> None:
-        """ ui_resource_UN60_NEW.bin """
-        self.ui_file = message.selected
-        self.query_one(Information).set_ui_file(message.selected)
-
     def on_mount(self) -> None:
         """Initialize the app."""
         self.folder_container = self.query_one(FolderContainer)
@@ -563,6 +420,7 @@ QuitScreen {
         self.note = self.query_one(Note)
         self.information = self.query_one(Information)
         self.information.refresh_country_code()
+        self.sidebar = self.query_one(Sidebar)
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
@@ -578,9 +436,44 @@ QuitScreen {
         await self.push_screen(DownloadScreen())
         await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file)
 
+    def action_toggle_sidebar(self) -> None:
+        sidebar = self.query_one(Sidebar)
+        self.set_focus(None)
+        if sidebar.has_class("-hidden"):
+            sidebar.remove_class("-hidden")
+        else:
+            if sidebar.query("*:focus"):
+                self.screen.set_focus(None)
+            sidebar.add_class("-hidden")
+
     def action_toggle_dark(self):
         """Toggle dark mode."""
         self.dark = not self.dark
+
+    @on(FolderContainer.Selected)
+    def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
+        self.remote_folder = message.selected
+        self.remote_folder_path = message.selected_path
+        self.query_one(Information).set_remote_folder(message.selected) 
+        self.ui_view.update_by_folder(message.selected)
+
+    @on(UIView.Selected)
+    def handle_ui_view_selected(self, message:UIView.Selected) -> None:
+        """ ui_resource_UN60_NEW.bin """
+        self.ui_file = message.selected
+        self.query_one(Information).set_ui_file(message.selected)
+
+    @on(Sidebar.Submitted)
+    def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
+        """ 根据输入，更新对应的货币信息 """
+        val = message.value
+        self.sidebar.query_one(ErrorMessage).msg = ""
+        error_msg = select_country(val)
+        if error_msg:
+            self.sidebar.query_one(ErrorMessage).msg = error_msg
+        else:
+            self.sidebar.query_one(ErrorMessage).msg = " 【Success】Success!"
+        self.query_one(Information).refresh_country_code()
 
 if __name__ == "__main__":
     app = GetZPKApp()

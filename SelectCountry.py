@@ -292,6 +292,8 @@ country_currency_map = {
 '津巴布韦元 ': 'ZWL',
 }
 
+
+
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
 
@@ -312,16 +314,22 @@ def fuzz_search(data):
     """ 模糊查询国家名称, 返回查询到的国家名称 """
     return process.extractOne(data, country_currency_map.keys())
 
+error_msg = []
+
 def conver_Country2Code(country_name, threshold=49):
     """ 通过模糊匹配转换国家对应的货币代码 """
+    global error_msg
 
     best_match = fuzz_search(country_name)
     if best_match[1] >= 80:
         print(f"【Info】{country_name} -> {best_match[0]}({country_currency_map[best_match[0]]}), score:{best_match[1]}")
+        error_msg.append(f" 【Info】{country_name} -> {best_match[0]}({country_currency_map[best_match[0]]})")
     elif best_match[1] >= threshold:
-        print_yellow_text(f"【Info】{country_name} -> {best_match[0]}({country_currency_map[best_match[0]]}), score:{best_match[1]}")
+        print_yellow_text(f"【Warning】{country_name} -> {best_match[0]}({country_currency_map[best_match[0]]}), score:{best_match[1]}")
+        error_msg.append(f" 【Warning】{country_name} -> {best_match[0]}({country_currency_map[best_match[0]]})")
     else:
         print_red_text(f"【Error】'{country_name}' Not Found! Pleas check the character")
+        error_msg.append(f" 【Error】'{country_name}' Not Found! Pleas check the character")
         return None
     return country_currency_map[best_match[0]]
 
@@ -341,9 +349,11 @@ def get_priority(currency_order, x):
     except ValueError as e:
         return 9999
 
-def main():
-    """ Open selecttion according to  input country """
-
+def select_country(input_str:str):
+    """ Open selecttion according to  input country 
+    :str input_str
+    """
+    
     """ 1. Get Input Country Name 
     Test Sample
     新加坡，马来西亚，文莱，柬埔寨，菲律宾
@@ -352,9 +362,12 @@ def main():
     新加坡, 马来西亚, 文莱, 柬埔寨, 菲律宾
     """
     # input_str = "新加、马来西、文莱、柬埔寨、菲律宾、USD PHP"
-    input_str = input("请输入需要开启的货币代码或国家名称：")
-    pattern = r'[,，\s、]+'
-    input_list = re.split(pattern, input_str)
+    # input_str = input("请输入需要开启的货币代码或国家名称：")
+    global error_msg
+    error_msg = []
+    pattern = r'[,，\s、/|;；]+'
+    # input_list = re.split(pattern, input_str)
+    input_list = list(filter(None, re.split(pattern, input_str)))
     print(f"【Info】input list: {input_list}")
 
     country_code = ['AUT','MIX']
@@ -364,6 +377,7 @@ def main():
                 country_code.append(str)
             else:
                 print_red_text(f"【Error】Invalid value '{str}', the length of the character must be 3!")
+                error_msg.append(f" 【Error】Invalid value '{str}', the length of the character must be 3!")
         elif detect_language(str) =='Zh':
             code = conver_Country2Code(str, threshold=49)
             if code is not None:
@@ -393,7 +407,7 @@ def main():
 
     if missing_codes:
         print_red_text(f"【Error】以下币种在XML文件中不存在： {', '.join(missing_codes)}")
-    
+        error_msg.append(f" 【Error】The Follwing Codes are not in XML： {', '.join(missing_codes)}\r\n")
     # 创建新的根元素，并复制根元素的属性
     sorted_root = ET.Element(root.tag)
     for key, value in root_attrib.items():
@@ -426,6 +440,8 @@ def main():
         os.makedirs('./new_currencys')
     sorted_tree.write('./new_currencys/currencys.xml', encoding="utf-8", xml_declaration=True)
 
+    return error_msg
+
 def press_any_key_to_continue():
     print("按任意键继续, 按q键退出...")
     user_input = msvcrt.getch().decode()  # 获取用户按键的输入
@@ -437,7 +453,7 @@ if __name__ == "__main__":
     
     while True:
         init()
-        main()
+        select_country()
 
         press_any_key_to_continue()
         # input("Press Any Key")
