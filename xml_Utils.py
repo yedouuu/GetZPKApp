@@ -72,7 +72,7 @@ def get_ui_file_time(filename):
     file_path = get_text("local_ui_file_path") + filename
     file_mtime = os.path.getmtime(file_path)
     mtime = time.localtime(file_mtime)
-    return time.strftime("%Y-%m-%d %H:%M", mtime)
+    return time.strftime("%Y-%m-%d", mtime)
     # print("文件的最后一修改时间（可读格式）：", time.strftime("%Y-%m-%d %H:%M:%S", mtime))
 
 

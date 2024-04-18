@@ -194,9 +194,9 @@ class UIView(DataTable):
         self.coverted_rows = []
         # 将ui文件列表转换为DataTable的行数据
         for ui in list:
-            # self.get_date(ui)
-            # self.get_desc(ui)
-            row = (self.get_date(ui), ui, "")
+            date = self.get_date(ui)
+            ui = ui.replace("ui_resource_", "", 1).replace(".bin", " ", 1)
+            row = (date, ui, "")
             self.coverted_rows.append(row)
         self.add_rows_with_Idx(self.coverted_rows)
 
@@ -257,11 +257,15 @@ class Information(Container):
 
 class Note(TextArea):
     """A widget to display note."""
+    
+    template = "客户代码:\r\n备注:"
 
     def on_mount(self):
         self.border_title = "Note"
-        # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
+        self.text = self.template
+
+    
 
 from rich.console import RenderableType
 from importlib.metadata import version
@@ -381,7 +385,7 @@ class GetZPKApp(App):
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "选择币种"),
         ("ctrl+q", "request_quit", "退出"),
-        ("ctrl+a", "get_zpk", "执行打包下载"),
+        ("ctrl+d", "get_zpk", "执行打包下载"),
         ("ctrl+r", "refresh_floder", "刷新"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
