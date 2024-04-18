@@ -36,7 +36,7 @@
 			<mm_thred val="64" />
 			<lsm_thred val="64" />
 			<rsm_thred val="64" />
-			<selecttion val="Y" />
+			<selecttion val="N" />
 		</Country>
 		<Country tag="OMR">
 			<denom_1 val="1">

@@ -213,13 +213,13 @@ class UIView(DataTable):
 
 class DownloadDesc(Widget):
     """A widget to display download desc."""
-    country = reactive([])
+    country_code = reactive([])
     remote_folder = reactive("")
     ui_file = reactive("")
     def render(self) -> str:
         return f"Folder:   {self.remote_folder}\r\n" + \
                 f"UI:       {self.ui_file}\r\n" + \
-                f"Country:  {", ".join(self.country)}"
+                f"Country:  {", ".join(self.country_code)}"
 
 class Information(Container):
     country = reactive(["AUT", "MIX"], recompose=True)
@@ -238,11 +238,28 @@ class Information(Container):
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
 
+    def set_country_code(self, code):
+        """Set country."""
+        self.query_one(DownloadDesc).country_code = code
+    
+    def refresh_country_code(self):
+        """Set country."""
+        self.query_one(DownloadDesc).country_code = get_open_country()
+        print(f"Country Code = {get_open_country()}")
+
+    def set_remote_folder(self, folder):
+        """Set remote folder."""
+        self.query_one(DownloadDesc).remote_folder = folder
+    
+    def set_ui_file(self, ui):
+        """Set ui file."""
+        self.query_one(DownloadDesc).ui_file = ui
+
 class Note(TextArea):
     """A widget to display note."""
 
     def on_mount(self):
-        self.border_title = "Information"
+        self.border_title = "Note"
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
 
@@ -485,10 +502,9 @@ QuitScreen {
     """
 
     BINDINGS = [
-        ("q", "request_quit", "Quit"),
+        ("q", "request_quit", "退出"),
         ("a", "get_zpk", "执行打包下载"),
-        ("r", "refresh_floder", "刷新文件夹"),
-        ("b", "push_screen('DownloadScreen')", "BSOD")
+        ("r", "refresh_floder", "刷新"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
     # SCREENS = {"DownloadScreen": DownloadScreen()}
@@ -531,26 +547,27 @@ QuitScreen {
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
         self.remote_folder = message.selected
         self.remote_folder_path = message.selected_path
-        self.query_one(DownloadDesc).remote_folder = message.selected
+        self.query_one(Information).set_remote_folder(message.selected) 
         self.ui_view.update_by_folder(message.selected)
 
     @on(UIView.Selected)
     def handle_ui_view_selected(self, message:UIView.Selected) -> None:
         """ ui_resource_UN60_NEW.bin """
         self.ui_file = message.selected
-        self.query_one(DownloadDesc).ui_file = message.selected
+        self.query_one(Information).set_ui_file(message.selected)
 
     def on_mount(self) -> None:
         """Initialize the app."""
         self.folder_container = self.query_one(FolderContainer)
         self.ui_view = self.query_one(UIView)
         self.note = self.query_one(Note)
-        self.downloadDesc = self.query_one(DownloadDesc)
-        self.downloadDesc.country = get_open_country()
+        self.information = self.query_one(Information)
+        self.information.refresh_country_code()
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
         self.folder_container.folder_refresh()
+        self.information.refresh_country_code()
         # self.ui_view.update_by_folder()
 
     def action_request_quit(self) -> None:

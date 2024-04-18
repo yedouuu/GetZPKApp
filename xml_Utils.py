@@ -51,7 +51,7 @@ def path_valide(path):
 
 config_tree = open_xml('./ssh_config.xml')
 local_currencys_xml_path = path_valide(get_text("local_currencys_xml_path"))
-currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
+# currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
 
 def get_version(current_folder, current_date):
     new_ver = 'A'
@@ -137,6 +137,7 @@ def get_remote_directory_version(remote_directory, type="ver"):
 
 def get_open_country():
     """ 获取开启的国家 """
+    currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
     country_code = []
     for e in currency_tree.iter("Country"):
         tmp = e.find("selecttion").get("val")
