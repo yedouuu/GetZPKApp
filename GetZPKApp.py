@@ -4,7 +4,6 @@ import asyncio
 from rich.text import Text
 from rich.markdown import Markdown
 
-
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.containers import Container, Center, Middle, VerticalScroll, Horizontal, ScrollableContainer
@@ -34,10 +33,12 @@ from textual.widgets import (
     Placeholder, 
     DataTable,
     Switch,
+    DirectoryTree,
 )
 
 from DownloadScreen import DownloadScreen
 from QuitScreen import QuitScreen
+from FileBrowser import FileBrowser
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -387,10 +388,11 @@ class GetZPKApp(App):
         ("ctrl+q", "request_quit", "退出"),
         ("ctrl+d", "get_zpk", "执行打包下载"),
         ("ctrl+r", "refresh_floder", "刷新"),
+        ("ctrl+f", "toggle_file_browser", "打开文件浏览器"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
-    # SCREENS = {"DownloadScreen": DownloadScreen()}
-
+    SCREENS = {"FileBrower": FileBrowser()}
+    # MODES = {"FileBrower": FileBrowser()}
     show_sidebar = reactive(False)
 
     def compose(self) -> ComposeResult:
@@ -398,6 +400,7 @@ class GetZPKApp(App):
             Header(show_clock=True),
             Sidebar(classes="-hidden"),
             Container(
+                
                 FolderContainer(id="folder_container"),
                 id="sider_container",
             ),
@@ -434,6 +437,10 @@ class GetZPKApp(App):
         self.information = self.query_one(Information)
         self.information.refresh_country_code()
         self.sidebar = self.query_one(Sidebar)
+        # self.mount(Footer())
+
+    def on_load(self) -> None:
+        pass
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
@@ -460,6 +467,12 @@ class GetZPKApp(App):
             if sidebar.query("*:focus"):
                 self.screen.set_focus(None)
             sidebar.add_class("-hidden")
+
+    def action_toggle_file_browser(self) -> None:
+        """Toggle file browser."""
+        self.set_focus(None)
+        # self.query_one(Footer).remove()
+        self.app.push_screen("FileBrower")
 
     def action_toggle_dark(self):
         """Toggle dark mode."""
