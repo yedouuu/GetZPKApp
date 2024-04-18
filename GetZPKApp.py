@@ -313,7 +313,7 @@ class ErrorMessage(Static):
                 tag = f"【{label}】"
 
                 if tag in seg:
-                    seg = seg.replace(tag, "")  # 移除标签文本
+                    # seg = seg.replace(tag, "")  # 移除标签文本
                     text.append(seg, style=style)
                     break
             else:
@@ -347,7 +347,11 @@ Built with ♥  by [@click="app.open_link('https://www.textualize.io')"]Textuali
 class Sidebar(Container):
 
     def compose(self) -> ComposeResult:
-        yield Title("Select Country")
+        yield Horizontal(
+            Title("Select Country"),
+            Button("Clear", id="clear_country"),
+        )
+        # yield Title("Select Country")
         yield Input()
         yield OptionGroup(ErrorMessage())
         # yield DarkSwitch()
@@ -362,6 +366,11 @@ class Sidebar(Container):
         self.query_one(Input).value = ""
         self.post_message(self.Submitted(val))
 
+    def on_button_pressed(self, event:Button.Pressed) -> None:
+        self.query_one(Input).value = ""
+        self.query_one(Input).focus(True)
+
+    
 
 
 class GetZPKApp(App):
@@ -440,6 +449,8 @@ class GetZPKApp(App):
         sidebar = self.query_one(Sidebar)
         self.set_focus(None)
         if sidebar.has_class("-hidden"):
+            self.sidebar.query_one(Input).value = " ".join(get_open_country()[2:])
+            self.sidebar.query_one(Input).focus(True)
             sidebar.remove_class("-hidden")
         else:
             if sidebar.query("*:focus"):
@@ -472,7 +483,7 @@ class GetZPKApp(App):
         if error_msg:
             self.sidebar.query_one(ErrorMessage).msg = error_msg
         else:
-            self.sidebar.query_one(ErrorMessage).msg = " 【Success】Success!"
+            self.sidebar.query_one(ErrorMessage).msg = [" 【Success】Success!"]
         self.query_one(Information).refresh_country_code()
 
 if __name__ == "__main__":

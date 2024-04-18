@@ -239,6 +239,14 @@ Sidebar {
       margin-left: 1;
       border: round $primary-lighten-2;
     }
+    
+    Horizontal {
+      height: 0.2fr;
+    }
+
+    #clear_country {
+      margin-top: 1;
+    }
 }
 
 Sidebar:focus-within {
@@ -252,12 +260,12 @@ Sidebar.-hidden {
 Sidebar Title {
     background: $boost;
     color: $secondary;
-    padding: 1 4;
+    padding: 1 0;
     margin-top: 1;
     border-right: vkey $background;
-    dock: top;
     text-align: center;
     text-style: bold;
+    width:75%
 }
 
 OptionGroup {
