@@ -7,19 +7,22 @@ Run with:
 """
 
 import os
+from pathlib import Path
 from rich.syntax import Syntax
 from rich.traceback import Traceback
+from pathlib import Path
+from typing import Iterable
 
 from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll, Horizontal
 from textual.reactive import var
-from textual.widgets import DirectoryTree, Footer, Header, Static, Button
+from textual.widgets import DirectoryTree, Footer, Header, Static, Button, Input
 from textual.screen import Screen
 from textual.reactive import reactive
 
 from CopyFile import copy_to_clipboard
 
-class ZPK_View(Static):
+class ZPKView(Static):
     
     path = reactive("")
 
@@ -40,8 +43,28 @@ class ZPK_View(Static):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
       # 调用函数，复制文件
-      abs_path = os.path.abspath(self.path)
       copy_to_clipboard([abs_path])
+      abs_path = os.path.abspath(self.path)
+
+class FilteredDirectoryTree(DirectoryTree):
+
+    def __init__ (self, path: str, keywords: str, *args, **kwargs) -> None:
+        super().__init__(path, *args, **kwargs)
+        self.keywords = keywords
+
+    # def watch_keywords(self, keywords: str) -> None:
+    #     """Called when keywords is modified."""
+    #     self.query_one(DirectoryTree).path = self.path
+
+    def filter_paths(self, paths: Iterable[Path]) -> Iterable[Path]:
+        path_list = []
+        for path in paths:
+            if path.is_dir() and self.keywords not in path.name:
+                continue
+            else:
+                path_list.append(path)
+
+        return path_list
 
 class FileBrowser(Screen):
     """Textual code browser app."""
@@ -70,7 +93,7 @@ FileBrowser.-show-tree #tree-view {
 
 
 #code-view {
-    overflow: auto scroll;
+    margin-top: 1;
     min-width: 100%;
 }
 #code {
@@ -83,6 +106,8 @@ FileBrowser.-show-tree #tree-view {
     ]
 
     show_tree = var(True)
+    filter_text = var("")
+    path = "./ZPK/"
 
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
@@ -90,13 +115,14 @@ FileBrowser.-show-tree #tree-view {
 
     def compose(self) -> ComposeResult:
         """Compose our UI."""
-        path = "./ZPK"
+        
         yield Header()
         with Container():
-            yield DirectoryTree(path, id="tree-view")
+            yield Input()
+            yield FilteredDirectoryTree(self.path, self.filter_text, id="tree-view")
             with VerticalScroll(id="code-view"):
                 yield Static(id="code", expand=True)
-                yield ZPK_View(path)
+            yield ZPKView(self.path)
         yield Footer()
 
     def on_mount(self) -> None:
@@ -107,13 +133,21 @@ FileBrowser.-show-tree #tree-view {
         """Called when the app has loaded."""
         pass
 
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        """Called when the user submits input."""
+        self.filter_text = event.value
+        self.query_one(FilteredDirectoryTree).remove()
+        self.query_one(Container).mount(FilteredDirectoryTree(self.path, self.filter_text, id="tree-view"))
+        event.stop()
+
+
     def on_directory_tree_file_selected(
         self, event: DirectoryTree.FileSelected
     ) -> None:
         """Called when the user click a file in the directory tree."""
         event.stop()
         code_view = self.query_one("#code", Static)
-        zpk_view = self.query_one(ZPK_View)
+        zpk_view = self.query_one(ZPKView)
         syntax = " "
         try:
             path = str(event.path)
