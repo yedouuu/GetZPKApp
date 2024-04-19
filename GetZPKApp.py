@@ -671,16 +671,17 @@ OptionGroup {
 }
 
 
-ZPK_View {
+ZPKView {
   margin-top: 1;
 
   #zpk_path {
     width: 50%;
+    margin-right: 1;
     border: round #7e7e7e;
   }
 
   Button {
-    width: 20%;
+    width: 15%;
   }
 }
 
@@ -762,7 +763,7 @@ ZPK_View {
                 f"""
 # 文件名: {latest_file}
 - UI文件: {self.ui_file}
-- 币种 : {self.information.get_country_code()}
+- 币种 : {", ".join(self.information.get_country_code())}
 - 备注 : {self.note.get_note().split(":")[-1]}\r\n
 """)
     

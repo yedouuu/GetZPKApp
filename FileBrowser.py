@@ -43,8 +43,8 @@ class ZPKView(Static):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
       # 调用函数，复制文件
-      copy_to_clipboard([abs_path])
       abs_path = os.path.abspath(self.path)
+      copy_to_clipboard([abs_path])
 
 class FilteredDirectoryTree(DirectoryTree):
 
@@ -91,10 +91,14 @@ FileBrowser.-show-tree #tree-view {
     max-width: 50%;
 }
 
+#file_filter_input {
+    margin-top: 1;
+}
 
 #code-view {
-    margin-top: 1;
     min-width: 100%;
+    height:70%;
+    border: round #7e7e7e;
 }
 #code {
     width: auto;
@@ -118,7 +122,7 @@ FileBrowser.-show-tree #tree-view {
         
         yield Header()
         with Container():
-            yield Input()
+            yield Input(id="file_filter_input")
             yield FilteredDirectoryTree(self.path, self.filter_text, id="tree-view")
             with VerticalScroll(id="code-view"):
                 yield Static(id="code", expand=True)
@@ -126,7 +130,7 @@ FileBrowser.-show-tree #tree-view {
         yield Footer()
 
     def on_mount(self) -> None:
-        self.query_one(DirectoryTree).focus()
+        self.query_one(FilteredDirectoryTree).focus()
         # self.mount(Footer())
 
     def on_load(self) -> None:
