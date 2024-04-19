@@ -42,9 +42,11 @@ class ZPKView(Static):
         self.query_one("#zpk_path", Static).update(file_name)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-      # 调用函数，复制文件
-      abs_path = os.path.abspath(self.path)
-      copy_to_clipboard([abs_path])
+        # 调用函数，复制文件
+        abs_path = os.path.abspath(self.path)
+        # command = f"powershell Set-Clipboard -LiteralPath {abs_path}"
+        # os.system(command)
+        copy_to_clipboard(abs_path)
 
 class FilteredDirectoryTree(DirectoryTree):
 

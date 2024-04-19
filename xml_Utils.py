@@ -315,7 +315,7 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
     if ".ZPK" in latest_file:
         await sftp.remove(remote_file_path)
     abs_path = os.path.abspath(local_file_path)
-    copy_to_clipboard([abs_path])
+    copy_to_clipboard(abs_path)
 
     sftp.exit()
     print("ZPK文件下载完成：", local_file_path)
