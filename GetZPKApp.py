@@ -1,6 +1,6 @@
 import time
 import asyncio
-
+import os
 from rich.text import Text
 from rich.markdown import Markdown
 
@@ -243,6 +243,9 @@ class Information(Container):
         """Set country."""
         self.query_one(DownloadDesc).country_code = code
     
+    def get_country_code(self):
+        return self.query_one(DownloadDesc).country_code
+
     def refresh_country_code(self):
         """Set country."""
         self.query_one(DownloadDesc).country_code = get_open_country()
@@ -260,11 +263,29 @@ class Note(TextArea):
     """A widget to display note."""
     
     template = "客户代码:\r\n备注:"
+    customer_code = ""
+    note = ""
 
     def on_mount(self):
         self.border_title = "Note"
         self.styles.border_title_align = "center"
         self.text = self.template
+
+    def analyze_note(self):
+        customer, self.note = self.text.split("\n", 2)
+        self.customer_code = customer.split(":")[1].strip()
+        print(f"Customer Code1 = {customer.split(":")[1].strip()}")
+
+    def get_customer_code(self) -> str:
+        print(f"Customer Code2 = {self.customer_code}")
+        return self.customer_code
+    
+    def get_note(self) -> str:
+        return self.note
+
+        
+        
+
 
     
 
@@ -451,10 +472,32 @@ class GetZPKApp(App):
     def action_request_quit(self) -> None:
         self.push_screen(QuitScreen())    
 
+    def create_readme(self, customer_path: str, latest_file: str) -> None:
+        """Create a readme file."""
+        readme_file_path = f"{customer_path}/README.md"
+        with open(readme_file_path, "a+", encoding="utf-8") as f:
+            f.write(
+                f"""
+# 文件名: {latest_file}
+- UI文件: {self.ui_file}
+- 币种 : {self.information.get_country_code()}
+- 备注 : {self.note.get_note().split(":")[-1]}\r\n
+""")
+    
+
     async def action_get_zpk(self):
         """Get ZPK."""
+        self.note.analyze_note()
+        customer_code = self.note.get_customer_code()
+        customer_path = ""
+        if customer_code:
+            customer_path = f"./ZPK/{customer_code}/"
+            if not os.path.exists(customer_path):
+                os.mkdir(customer_path)
+
         await self.push_screen(DownloadScreen())
-        await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file)
+        latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, customer_path)
+        self.create_readme(customer_path, latest_file)
 
     def action_toggle_sidebar(self) -> None:
         sidebar = self.query_one(Sidebar)

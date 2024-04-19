@@ -290,7 +290,7 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, callback):
     print(f"打包完成")
 
 
-async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_progress):
+async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path: str, update_progress) -> str:
     # 建立 SFTP 客户端连接
     sftp = await ssh_client.get_sftp()
 
@@ -300,7 +300,12 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_pro
 
     remote_file_path = f"{remote_directory}{latest_file}"  # 注意路径分隔符
     download_zpk_path = get_download_zpk_path(remote_directory)
-    local_file_path = f"{download_zpk_path}{latest_file}"  # 注意路径分隔符
+
+    # 如果有输入客户代码，则下载到客户代码文件夹下
+    if customer_path:
+        local_file_path = f"{customer_path}{latest_file}"  # 注意路径分隔符
+    else:
+        local_file_path = f"{download_zpk_path}{latest_file}"  # 注意路径分隔符
 
     # 获取远程文件的大小
     remote_file_stat = await sftp.stat(remote_file_path)
@@ -312,6 +317,9 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_pro
         await sftp.remove(remote_file_path)
     abs_path = os.path.abspath(local_file_path)
     copy_to_clipboard([abs_path])
-    sftp.exit()
 
+    
+
+    sftp.exit()
     print("ZPK文件下载完成：", local_file_path)
+    return latest_file

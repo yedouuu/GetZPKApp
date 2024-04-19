@@ -6,7 +6,7 @@
     
     <local_currencys_xml_path>./new_currencys/</local_currencys_xml_path>
     <local_ui_file_path>./ui/</local_ui_file_path>
-    <local_zpk_path>./</local_zpk_path>
+    <local_zpk_path>./ZPK/</local_zpk_path>
 
     <remote_directory>/home/lin/Desktop/UN60_DEV/</remote_directory>
     <remote_directory>/home/lin/Desktop/UN60_NEW/</remote_directory>
