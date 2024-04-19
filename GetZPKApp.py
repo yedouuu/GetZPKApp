@@ -1,12 +1,12 @@
-import time
-import asyncio
+
 import os
 from rich.text import Text
 from rich.markdown import Markdown
+from rich.console import RenderableType
 
-from textual import events, on
+from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import Container, Center, Middle, VerticalScroll, Horizontal, ScrollableContainer
+from textual.containers import Container, VerticalScroll, Horizontal, ScrollableContainer
 from textual.reactive import reactive
 from textual.timer import Timer
 from textual.message import Message
@@ -28,12 +28,10 @@ from textual.widgets import (
     Header, 
     TextArea, 
     Input, 
-    OptionList, 
     Label, 
     Placeholder, 
     DataTable,
     Switch,
-    DirectoryTree,
 )
 
 from DownloadScreen import DownloadScreen
@@ -165,9 +163,6 @@ class UIView(DataTable):
         """Add rows to table."""
         for number, row in enumerate(rows, start=1):
             label = Text(str(number), style="#B0FC38 italic")
-            # styled_row = [
-            #     Text(str(cell), style="padding=1 0 0 0; height=2;", justify="center") for cell in row
-            # ]
             self.add_row(*row, label=label, height=1, key=f"row_{number}")
 
     class Selected(Message):
@@ -284,13 +279,6 @@ class Note(TextArea):
         return self.note
 
         
-        
-
-
-    
-
-from rich.console import RenderableType
-from importlib.metadata import version
 
 class MyMessage(Static):
     pass
@@ -402,7 +390,301 @@ class Sidebar(Container):
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
 
-    CSS_PATH = "./tcss/getzpk_app.tcss"
+    # CSS_PATH = "./tcss/getzpk_app.tcss"
+    CSS="""
+GetZPKApp {
+    layout: vertical;
+    background: $boost;
+    min-width: 50;
+}
+
+FolderContainer {
+    content-align: center middle;
+    width: 100%;
+    height: 100%;
+    column-span: 1;
+    border: round #7e7e7e;
+
+    Label {
+        content-align: center middle;
+        margin: 0 0 1 0;
+    }
+    Input {
+        width: 100%;
+        height: 3;
+        margin: 0 0 1 0;
+        padding: 0;
+    }
+    RemoteFloder {
+      width: 100%;
+      height: 3;
+      margin: 0 0 0 0;
+      padding: 0;
+      border: round #7e7e7e;
+    }
+}
+
+.table {
+  row-span: 1;
+  column-span: 8;
+}
+
+UIView {
+    height: 16;
+    max-height: 16;
+    margin: 0 0 0 0;
+    .table_title {
+    }
+
+    .error_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $error;
+    }
+    .warning_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $warning;
+    }
+    .success_message {
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
+        background: $success;
+    } 
+
+    .hidden {
+        display: none;
+    }
+
+    .selected {
+        background: $success;
+    }
+}
+
+
+.selected {
+    background: $primary;
+}
+.filtered {
+    display: none;
+}
+
+
+
+#container {
+  layout:grid;
+  grid-size: 4 8;
+}
+#sider_container {
+  row-span: 8;
+}
+#main_container {
+  row-span: 8;
+  column-span: 3;
+
+  #main2_container {
+    layout: grid;
+    grid-size: 8 8;
+    border: round #7e7e7e;
+
+    #top {
+      row-span: 4;
+      column-span: 8;
+    }
+    #mid {
+      row-span: 4;
+      column-span: 3;
+      padding: 0 0 0 0;
+      margin: 0 0 0 0;
+      border: panel $primary-lighten-2;
+    }
+    #bot {
+      row-span: 4;
+      column-span: 8;
+      border: panel $primary-lighten-2;
+      margin: 0 0 0 0;
+      padding: 0 1;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+Note {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  width: 100%;
+  height: 100%;
+
+}
+
+Information {
+  margin: 0 0 0 0;
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  content-align-horizontal: center;
+  color: $warning;
+}
+
+.subtitle {
+  color: $warning;
+}
+
+#info_folder {
+  width: 100%;
+  height: 100%;
+}
+
+#main {
+  layout: grid;
+  grid-size: 8 8;
+}
+
+#main_top{
+  row-span: 4;
+}
+
+DownloadScreen {
+    align: center middle;
+
+    #dialog {
+        grid-size: 2 4;
+        grid-gutter: 1 2;
+        grid-rows: 1fr 3;
+        padding: 0 1;
+        width: 60;
+        height: 16;
+        border: thick $background 80%;
+        background: $surface;
+    }
+
+    #question {
+        column-span: 2;
+        row-span:2;
+        height: 1fr;
+        width: 1fr;
+        content-align: center middle;
+    }
+
+    #progress {
+        column-span: 2;
+        margin-left: 10;
+        content-align: center middle;
+    }
+
+    Button {
+        column-span: 2;
+        width: 100%;
+    }
+
+    .loading {
+      background: $panel;
+    }
+}
+
+
+QuitScreen {
+    align: center middle;
+
+    #dialog {
+        grid-size: 2;
+        grid-gutter: 1 2;
+        grid-rows: 1fr 3;
+        padding: 0 1;
+        width: 60;
+        height: 11;
+        border: thick $background 80%;
+        background: $surface;
+    }
+
+    #question {
+        column-span: 2;
+        height: 1fr;
+        width: 1fr;
+        content-align: center middle;
+    }
+
+    Button {
+        width: 100%;
+    }
+}
+
+Sidebar {
+    width: 70%;
+    background: $panel;
+    transition: offset 500ms in_out_cubic;
+    layer: overlay;
+    column-span: 3;
+    row-span: 8;
+
+    Input {
+      margin: 1;
+    }
+
+    ErrorMessage {
+      width: 100%;
+      height: 100%;
+      margin-left: 1;
+      border: round $primary-lighten-2;
+    }
+    
+    Horizontal {
+      height: 0.2fr;
+    }
+
+    #clear_country {
+      margin-top: 1;
+    }
+}
+
+Sidebar:focus-within {
+    offset: 0 0 !important;
+}
+
+Sidebar.-hidden {
+    offset-x: -100%;
+}
+
+Sidebar Title {
+    background: $boost;
+    color: $secondary;
+    padding: 1 0;
+    margin-top: 1;
+    border-right: vkey $background;
+    text-align: center;
+    text-style: bold;
+    width:75%
+}
+
+OptionGroup {
+    background: $boost;
+    color: $text;
+    height: 1fr;
+    padding: 0 1;
+    border-right: vkey $background;
+}
+
+
+ZPK_View {
+  margin-top: 1;
+
+  #zpk_path {
+    width: 50%;
+    border: round #7e7e7e;
+  }
+
+  Button {
+    width: 20%;
+  }
+}
+
+"""
 
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "选择币种"),

@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 import lxml.etree as LXML_ET
 from colorama import Fore, Style, init
 import time
-import asyncio
 from SSHClient import SSH_Client
 from CopyFile import copy_to_clipboard
 

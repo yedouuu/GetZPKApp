@@ -13,7 +13,7 @@ from rich.traceback import Traceback
 from pathlib import Path
 from typing import Iterable
 
-from textual.app import App, ComposeResult
+from textual.app import ComposeResult
 from textual.containers import Container, VerticalScroll, Horizontal
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static, Button, Input

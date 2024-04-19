@@ -1,7 +1,6 @@
 import time
-import asyncio
 from textual.app import App, ComposeResult
-from textual.containers import Grid, Center, Middle, Vertical
+from textual.containers import Grid
 from textual.screen import ModalScreen
 from textual.widgets import Button, Footer, Header, Label, ProgressBar, Static
 import logging
