@@ -3,6 +3,7 @@ import os
 from rich.text import Text
 from rich.markdown import Markdown
 from rich.console import RenderableType
+import win32timezone
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -689,8 +690,8 @@ ZPKView {
 
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "选择币种"),
-        ("ctrl+d", "get_zpk", "执行打包下载"),
-        ("ctrl+f", "toggle_file_browser", "打开文件浏览器"),
+        ("ctrl+d", "get_zpk", "下载"),
+        ("ctrl+f", "toggle_file_browser", "查看文件"),
         ("ctrl+r", "refresh_floder", "刷新"),
         ("ctrl+q", "request_quit", "退出"),
     ]

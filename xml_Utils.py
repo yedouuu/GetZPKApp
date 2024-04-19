@@ -307,8 +307,8 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
         local_file_path = f"{download_zpk_path}{latest_file}"  # 注意路径分隔符
 
     # 获取远程文件的大小
-    remote_file_stat = await sftp.stat(remote_file_path)
-    total_size = remote_file_stat.size
+    # remote_file_stat = await sftp.stat(remote_file_path)
+    # total_size = remote_file_stat.size
 
     # 使用 SFTP 的 get 方法下载文件
     await sftp.get(remote_file_path, localpath=local_file_path, progress_handler=update_progress)
@@ -316,8 +316,6 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
         await sftp.remove(remote_file_path)
     abs_path = os.path.abspath(local_file_path)
     copy_to_clipboard([abs_path])
-
-    
 
     sftp.exit()
     print("ZPK文件下载完成：", local_file_path)
