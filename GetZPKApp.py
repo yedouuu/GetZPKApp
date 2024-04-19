@@ -538,13 +538,16 @@ class GetZPKApp(App):
     def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
         """ 根据输入，更新对应的货币信息 """
         val = message.value
-        self.sidebar.query_one(ErrorMessage).msg = ""
-        error_msg = select_country(val)
-        if error_msg:
-            self.sidebar.query_one(ErrorMessage).msg = error_msg
+        if val:
+            self.sidebar.query_one(ErrorMessage).msg = ""
+            error_msg = select_country(val)
+            if error_msg:
+                self.sidebar.query_one(ErrorMessage).msg = error_msg
+            else:
+                self.sidebar.query_one(ErrorMessage).msg = [" 【Success】Success!"]
+            self.query_one(Information).refresh_country_code()
         else:
-            self.sidebar.query_one(ErrorMessage).msg = [" 【Success】Success!"]
-        self.query_one(Information).refresh_country_code()
+            self.action_toggle_sidebar()
 
 if __name__ == "__main__":
     app = GetZPKApp()
