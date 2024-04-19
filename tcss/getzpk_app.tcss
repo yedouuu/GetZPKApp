@@ -278,10 +278,11 @@ OptionGroup {
 
 
 ZPK_View {
+  margin-top: 1;
 
   #zpk_path {
     width: 50%;
-    border: solid red;
+    border: round #7e7e7e;
   }
 
   Button {

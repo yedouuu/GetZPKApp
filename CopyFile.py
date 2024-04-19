@@ -1,11 +1,10 @@
 import win32clipboard
 from ctypes import *
 import os
-import logging
+# import logging
 
 # 设置日志
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 class DROPFILES(Structure):
     _fields_ = [
         ("pFiles", c_uint),
@@ -17,7 +16,8 @@ class DROPFILES(Structure):
 
 def setClipboardFiles(paths):
     if not all(os.path.exists(path) for path in paths):
-        logging.error("One or more files do not exist.")
+        # logging.error("One or more files do not exist.")
+        print("One or more files do not exist.")
         return
 
     files = ("\0".join(paths)).replace("/", "\\")
@@ -26,9 +26,9 @@ def setClipboardFiles(paths):
         win32clipboard.OpenClipboard()
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardData(win32clipboard.CF_HDROP, metadata + data)
-        logging.info("Files copied to clipboard successfully.")
+        print("Files copied to clipboard successfully.")
     except Exception as e:
-        logging.error(f"Failed to set clipboard data: {e}")
+        print(f"Failed to set clipboard data: {e}")
     finally:
         win32clipboard.CloseClipboard()
 
@@ -41,7 +41,7 @@ def copy_to_clipboard(paths):
     """
     :list paths: 文件路径列表
     """
-    logging.info(f"Attempting to copy files: {paths}")
+    print(f"Attempting to copy files: {paths}")
     setClipboardFiles(paths)
 
 if __name__ == '__main__':

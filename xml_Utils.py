@@ -6,6 +6,8 @@ from colorama import Fore, Style, init
 import time
 import asyncio
 from SSHClient import SSH_Client
+from CopyFile import copy_to_clipboard
+
 
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
@@ -308,6 +310,8 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, update_pro
     await sftp.get(remote_file_path, localpath=local_file_path, progress_handler=update_progress)
     if ".ZPK" in latest_file:
         await sftp.remove(remote_file_path)
+    abs_path = os.path.abspath(local_file_path)
+    copy_to_clipboard([abs_path])
     sftp.exit()
 
     print("ZPK文件下载完成：", local_file_path)

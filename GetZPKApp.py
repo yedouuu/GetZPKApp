@@ -385,10 +385,10 @@ class GetZPKApp(App):
 
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "选择币种"),
-        ("ctrl+q", "request_quit", "退出"),
         ("ctrl+d", "get_zpk", "执行打包下载"),
-        ("ctrl+r", "refresh_floder", "刷新"),
         ("ctrl+f", "toggle_file_browser", "打开文件浏览器"),
+        ("ctrl+r", "refresh_floder", "刷新"),
+        ("ctrl+q", "request_quit", "退出"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
     SCREENS = {"FileBrower": FileBrowser()}
