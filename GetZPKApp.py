@@ -1,4 +1,4 @@
-
+import time
 import os
 from rich.text import Text
 from rich.markdown import Markdown
@@ -227,6 +227,10 @@ class Information(Container):
     def compose(self) -> ComposeResult:
         # yield Static("Inforamtion", classes="title")
         yield DownloadDesc()
+        yield Horizontal(
+            Button("修改币种", "primary", id="information_country_btn"),
+            Button("下载","primary", id="information_download_btn")
+        )
 
     def on_mount(self) -> None:
         """Initialize the container."""
@@ -234,6 +238,24 @@ class Information(Container):
         self.border_title = "Information"
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
+
+    class CurrencyBtnPressed(Message):
+        """Handle currency button presses."""
+        def __init__(self) -> None:
+            super().__init__()
+
+    class DownloadBtnPressed(Message):
+        """Handle download button presses."""
+        def __init__(self) -> None:
+            super().__init__()
+
+    def on_button_pressed(self, event:Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "information_country_btn":
+            self.post_message(self.CurrencyBtnPressed())
+        elif event.button.id == "information_download_btn":
+            self.post_message(self.DownloadBtnPressed())
+
 
     def set_country_code(self, code):
         """Set country."""
@@ -391,302 +413,7 @@ class Sidebar(Container):
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
 
-    # CSS_PATH = "./tcss/getzpk_app.tcss"
-    CSS="""
-GetZPKApp {
-    layout: vertical;
-    background: $boost;
-    min-width: 50;
-}
-
-FolderContainer {
-    content-align: center middle;
-    width: 100%;
-    height: 100%;
-    column-span: 1;
-    border: round #7e7e7e;
-
-    Label {
-        content-align: center middle;
-        margin: 0 0 1 0;
-    }
-    Input {
-        width: 100%;
-        height: 3;
-        margin: 0 0 1 0;
-        padding: 0;
-    }
-    RemoteFloder {
-      width: 100%;
-      height: 3;
-      margin: 0 0 0 0;
-      padding: 0;
-      border: round #7e7e7e;
-    }
-}
-
-.table {
-  row-span: 1;
-  column-span: 8;
-}
-
-UIView {
-    height: 16;
-    max-height: 16;
-    margin: 0 0 0 0;
-    .table_title {
-    }
-
-    .error_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $error;
-    }
-    .warning_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $warning;
-    }
-    .success_message {
-        content-align: center middle;
-        width: 100%;
-        height: 100%;
-        background: $success;
-    } 
-
-    .hidden {
-        display: none;
-    }
-
-    .selected {
-        background: $success;
-    }
-}
-
-
-.selected {
-    background: $primary;
-}
-.filtered {
-    display: none;
-}
-
-
-
-#container {
-  layout:grid;
-  grid-size: 4 8;
-}
-#sider_container {
-  row-span: 8;
-}
-#main_container {
-  row-span: 8;
-  column-span: 3;
-
-  #main2_container {
-    layout: grid;
-    grid-size: 8 8;
-    border: round #7e7e7e;
-
-    #top {
-      row-span: 4;
-      column-span: 8;
-    }
-    #mid {
-      row-span: 4;
-      column-span: 3;
-      padding: 0 0 0 0;
-      margin: 0 0 0 0;
-      border: panel $primary-lighten-2;
-    }
-    #bot {
-      row-span: 4;
-      column-span: 8;
-      border: panel $primary-lighten-2;
-      margin: 0 0 0 0;
-      padding: 0 1;
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-Note {
-  padding: 0 0 0 0;
-  margin: 0 0 0 0;
-  width: 100%;
-  height: 100%;
-
-}
-
-Information {
-  margin: 0 0 0 0;
-  width: 100%;
-  height: 100%;
-}
-
-.title {
-  content-align-horizontal: center;
-  color: $warning;
-}
-
-.subtitle {
-  color: $warning;
-}
-
-#info_folder {
-  width: 100%;
-  height: 100%;
-}
-
-#main {
-  layout: grid;
-  grid-size: 8 8;
-}
-
-#main_top{
-  row-span: 4;
-}
-
-DownloadScreen {
-    align: center middle;
-
-    #dialog {
-        grid-size: 2 4;
-        grid-gutter: 1 2;
-        grid-rows: 1fr 3;
-        padding: 0 1;
-        width: 60;
-        height: 16;
-        border: thick $background 80%;
-        background: $surface;
-    }
-
-    #question {
-        column-span: 2;
-        row-span:2;
-        height: 1fr;
-        width: 1fr;
-        content-align: center middle;
-    }
-
-    #progress {
-        column-span: 2;
-        margin-left: 10;
-        content-align: center middle;
-    }
-
-    Button {
-        column-span: 2;
-        width: 100%;
-    }
-
-    .loading {
-      background: $panel;
-    }
-}
-
-
-QuitScreen {
-    align: center middle;
-
-    #dialog {
-        grid-size: 2;
-        grid-gutter: 1 2;
-        grid-rows: 1fr 3;
-        padding: 0 1;
-        width: 60;
-        height: 11;
-        border: thick $background 80%;
-        background: $surface;
-    }
-
-    #question {
-        column-span: 2;
-        height: 1fr;
-        width: 1fr;
-        content-align: center middle;
-    }
-
-    Button {
-        width: 100%;
-    }
-}
-
-Sidebar {
-    width: 70%;
-    background: $panel;
-    transition: offset 500ms in_out_cubic;
-    layer: overlay;
-    column-span: 3;
-    row-span: 8;
-
-    Input {
-      margin: 1;
-    }
-
-    ErrorMessage {
-      width: 100%;
-      height: 100%;
-      margin-left: 1;
-      border: round $primary-lighten-2;
-    }
-    
-    Horizontal {
-      height: 0.2fr;
-    }
-
-    #clear_country {
-      margin-top: 1;
-    }
-}
-
-Sidebar:focus-within {
-    offset: 0 0 !important;
-}
-
-Sidebar.-hidden {
-    offset-x: -100%;
-}
-
-Sidebar Title {
-    background: $boost;
-    color: $secondary;
-    padding: 1 0;
-    margin-top: 1;
-    border-right: vkey $background;
-    text-align: center;
-    text-style: bold;
-    width:75%
-}
-
-OptionGroup {
-    background: $boost;
-    color: $text;
-    height: 1fr;
-    padding: 0 1;
-    border-right: vkey $background;
-}
-
-
-ZPKView {
-  margin-top: 1;
-
-  #zpk_path {
-    width: 50%;
-    margin-right: 1;
-    border: round #7e7e7e;
-  }
-
-  Button {
-    width: 15%;
-  }
-}
-
-"""
+    CSS_PATH = "./tcss/getzpk_app.tcss"
 
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "选择币种"),
@@ -763,6 +490,7 @@ ZPKView {
             f.write(
                 f"""
 # 文件名: {latest_file}
+- 时间: {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))}
 - UI文件: {self.ui_file}
 - 币种 : {", ".join(self.information.get_country_code())}
 - 备注 : {self.note.get_note().split(":")[-1]}\r\n
@@ -832,6 +560,14 @@ ZPKView {
             self.query_one(Information).refresh_country_code()
         else:
             self.action_toggle_sidebar()
+    
+    @on(Information.CurrencyBtnPressed)
+    def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
+        self.action_toggle_sidebar()
+
+    @on(Information.DownloadBtnPressed)
+    def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
+        self.action_get_zpk()
 
 if __name__ == "__main__":
     app = GetZPKApp()
