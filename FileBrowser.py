@@ -14,11 +14,12 @@ from pathlib import Path
 from typing import Iterable
 
 from textual.app import ComposeResult
-from textual.containers import Container, VerticalScroll, Horizontal
+from textual.containers import Container, VerticalScroll, Horizontal, ScrollableContainer
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static, Button, Input
 from textual.screen import Screen
 from textual.reactive import reactive
+from textual.binding import Binding
 
 from CopyFile import copy_to_clipboard
 
@@ -68,6 +69,9 @@ class FilteredDirectoryTree(DirectoryTree):
 
         return path_list
 
+class FileBrowserFooter(Footer):
+    pass
+
 class FileBrowser(Screen):
     """Textual code browser app."""
 
@@ -109,6 +113,11 @@ FileBrowser.-show-tree #tree-view {
     BINDINGS = [
         ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),
+        Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B", show=False),
+        Binding("ctrl+d", "get_zpk", "下载", key_display="D", show=False),
+        Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F", show=False),
+        Binding("ctrl+r", "refresh_floder", "刷新", key_display="R", show=False),
+        Binding("ctrl+q", "request_quit", "退出", key_display="Q", show=False),
     ]
 
     show_tree = var(True)
@@ -126,10 +135,10 @@ FileBrowser.-show-tree #tree-view {
         with Container():
             yield Input(id="file_filter_input")
             yield FilteredDirectoryTree(self.path, self.filter_text, id="tree-view")
-            with VerticalScroll(id="code-view"):
+            with ScrollableContainer(id="code-view"):
                 yield Static(id="code", expand=True)
             yield ZPKView(self.path)
-        yield Footer()
+        yield FileBrowserFooter()
 
     def on_mount(self) -> None:
         self.query_one(FilteredDirectoryTree).focus()

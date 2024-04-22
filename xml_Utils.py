@@ -54,20 +54,6 @@ config_tree = open_xml('./ssh_config.xml')
 local_currencys_xml_path = path_valide(get_text("local_currencys_xml_path"))
 # currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
 
-def get_version(current_folder, current_date):
-    new_ver = 'A'
-    
-    contents = os.listdir(current_folder)  # Get the list of contents
-    if len(contents) == 0:
-        return new_ver
-    # 获取当前文件夹下的所有文件
-    s = [content.split('.')[0][-1] for content in contents if 'ZPK' in content and f"{current_date}" in content]
-    if len(s) > 0:
-        max_s = max(s)
-        new_ver = chr((ord(max_s) - ord('A') + 1) % 26 + ord('A'))
-
-
-
 
 def get_ui_file_time(filename):
     file_path = get_text("local_ui_file_path") + filename
@@ -191,7 +177,7 @@ def get_download_zpk_path(remote_directory:str):
     return download_zpk_path
 
 
-def generate_new_name(remote_directory:str):
+def generate_new_name(remote_directory:str, customer_path:str=""):
     """ 获取最新的文件名字 
     return: f'WL_{directory_ver}_{current_date}' + ver
     """
@@ -200,8 +186,12 @@ def generate_new_name(remote_directory:str):
     directory_ver = get_remote_directory_version(remote_directory, "full")
     directory_ver = directory_ver.replace("_", "")
 
-    download_zpk_path = get_download_zpk_path(remote_directory)
+    if customer_path:
+        download_zpk_path = customer_path
+    else:
+        download_zpk_path = get_download_zpk_path(remote_directory)
 
+    print(f"download_zpk_path = {download_zpk_path}")
     """ 生成新的文件名 """
     current_date = datetime.date.today().strftime("%y%m%d")
     ver = get_version(download_zpk_path, current_date)
@@ -211,10 +201,9 @@ def generate_new_name(remote_directory:str):
     return file_name
 
 
-async def modify_user_config(ssh_client, remote_directory):
+async def modify_user_config(ssh_client, remote_directory, file_name):
     """修改user_config文件为最新的版本号"""
     sftp = await ssh_client.get_sftp()
-    file_name = generate_new_name(remote_directory)
 
     user_config_xml_path = get_text('remote_user_config_xml_path')
     async with sftp.open(remote_directory + user_config_xml_path, 'rb') as user_config_xml:
@@ -267,11 +256,17 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
         print(f"【Error】上传{ui_file}失败：{e}")
 
 
-async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, callback):
+async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path: str, callback):
     """打包zpk文件并下载"""
     sftp = await ssh_client.get_sftp()
     
-    await modify_user_config(ssh_client, remote_directory)
+    # 如果有输入客户代码，则下载到客户代码文件夹下
+    if customer_path:
+        file_name = generate_new_name(remote_directory, customer_path)
+    else:
+        file_name = generate_new_name(remote_directory)
+
+    await modify_user_config(ssh_client, remote_directory, file_name)
 
     # 构建并执行命令来获取文件数量
     cmd_get_file_amount = f'cd {remote_directory}/upgrade; find . -type f | wc -l'
@@ -280,7 +275,7 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, callback):
     print(f"file_count={file_count}")
 
     # 生成新的文件名
-    file_name = generate_new_name(remote_directory)
+    # file_name = generate_new_name(remote_directory)
     remote_run_script = get_text('remote_run_script')
     command = f"cd {remote_directory}; sh {remote_run_script} {file_name}"
 

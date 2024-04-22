@@ -99,7 +99,7 @@ class DownloadScreen(ModalScreen):
             self.query_one("#progress").advance(10)
 
             self.change_status("打包zpk...")
-            await pack_zpk(self.ssh_client, remote_folder, self.zpk_progress)
+            await pack_zpk(self.ssh_client, remote_folder, customer_path, self.zpk_progress)
 
             self.change_status("下载ZPK...")
             latest_file = await download_zpk(self.ssh_client, remote_folder, customer_path, self.update_progress)

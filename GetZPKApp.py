@@ -9,6 +9,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll, Horizontal, ScrollableContainer
 from textual.reactive import reactive
+from textual.binding import Binding
 from textual.timer import Timer
 from textual.message import Message
 from textual.widget import Widget
@@ -117,7 +118,7 @@ class FolderContainer(VerticalScroll):
     def folder_mount(self, list):
         """Mount remote folder."""
         for folder in list:
-            self.mount(RemoteFloder(folder, id=f"{folder}"))
+            self.mount(RemoteFloder(folder, variant="primary", id=f"{folder}"))
         self.select(self.selected)
 
     def folder_clear(self):
@@ -213,10 +214,28 @@ class DownloadDesc(Widget):
     country_code = reactive([])
     remote_folder = reactive("")
     ui_file = reactive("")
+    
     def render(self) -> str:
-        return f"Folder:   {self.remote_folder}\r\n" + \
-                f"UI:       {self.ui_file}\r\n" + \
-                f"Country:  {", ".join(self.country_code)}"
+        text = Text()
+        styles = {
+            "Error": "bold red",
+            "Success": "bold green",
+            "Warning": "bold yellow",
+            "Info": "bold blue"
+        }
+        text.append("Folder:  ", style=styles["Info"])
+        text.append(self.remote_folder)
+        text.append("\r\n")
+
+        text.append("UI:      ", style=styles["Info"])
+        text.append(self.ui_file.replace("ui_resource_", "", 1))
+        text.append("\r\n")
+        
+        text.append("Country: ", style=styles["Info"])
+        text.append(", ".join(self.country_code))
+        text.append("\r\n")
+        
+        return text
 
 class Information(Container):
     country = reactive(["AUT", "MIX"], recompose=True)
@@ -280,7 +299,7 @@ class Information(Container):
 class Note(TextArea):
     """A widget to display note."""
     
-    template = "客户代码:\r\n备注:"
+    template = reactive("客户代码:\r\n备注:")
     customer_code = ""
     note = ""
 
@@ -290,18 +309,26 @@ class Note(TextArea):
         self.text = self.template
 
     def analyze_note(self):
-        customer, self.note = self.text.split("\n", 2)
+        customer, self.note = self.text.split("\n", 1)
         self.customer_code = customer.split(":")[1].strip()
         print(f"Customer Code1 = {customer.split(":")[1].strip()}")
+        print(f"Note = {self.note}")
+        self.text = self.template
 
     def get_customer_code(self) -> str:
-        print(f"Customer Code2 = {self.customer_code}")
         return self.customer_code
     
     def get_note(self) -> str:
         return self.note
 
-        
+    def refresh_note(self):
+        self.text = self.template
+
+    @on(TextArea.Changed)
+    def handle_change(self, event:TextArea.Changed) -> None:
+        """Handle text area changes."""
+        # self.analyze_note()
+        pass
 
 class MyMessage(Static):
     pass
@@ -416,11 +443,11 @@ class GetZPKApp(App):
     CSS_PATH = "./tcss/getzpk_app.tcss"
 
     BINDINGS = [
-        ("ctrl+b", "toggle_sidebar", "选择币种"),
-        ("ctrl+d", "get_zpk", "下载"),
-        ("ctrl+f", "toggle_file_browser", "查看文件"),
-        ("ctrl+r", "refresh_floder", "刷新"),
-        ("ctrl+q", "request_quit", "退出"),
+        Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B"),
+        Binding("ctrl+d", "get_zpk", "下载", key_display="D"),
+        Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F"),
+        Binding("ctrl+r", "refresh_floder", "刷新", key_display="R"),
+        Binding("ctrl+q", "request_quit", "退出", key_display="Q"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
     SCREENS = {"FileBrower": FileBrowser()}
@@ -478,7 +505,8 @@ class GetZPKApp(App):
         """Refresh remote folders."""
         self.folder_container.folder_refresh()
         self.information.refresh_country_code()
-        # self.ui_view.update_by_folder()
+        self.note.refresh_note()
+        # self.mount(Note())
 
     def action_request_quit(self) -> None:
         self.push_screen(QuitScreen())    
@@ -496,6 +524,18 @@ class GetZPKApp(App):
 - 备注 : {self.note.get_note().split(":")[-1]}\r\n
 """)
     
+    def test_note(self):
+        self.note.analyze_note()
+        customer_code = self.note.get_customer_code()
+        customer_path = ""
+        if customer_code:
+            customer_path = f"./ZPK/{customer_code}/"
+            if not os.path.exists(customer_path):
+                os.mkdir(customer_path)
+        
+        latest_file = "WLGL20_240422A.bin"
+        self.create_readme(customer_path, latest_file)
+        self.note.refresh_note()
 
     async def action_get_zpk(self):
         """Get ZPK."""
@@ -510,6 +550,7 @@ class GetZPKApp(App):
         await self.push_screen(DownloadScreen())
         latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, customer_path)
         self.create_readme(customer_path, latest_file)
+        self.note.refresh_note()
 
     def action_toggle_sidebar(self) -> None:
         sidebar = self.query_one(Sidebar)
@@ -526,7 +567,6 @@ class GetZPKApp(App):
     def action_toggle_file_browser(self) -> None:
         """Toggle file browser."""
         self.set_focus(None)
-        # self.query_one(Footer).remove()
         self.app.push_screen("FileBrower")
 
     def action_toggle_dark(self):
@@ -566,8 +606,9 @@ class GetZPKApp(App):
         self.action_toggle_sidebar()
 
     @on(Information.DownloadBtnPressed)
-    def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
-        self.action_get_zpk()
+    async def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
+        await self.action_get_zpk()
+        # self.test_note()
 
 if __name__ == "__main__":
     app = GetZPKApp()
