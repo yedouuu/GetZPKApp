@@ -349,9 +349,21 @@ def get_priority(currency_order, x):
     except ValueError as e:
         return 9999
 
-def select_country(input_str:str):
+def get_currency_by_folder(remote_folder):
+    """ 
+    获取指定型号的货币XML文件
+    :param remote_folder: 远程文件夹(UN60_XXX, UN200)
+    """
+    model_code = remote_folder.split("_")          # UN60、UN200、UN220
+    model_currency_file = f"{model_code[0]}_currencys.xml"
+    origin_cur_path = "./currencys/"
+    currency_path = os.path.join(origin_cur_path, model_currency_file)
+    return currency_path
+
+def select_country(input_str:str, remote_folder:str):
     """ Open selecttion according to  input country 
-    :str input_str
+    :param input_str
+    :param remote_folder: 选择的远端目录(UN60_XXX、UN200)
     """
     
     """ 1. Get Input Country Name 
@@ -386,7 +398,9 @@ def select_country(input_str:str):
 
     """ 2. Process XML"""
     try:
-        tree = ET.parse('./currencys.xml')
+        currency_path = get_currency_by_folder(remote_folder)
+        print(f"Start to Process XML: {currency_path}")
+        tree = ET.parse(currency_path)
         # 在这里可以继续处理已解析的XML数据
     except ET.ParseError as e:
         print(f"XML解析错误：{e}")

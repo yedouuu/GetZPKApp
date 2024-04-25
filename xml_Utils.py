@@ -6,7 +6,7 @@ from colorama import Fore, Style, init
 import time
 from SSHClient import SSH_Client
 from CopyFile import copy_to_clipboard
-
+from SelectCountry import get_currency_by_folder
 
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
@@ -122,9 +122,11 @@ def get_remote_directory_version(remote_directory, type="ver"):
     elif "ver" in type:
         return directory_name.split('_')[-1].upper()
 
-def get_open_country():
+def get_open_country(remote_folder:str):
     """ 获取开启的国家 """
-    currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
+    # currency_path = get_currency_by_folder(remote_folder)
+    path = get_text("local_currencys_xml_path")
+    currency_tree = open_xml(path + "currencys.xml")
     country_code = []
     for e in currency_tree.iter("Country"):
         tmp = e.find("selecttion").get("val")
