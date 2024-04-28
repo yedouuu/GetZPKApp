@@ -687,7 +687,7 @@ DownloadScreen {
 
     #progress {
         column-span: 2;
-        margin-left: 10;
+        margin-left: 5;
         content-align: center middle;
     }
 

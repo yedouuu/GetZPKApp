@@ -4,7 +4,7 @@ from textual.containers import Grid
 from textual.screen import ModalScreen
 from textual.widgets import Button, Footer, Header, Label, ProgressBar, Static
 import logging
-
+import asyncio
 from xml_Utils import (
     upload_currencys_xml,
     upload_ui_file,
@@ -29,7 +29,7 @@ class DownloadScreen(ModalScreen):
     def compose(self) -> ComposeResult:
         yield Grid(
             Label("连接中...", id="question"),
-            ProgressBar(total=100, show_eta=False, id="progress"),
+            ProgressBar(total=100, show_eta=True, id="progress"),
             # Button("取消", variant="error", id="quit"),
             Button("完成", variant="success", disabled=True, id="ok"),
             id="dialog",
@@ -37,7 +37,12 @@ class DownloadScreen(ModalScreen):
 
     async def on_mount(self) -> None:
         ssh_config = get_ssh_config()
-        self.ssh_client = SSH_Client(ssh_config["hostname"], ssh_config["port"], ssh_config["username"], ssh_config["key_path"], ssh_config["password"])
+        self.ssh_client = SSH_Client(ssh_config["hostname"], \
+                                     ssh_config["port"],     \
+                                     ssh_config["username"], \
+                                     ssh_config["key_path"], \
+                                     ssh_config["password"]
+                                    )
         await self.ssh_client.connect()
         self.query_one("#question").update(f"连接成功")
 
@@ -51,24 +56,21 @@ class DownloadScreen(ModalScreen):
     def change_status(self, status:str):
         self.query_one("#question").update(f"{status}")
 
-
-    def update_progress(self, path, offset, size, _):
-        # Ensure offset and size are integers
-        if not isinstance(offset, int):
-            offset = int.from_bytes(offset, 'big')  # Assuming big-endian byte order if offset is bytes
-
-        if not isinstance(size, int):
-            size = int.from_bytes(size, 'big')  # Adjust according to your data's byte order
-
-        new_progress = 90
-        # Calculate the percentage of completion
-        percentage = float((float(offset) / size) * 10)  # From 90% to 100%
+    last_update_time = asyncio.get_event_loop().time()
+    def download_progress_handler(self, srcpath, dstpath, bytes_transferred, total_bytes):
+        # print(f"Transferring {srcpath} to {dstpath}")
+        # print(f"Transferred {bytes_transferred} of {total_bytes} bytes")
+        new_progress = 70
+        percentage = float((float(bytes_transferred) / total_bytes) * 30)  # From 70% to 100%
         new_progress += percentage
-
-        # Update the progress bar
-        # self.query_one("#progress").update(total=100, progress=new_progress)
-        self.query_one("#progress").advance(percentage)
-        self.app.refresh()
+        
+        # 用时间控制刷新频率，例如每0.5秒刷新一次
+        current_time = asyncio.get_event_loop().time()
+        if current_time - self.last_update_time >= 0.5:
+            print(f"dowload_progress = {new_progress}")
+            self.query_one("#progress").update(total=100, progress=new_progress)
+            self.app.refresh()
+            self.last_update_time = current_time
 
 
     def zpk_progress(self, line, total):
@@ -76,12 +78,9 @@ class DownloadScreen(ModalScreen):
         if not isinstance(line, float):
             line = float(line)
 
-        new_progress = 20
-
         # Calculate the percentage of completion
-        percentage = ((line / total) * 70)  # From 20% to 90%
-        new_progress += percentage
-        #print(f"line/total={(line / total)*40}   precentage = {percentage}")
+        percentage = ((line / total) * 60)  # From 10% to 70%
+        # print(f"line/total={(line / total)*60}   precentage = {percentage}")
 
         # Update the progress bar
         self.query_one("#progress").advance(percentage)
@@ -92,18 +91,18 @@ class DownloadScreen(ModalScreen):
         try:
             self.change_status("上传currencys.xml...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
-            self.query_one("#progress").advance(10)
+            self.query_one("#progress").advance(5)
 
             self.change_status("上传ui_file...")
             await upload_ui_file(self.ssh_client, remote_folder, ui_file)
-            self.query_one("#progress").advance(10)
+            self.query_one("#progress").advance(5)
 
             self.change_status("打包zpk...")
             await pack_zpk(self.ssh_client, remote_folder, customer_path, self.zpk_progress)
 
             self.change_status("下载ZPK...")
-            latest_file = await download_zpk(self.ssh_client, remote_folder, customer_path, self.update_progress)
-            self.query_one("#progress").update(total=100, progress=100)
+            latest_file = await download_zpk(self.ssh_client, remote_folder, customer_path, self.download_progress_handler)
+            # self.query_one("#progress").update(total=100, progress=100)
             self.query_one("#ok").disabled = False
             self.change_status("下载完成...")
             return latest_file
