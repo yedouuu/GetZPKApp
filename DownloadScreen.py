@@ -37,7 +37,7 @@ class DownloadScreen(ModalScreen):
 
     async def on_mount(self) -> None:
         ssh_config = get_ssh_config()
-        self.ssh_client = SSH_Client(ssh_config["hostname"], ssh_config["port"], ssh_config["username"], ssh_config["password"])
+        self.ssh_client = SSH_Client(ssh_config["hostname"], ssh_config["port"], ssh_config["username"], ssh_config["key_path"], ssh_config["password"])
         await self.ssh_client.connect()
         self.query_one("#question").update(f"连接成功")
 

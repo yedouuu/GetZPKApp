@@ -142,10 +142,12 @@ def get_ssh_config():
     username = get_text('username')
     port = get_text('port')
     password = get_text('password')
+    key_path = get_text('key_path')
     return {'hostname':hostname,    \
             'port':port,            \
             'username':username,    \
-            'password':password
+            'password':password,    \
+            'key_path':key_path
         }
 
 

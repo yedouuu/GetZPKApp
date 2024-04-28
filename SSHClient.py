@@ -2,16 +2,20 @@ import asyncssh
 import asyncio
 
 class SSH_Client:
-    def __init__(self, host, port, username, password):
+    def __init__(self, host, port, username, key_path=None, password=None):
         self.host = host
         self.port = int(port)
         self.username = username
+        self.key_path = key_path
         self.password = password
         self.conn = None
 
     async def connect(self):
-        self.conn = await asyncssh.connect(self.host, port=self.port, username=self.username, password=self.password)
-
+        if self.key_path:
+            self.conn = await asyncssh.connect(self.host, port=self.port, username=self.username, client_keys=[self.key_path])
+        else:
+            self.conn = await asyncssh.connect(self.host, port=self.port, username=self.username, password=self.password)
+    
     async def get_sftp(self):
         return await self.conn.start_sftp_client()
     
