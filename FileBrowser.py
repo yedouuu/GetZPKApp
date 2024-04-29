@@ -108,7 +108,7 @@ Screen {
 
 FileBrowser.-show-tree #tree-view {
     display: block;
-    max-width: 50%;
+    max-width: 40%;
 }
 
 #file_filter_input {
@@ -122,6 +122,12 @@ FileBrowser.-show-tree #tree-view {
 }
 #code {
     width: auto;
+}
+
+ZPKView {
+    Button {
+        margin-left: 1;
+    }
 }
 """
     BINDINGS = [

@@ -636,7 +636,7 @@ Information {
   #information_country_btn,
   #information_download_btn {
     height: 3;
-    margin: 0 2;
+    margin: 0 1;
     padding: 0;
     border: round #7e7e7e;
     background: #1e1e1e;
@@ -947,6 +947,7 @@ ZPKView {
         ui_path = get_text("local_ui_file_path")
         print(f"upload ui path = {ui_path},  remote_folder = {self.remote_folder}")
         select_and_upload_file(ui_path, self.remote_folder)
+        self.action_refresh_floder()
 
     def action_toggle_dark(self):
         """Toggle dark mode."""

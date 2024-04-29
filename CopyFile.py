@@ -1,10 +1,14 @@
 import win32clipboard
 import tkinter as tk
-from tkinter import filedialog, messagebox
 import subprocess
 import re
 from ctypes import *
 import os
+from tkinter import (
+    filedialog, 
+    messagebox, 
+)
+
 # import logging
 
 # 设置日志
