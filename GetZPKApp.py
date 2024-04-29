@@ -996,5 +996,10 @@ ZPKView {
         self.action_upload_ui_file()
 
 if __name__ == "__main__":
-    app = GetZPKApp()
-    app.run()
+    try:
+        app = GetZPKApp()
+        app.run()
+    except Exception as e:
+        print("Exception:", e)
+        input("Press Enter to exit...")
+        input("Press Enter to exit...")

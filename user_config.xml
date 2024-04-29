@@ -1,0 +1,7 @@
+<User_Configuration>
+    <!-- <item name="currencies_with_decimal" type="str" value="KWD,BHD,OMR,BSD"/> -->
+    <currencies_with_decimal value="KWD,BHD,OMR,BSD,ABC"></currencies_with_decimal>
+    <currency_map redirect="TRL">土耳其 TRY</currency_map>
+    <currency_map redirect="UGS">乌干达 UGX</currency_map>
+
+</User_Configuration>

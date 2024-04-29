@@ -6,7 +6,6 @@ from colorama import Fore, Style, init
 import time
 from SSHClient import SSH_Client
 from CopyFile import copy_to_clipboard
-from SelectCountry import get_currency_by_folder
 
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
@@ -28,7 +27,8 @@ def open_xml(filename):
         input("按任意键退出...")
         exit()
 
-def get_text(tag, type="one"):
+config_tree = open_xml('./ssh_config.xml')
+def get_text(tag, type="one", param=None, config_tree=config_tree):
     """ 查找指定tag的text值
 	one:(默认值)返回一个元素的text
 	all:以List返回所有查找到的元素的text
@@ -50,7 +50,7 @@ def path_valide(path):
         path += '/'
     return path
 
-config_tree = open_xml('./ssh_config.xml')
+
 local_currencys_xml_path = path_valide(get_text("local_currencys_xml_path"))
 # currency_tree = open_xml(local_currencys_xml_path + "currencys.xml")
 
@@ -226,6 +226,12 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
         # 进行 XML 数据的修改操作
         element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
         element.set('value', file_name)  # 修改value属性
+
+        root = open_xml("./user_config.xml").getroot()
+        currencies = root.find("currencies_with_decimal").get("value")
+        element = user_config_tree.xpath('/config/item[@name="currencies_with_decimal"]')[0]
+        element.set('value', currencies)  # 修改value属性
+        
         modified_xml = LXML_ET.tostring(user_config_tree, encoding="utf-8", xml_declaration=True)
 
         # 将修改后的 XML 字节序列写回文件

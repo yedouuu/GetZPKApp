@@ -4,6 +4,7 @@ import os
 import msvcrt
 from fuzzywuzzy import process
 from colorama import Fore, Style, init
+from xml_Utils import get_text, open_xml
 
 country_currency_map = {
     '自动AUT':  'AUT' ,
@@ -356,9 +357,28 @@ def get_currency_by_folder(remote_folder):
     """
     model_code = remote_folder.split("_")          # UN60、UN200、UN220
     model_currency_file = f"{model_code[0]}_currencys.xml"
-    origin_cur_path = "./currencys/"
+    origin_cur_path = get_text("local_original_currencys_xml_path")
     currency_path = os.path.join(origin_cur_path, model_currency_file)
     return currency_path
+
+def handle_special_map(input: str):
+    """
+    处理特殊映射关系，查询特殊关系映射文件。
+    - 若有匹配的则返回特殊的映射关系。
+    - 若没匹配到则返回None
+    :param input: 输入的货币名称或货币代码
+    """
+    map_file = "./user_config.xml"
+    map_tree = open_xml(map_file)
+
+    for e in map_tree.iter("currency_map"):
+        map_str = e.text
+        if input in map_str:
+            print("special map found: ", e.get('redirect')) 
+            return e.get('redirect')
+        
+    return None
+
 
 def select_country(input_str:str, remote_folder:str):
     """ Open selecttion according to  input country 
@@ -384,6 +404,11 @@ def select_country(input_str:str, remote_folder:str):
 
     country_code = ['AUT','MIX']
     for str in input_list:
+        special_str = handle_special_map(str)
+        if special_str != None:
+            error_msg.append(f" 【Info】{str} -> {special_str}")
+            str = special_str
+        
         if detect_language(str) == 'En':
             if len(str) == 3:
                 country_code.append(str.upper())
@@ -392,8 +417,7 @@ def select_country(input_str:str, remote_folder:str):
                 error_msg.append(f" 【Error】Invalid value '{str}', the length of the character must be 3!")
         elif detect_language(str) =='Zh':
             code = conver_Country2Code(str, threshold=49)
-            if code is not None:
-                country_code.append(code)
+            country_code.append(code)
     print_green_text(f"【Info】country_code: {country_code}")
 
     """ 2. Process XML"""
