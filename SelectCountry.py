@@ -386,7 +386,7 @@ def select_country(input_str:str, remote_folder:str):
     for str in input_list:
         if detect_language(str) == 'En':
             if len(str) == 3:
-                country_code.append(str)
+                country_code.append(str.upper())
             else:
                 print_red_text(f"【Error】Invalid value '{str}', the length of the character must be 3!")
                 error_msg.append(f" 【Error】Invalid value '{str}', the length of the character must be 3!")

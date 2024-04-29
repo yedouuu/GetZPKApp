@@ -1,8 +1,10 @@
 import time
 import os
+import asyncio
 from rich.text import Text
 from rich.markdown import Markdown
 from rich.console import RenderableType
+# 不能删除这个模块(win32timezone)，否则PyInstaller打包后执行会报错
 import win32timezone
 
 from textual import on
@@ -21,6 +23,7 @@ from xml_Utils import (
     get_remote_directory_version,
     get_ui_file_time,
 )
+from CopyFile import select_and_upload_file
 from SelectCountry import select_country
 from textual.widgets import (
     Static, 
@@ -72,6 +75,21 @@ class FolderContainer(VerticalScroll):
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
         self.select(event.button.label)
+
+    async def on_input_changed(self, event: Input.Changed) -> None:
+        """Called when the user types in the input."""
+        self.filter_text = event.value
+        # 取消已有的延时任务，如果存在
+        if hasattr(self, 'delay_task') and not self.delay_task.done():
+            self.delay_task.cancel()
+        # 创建一个新的延时任务
+        self.delay_task = asyncio.create_task(self.handle_delayed_update(event.value))
+
+    async def handle_delayed_update(self, value):
+        """Handle the update with a delay."""
+        await asyncio.sleep(0.3)  # 非阻塞延时1秒
+        # 执行需要延时后处理的任务
+        self.filter(value)
 
     def on_input_submitted(self, event:Input.Submitted) -> None:
         val = event.control.value
@@ -144,7 +162,7 @@ class UIView(DataTable):
     
     def compose(self) -> ComposeResult:
         yield Static("当前文件夹下没有ui文件", id="ui_message", classes="error_message hidden")
-        
+    
     ui_files = []
     origin_rows = []
     ui_file_idx = 0
@@ -247,7 +265,8 @@ class Information(Container):
         yield DownloadDesc()
         yield Horizontal(
             Button("修改币种", "primary", id="information_country_btn"),
-            Button("下载","primary", id="information_download_btn")
+            Button("下载","primary", id="information_download_btn"),
+            Button("上传UI","primary", id="upload_ui_btn"),
         )
 
     def on_mount(self) -> None:
@@ -267,12 +286,19 @@ class Information(Container):
         def __init__(self) -> None:
             super().__init__()
 
+    class uploadBtnPressed(Message):
+        """Handle download button presses."""
+        def __init__(self) -> None:
+            super().__init__()
+
     def on_button_pressed(self, event:Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "information_country_btn":
             self.post_message(self.CurrencyBtnPressed())
         elif event.button.id == "information_download_btn":
             self.post_message(self.DownloadBtnPressed())
+        elif event.button.id == "upload_ui_btn":
+            self.post_message(self.uploadBtnPressed())
 
 
     def set_country_code(self, code):
@@ -606,7 +632,7 @@ Information {
     row-span: 1;
     height: 100%;
   }
-
+  #upload_ui_btn,
   #information_country_btn,
   #information_download_btn {
     height: 3;
@@ -802,6 +828,7 @@ ZPKView {
 
     BINDINGS = [
         Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B"),
+        Binding("ctrl+u", "upload_ui_file", "上传UI文件", key_display="U"),
         Binding("ctrl+d", "get_zpk", "下载", key_display="D"),
         Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F"),
         Binding("ctrl+r", "refresh_floder", "刷新", key_display="R"),
@@ -880,19 +907,6 @@ ZPKView {
 - 币种 : {", ".join(self.information.get_country_code())}
 - 备注 : {self.note.get_note().split(":")[-1]}\r\n
 """)
-    
-    def test_note(self):
-        self.note.analyze_note()
-        customer_code = self.note.get_customer_code()
-        customer_path = ""
-        if customer_code:
-            customer_path = f"./ZPK/{customer_code}/"
-            if not os.path.exists(customer_path):
-                os.mkdir(customer_path)
-        
-        latest_file = "WLGL20_240422A.bin"
-        self.create_readme(customer_path, latest_file)
-        self.note.refresh_note()
 
     async def action_get_zpk(self):
         """Get ZPK."""
@@ -926,6 +940,13 @@ ZPKView {
         """Toggle file browser."""
         self.set_focus(None)
         self.app.push_screen("FileBrower")
+        # self.query_one(FileBrowser).refresh_filetree()
+
+    def action_upload_ui_file(self) -> None:
+        """Upload ui file."""
+        ui_path = get_text("local_ui_file_path")
+        print(f"upload ui path = {ui_path},  remote_folder = {self.remote_folder}")
+        select_and_upload_file(ui_path, self.remote_folder)
 
     def action_toggle_dark(self):
         """Toggle dark mode."""
@@ -968,6 +989,10 @@ ZPKView {
     async def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
         await self.action_get_zpk()
         # self.test_note()
+
+    @on(Information.uploadBtnPressed)
+    def handle_upload_ui(self, event:Button.Pressed) -> None:
+        self.action_upload_ui_file()
 
 if __name__ == "__main__":
     app = GetZPKApp()
