@@ -6,6 +6,7 @@ from rich.markdown import Markdown
 from rich.console import RenderableType
 # 不能删除这个模块(win32timezone)，否则PyInstaller打包后执行会报错
 import win32timezone
+import tkinter as tk
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -905,7 +906,7 @@ ZPKView {
 - 时间: {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))}
 - UI文件: {self.ui_file}
 - 币种 : {", ".join(self.information.get_country_code())}
-- 备注 : {self.note.get_note().split(":")[-1]}\r\n
+- 备注 : {self.note.get_note().split("备注:")[-1].replace("\r\n", "\n")}\r\n
 """)
 
     async def action_get_zpk(self):
@@ -921,6 +922,7 @@ ZPKView {
         select_country(" ".join(self.information.get_country_code()), self.remote_folder)
         await self.push_screen(DownloadScreen())
         latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, customer_path)
+        # latest_file = "WLGL20_20230316_1532_1.ZPK"
         self.create_readme(customer_path, latest_file)
         self.note.refresh_note()
 

@@ -1,5 +1,10 @@
 __pycache__/
+.gitignore
 test/
 *.pyc
 *.ZPK
 ZPK/
+*.exe
+*.spec
+dist/
+build/

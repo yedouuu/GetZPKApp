@@ -102,7 +102,7 @@ class DownloadScreen(ModalScreen):
 
             self.change_status("下载ZPK...")
             latest_file = await download_zpk(self.ssh_client, remote_folder, customer_path, self.download_progress_handler)
-            # self.query_one("#progress").update(total=100, progress=100)
+            self.query_one("#progress").update(total=100, progress=100)
             self.query_one("#ok").disabled = False
             self.change_status("下载完成...")
             return latest_file
