@@ -417,7 +417,7 @@ def select_country(input_str:str, remote_folder:str):
                 error_msg.append(f" 【Error】Invalid value '{str}', the length of the character must be 3!")
         elif detect_language(str) =='Zh':
             code = conver_Country2Code(str, threshold=49)
-            country_code.append(code)
+            code and country_code.append(code)
     print_green_text(f"【Info】country_code: {country_code}")
 
     """ 2. Process XML"""
