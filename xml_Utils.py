@@ -228,9 +228,18 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
         element.set('value', file_name)  # 修改value属性
 
         root = open_xml("./user_config.xml").getroot()
-        currencies = root.find("currencies_with_decimal").get("value")
-        element = user_config_tree.xpath('/config/item[@name="currencies_with_decimal"]')[0]
-        element.set('value', currencies)  # 修改value属性
+        for child in root.findall("item"):
+            # print(child.tag, child.attrib)
+            for key, val in child.attrib.items():
+                # print(key, val)
+                if key == 'name':
+                    element = user_config_tree.xpath(f'/config/item[@name="{val}"]')[0]
+                else: 
+                    element.set(key, val)  # 修改value属性
+
+        # currencies = root.find("currencies_with_decimal").get("value")
+        # element = user_config_tree.xpath('/config/item[@name="currencies_with_decimal"]')[0]
+        # element.set('value', currencies)  # 修改value属性
         
         modified_xml = LXML_ET.tostring(user_config_tree, encoding="utf-8", xml_declaration=True)
 
