@@ -266,6 +266,7 @@ class Information(Container):
         yield DownloadDesc()
         yield Horizontal(
             Button("修改币种", "primary", id="information_country_btn"),
+            Button("修改语言", "primary", id="information_language_btn"),
             Button("下载","primary", id="information_download_btn"),
             Button("上传UI","primary", id="upload_ui_btn"),
         )
@@ -282,6 +283,11 @@ class Information(Container):
         def __init__(self) -> None:
             super().__init__()
 
+    class LanguageBtnPressed(Message):
+        """Handle download button presses."""
+        def __init__(self) -> None:
+            super().__init__()
+
     class DownloadBtnPressed(Message):
         """Handle download button presses."""
         def __init__(self) -> None:
@@ -291,6 +297,7 @@ class Information(Container):
         """Handle download button presses."""
         def __init__(self) -> None:
             super().__init__()
+            
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
         """Handle button presses."""
@@ -985,6 +992,10 @@ ZPKView {
             self.action_toggle_sidebar()
     
     @on(Information.CurrencyBtnPressed)
+    def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
+        self.action_toggle_sidebar()
+
+    @on(Information.LanguageBtnPressed)
     def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
         self.action_toggle_sidebar()
 
