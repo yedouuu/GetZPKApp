@@ -70,7 +70,8 @@ def open_file_path(path):
     """
     # 安全地处理路径，包含特殊字符
     # 使用单引号围绕路径，并替换内部的单引号以避免中断
-    safe_path = path.replace("'", "''")
+    abs_path = os.path.abspath(path)
+    safe_path = abs_path.replace("'", "''")
 
     # 构造 PowerShell 命令，使用单引号围绕安全路径
     command = ['powershell', '-c', f"Start-Process explorer '{safe_path}'"]

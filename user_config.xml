@@ -1,8 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
 <User_Configuration>
-    <!-- <item name="currencies_with_decimal" type="str" value="KWD,BHD,OMR,BSD"/> -->
-    <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD,BHD"></item>
-    <item name="save_bundle_csv" type="bool" value="false" range="true,false"/>
-    <item name="mag_integrative_detection" type="bool" value="true" range="true,false"/>
+    
+    <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD,BHD" />
+    <item name="save_bundle_csv" type="bool" value="false" range="true,false" />
+    <item name="mag_integrative_detection" type="bool" value="true" range="true,false" />
+    <item name="default_language" type="str" value="LANGUAGE_ENGLISH" range="LANGUAGE_ENGLISH,LANGUAGE_RUSSIAN" />
     <currency_map redirect="TRL">土耳其 TRY</currency_map>
     <currency_map redirect="UGS">乌干达 UGX</currency_map>
     <currency_map redirect="MGA">马达加斯加</currency_map>

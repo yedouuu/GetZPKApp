@@ -23,8 +23,10 @@ from xml_Utils import (
     get_remote_directorys,
     get_remote_directory_version,
     get_ui_file_time,
+    set_language,
+    get_languages,
 )
-from CopyFile import select_and_upload_file
+from CopyFile import select_and_upload_file, open_file_path
 from SelectCountry import select_country
 from textual.widgets import (
     Static, 
@@ -37,6 +39,7 @@ from textual.widgets import (
     Placeholder, 
     DataTable,
     Switch,
+    OptionList,
 )
 
 from DownloadScreen import DownloadScreen
@@ -264,12 +267,6 @@ class Information(Container):
     def compose(self) -> ComposeResult:
         # yield Static("Inforamtion", classes="title")
         yield DownloadDesc()
-        yield Horizontal(
-            Button("修改币种", "primary", id="information_country_btn"),
-            Button("修改语言", "primary", id="information_language_btn"),
-            Button("下载","primary", id="information_download_btn"),
-            Button("上传UI","primary", id="upload_ui_btn"),
-        )
 
     def on_mount(self) -> None:
         """Initialize the container."""
@@ -278,7 +275,91 @@ class Information(Container):
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
 
-    class CurrencyBtnPressed(Message):
+
+    def set_country_code(self, code):
+        """Set country."""
+        self.query_one(DownloadDesc).country_code = code
+    
+    def get_country_code(self):
+        return self.query_one(DownloadDesc).country_code
+
+    def refresh_country_code(self, remote_folder):
+        """Set country."""
+        country_code = get_open_country(remote_folder)
+        self.query_one(DownloadDesc).country_code = country_code
+        print(f"Country Code = {country_code}")
+
+    def set_remote_folder(self, folder):
+        """Set remote folder."""
+        self.query_one(DownloadDesc).remote_folder = folder
+    
+    def set_ui_file(self, ui):
+        """Set ui file."""
+        self.query_one(DownloadDesc).ui_file = ui
+
+class Language(Static):
+    languages = reactive([])
+
+    def compose(self) -> ComposeResult:
+        yield OptionList(
+            "English",
+        )
+
+    def on_mount(self) -> None:
+        """Initialize the container."""
+        # self.styles.border = ("heavy")
+        self.border_title = "Language"
+        # self.border_subtitle = "by Frank Herbert, in “Dune”"
+        self.styles.border_title_align = "center"
+        self.clear_languages()
+        self.add_languages(get_languages())
+
+    class LanguageSelected(Message):
+        """Handle language selection."""
+        def __init__(self, selected) -> None:
+            self.selected = selected
+            super().__init__()
+
+    def on_option_list_option_selected(self, event:OptionList.OptionSelected):
+        # print(self.languages[event.option_index])
+        self.post_message(self.LanguageSelected(self.languages[event.option_index]))
+
+    def get_languages(self):
+        return self.languages
+
+    def add_languages(self, items):
+        self.query_one(OptionList).add_options(items)
+        self.languages = items
+    
+    def clear_languages(self):
+        self.query_one(OptionList).clear_options()
+        self.languages = []
+
+
+class Function_area(ScrollableContainer):
+    """A container to hold the download area."""
+    
+    def compose(self) -> ComposeResult:
+        # yield Static("Inforamtion", classes="title")
+        yield Horizontal(
+            Button("修改币种", "primary", id="information_country_btn"),
+            Button("上传UI","primary", id="upload_ui_btn"),
+            Button("下载","primary", id="information_download_btn"),
+        )
+        yield Horizontal(
+            Button("查看文件","primary", id="information_filebrowser"),
+            Button("打开配置文件", "primary", id="user_config_btn"),
+            
+        )
+
+    def on_mount(self) -> None:
+        """Initialize the container."""
+        # self.styles.border = ("heavy")
+        # self.border_title = "Function"
+        # self.border_subtitle = "by Frank Herbert, in “Dune”"
+        # self.styles.border_title_align = "center"
+
+    class CurrenciesBtnPressed(Message):
         """Handle currency button presses."""
         def __init__(self) -> None:
             super().__init__()
@@ -302,33 +383,17 @@ class Information(Container):
     def on_button_pressed(self, event:Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "information_country_btn":
-            self.post_message(self.CurrencyBtnPressed())
+            print("Currencies Button Pressed PostMessage")
+            self.post_message(self.CurrenciesBtnPressed())
         elif event.button.id == "information_download_btn":
             self.post_message(self.DownloadBtnPressed())
         elif event.button.id == "upload_ui_btn":
             self.post_message(self.uploadBtnPressed())
+        elif event.button.id == "user_config_btn":
+            print("user_config_btn Pressed PostMessage")
+            open_file_path("./user_config.xml")
 
 
-    def set_country_code(self, code):
-        """Set country."""
-        self.query_one(DownloadDesc).country_code = code
-    
-    def get_country_code(self):
-        return self.query_one(DownloadDesc).country_code
-
-    def refresh_country_code(self, remote_folder):
-        """Set country."""
-        country_code = get_open_country(remote_folder)
-        self.query_one(DownloadDesc).country_code = country_code
-        print(f"Country Code = {country_code}")
-
-    def set_remote_folder(self, folder):
-        """Set remote folder."""
-        self.query_one(DownloadDesc).remote_folder = folder
-    
-    def set_ui_file(self, ui):
-        """Set ui file."""
-        self.query_one(DownloadDesc).ui_file = ui
 
 class Note(TextArea):
     """A widget to display note."""
@@ -468,8 +533,6 @@ class Sidebar(Container):
         self.query_one(Input).value = ""
         self.query_one(Input).focus(True)
 
-    
-
 
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
@@ -581,6 +644,8 @@ UIView {
 #container {
   layout:grid;
   grid-size: 4 8;
+  width: 100%;
+  height: 200%;
 }
 #sider_container {
   row-span: 8;
@@ -595,22 +660,39 @@ UIView {
     border: round #7e7e7e;
 
     #top {
-      row-span: 4;
+      row-span: 2;
       column-span: 8;
     }
-    #mid {
-      row-span: 4;
+    #note {
+      row-span: 1;
       column-span: 3;
       padding: 0 0 0 0;
       margin: 0 0 0 0;
       border: panel $primary-lighten-2;
     }
-    #bot {
-      row-span: 4;
-      column-span: 8;
+    #information {
+      row-span: 1;
+      column-span: 5;
       border: panel $primary-lighten-2;
       margin: 0 0 0 0;
       padding: 0 1;
+      width: 100%;
+      height: 100%;
+    }
+    #function_area {
+      row-span: 1;
+      column-span: 8;
+    #   border: panel $primary-lighten-2;
+      margin: 1 0 0 0;
+      padding: 0 1;
+      width: 100%;
+      height: 100%;
+    }
+    #language {
+      row-span: 2;
+      column-span: 3;
+      border: panel $primary-lighten-2;
+      margin: 1 0 0 0;
       width: 100%;
       height: 100%;
     }
@@ -640,9 +722,16 @@ Information {
     row-span: 1;
     height: 100%;
   }
-  #upload_ui_btn,
-  #information_country_btn,
-  #information_download_btn {
+}
+
+Function_area {
+  OptionList {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+
+  Button {
     height: 3;
     margin: 0 1;
     padding: 0;
@@ -762,12 +851,13 @@ QuitScreen {
     }
 }
 
+LanguageSidebar,
 Sidebar {
-    width: 70%;
+    width: 100%;
     background: $panel;
     transition: offset 500ms in_out_cubic;
     layer: overlay;
-    column-span: 3;
+    column-span: 2;
     row-span: 8;
 
     Input {
@@ -790,14 +880,23 @@ Sidebar {
     }
 }
 
+LanguageSidebar {
+    offset-x: -100% !important;
+}
+
+LanguageSidebar:focus-within,
 Sidebar:focus-within {
     offset: 0 0 !important;
 }
 
-Sidebar.-hidden {
+LanguageSidebar.-hidden200 {
+    offset-x: -200%;
+}
+Sidebar.-hidden100 {
     offset-x: -100%;
 }
 
+LanguageSidebar Title,
 Sidebar Title {
     background: $boost;
     color: $secondary;
@@ -806,7 +905,11 @@ Sidebar Title {
     border-right: vkey $background;
     text-align: center;
     text-style: bold;
-    width:75%
+    width:75%;
+}
+
+LanguageSidebar Title {
+    width:100% !important;
 }
 
 OptionGroup {
@@ -848,9 +951,9 @@ ZPKView {
     show_sidebar = reactive(False)
 
     def compose(self) -> ComposeResult:
-        yield VerticalScroll(
+        yield ScrollableContainer(
             Header(show_clock=True),
-            Sidebar(classes="-hidden"),
+            Sidebar(classes="-hidden100"),
             Container(
                 
                 FolderContainer(id="folder_container"),
@@ -866,18 +969,29 @@ ZPKView {
                         id="top"
                     ),
                     Note(
-                        id="mid"
+                        id="note"
                     ),
                     Information(
                         
-                        id="bot"
+                        id="information"
+                    ),
+                    Language(
+                        id="language"
+                    ),
+                    Function_area(
+                        id="function_area"
                     ),
                     id="main2_container"
                 ),
                 id="main_container"
             ),
-            Footer(),
             id = "container"
+        )
+        yield Placeholder(
+
+        )
+        yield Footer(
+
         )
         
                 
@@ -888,6 +1002,8 @@ ZPKView {
         self.note = self.query_one(Note)
         self.information = self.query_one(Information)
         self.sidebar = self.query_one(Sidebar)
+        self.function_area = self.query_one(Function_area)
+        self.language = self.query_one(Language)
         # self.mount(Footer())
 
     def on_load(self) -> None:
@@ -935,15 +1051,27 @@ ZPKView {
 
     def action_toggle_sidebar(self) -> None:
         sidebar = self.query_one(Sidebar)
+        print("currency sidebar")
         self.set_focus(None)
-        if sidebar.has_class("-hidden"):
+        if sidebar.has_class("-hidden100"):
             self.sidebar.query_one(Input).value = " ".join(get_open_country(self.remote_folder)[2:])
             self.sidebar.query_one(Input).focus(True)
-            sidebar.remove_class("-hidden")
+            sidebar.remove_class("-hidden100")
         else:
             if sidebar.query("*:focus"):
                 self.screen.set_focus(None)
-            sidebar.add_class("-hidden")
+            sidebar.add_class("-hidden100")
+
+    def action_toggle_language_sidebar(self) -> None:
+        print("language sidebar")
+        language_sidebar = self.query_one(LanguageSidebar)
+        self.set_focus(None)
+        if language_sidebar.has_class("-hidden200"):
+            language_sidebar.remove_class("-hidden200")
+        else:
+            if language_sidebar.query("*:focus"):
+                self.screen.set_focus(None)
+            language_sidebar.add_class("-hidden200")
 
     def action_toggle_file_browser(self) -> None:
         """Toggle file browser."""
@@ -990,21 +1118,26 @@ ZPKView {
             self.query_one(Information).refresh_country_code(self.remote_folder)
         else:
             self.action_toggle_sidebar()
-    
-    @on(Information.CurrencyBtnPressed)
+
+    @on(Language.LanguageSelected)
+    def handle_language_selected(self, message:Language.LanguageSelected) -> None:
+        language = message.selected
+        # print(language)
+        set_language(language)
+
+
+    @on(Function_area.CurrenciesBtnPressed)
     def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
+        print("Function_area.CurrencyBtnPressed")
         self.action_toggle_sidebar()
 
-    @on(Information.LanguageBtnPressed)
-    def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
-        self.action_toggle_sidebar()
 
-    @on(Information.DownloadBtnPressed)
+    @on(Function_area.DownloadBtnPressed)
     async def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
         await self.action_get_zpk()
         # self.test_note()
 
-    @on(Information.uploadBtnPressed)
+    @on(Function_area.uploadBtnPressed)
     def handle_upload_ui(self, event:Button.Pressed) -> None:
         self.action_upload_ui_file()
 

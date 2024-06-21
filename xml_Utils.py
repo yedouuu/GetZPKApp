@@ -27,6 +27,14 @@ def open_xml(filename):
         input("按任意键退出...")
         exit()
 
+def save_xml(tree, filename):
+    try:
+        ET.ElementTree(tree).write(filename, encoding="utf-8", xml_declaration=True)
+    except IOError as e:
+        print_red_text(f"文件写入错误：{e}")
+        input("按任意键退出...")
+        exit()
+
 config_tree = open_xml('./ssh_config.xml')
 def get_text(tag, type="one", param=None, config_tree=config_tree):
     """ 查找指定tag的text值
@@ -204,6 +212,20 @@ def generate_new_name(remote_directory:str, customer_path:str=""):
 
     return file_name
 
+def get_languages() -> list:
+    """ 获取语言列表 """
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "default_language":
+            return child.get("range").split(",")
+
+def set_language(language:str):
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "default_language":
+            if language in child.get("range"):
+                child.set("value", language)
+    save_xml(user_config_root, "./user_config.xml")
 
 async def modify_user_config(ssh_client, remote_directory, file_name):
     """修改user_config文件为最新的版本号"""
