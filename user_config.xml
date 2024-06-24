@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<User_Configuration>
+<config>
     
     <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD,BHD" />
     <item name="save_bundle_csv" type="bool" value="false" range="true,false" />
@@ -9,4 +9,4 @@
     <currency_map redirect="UGS">乌干达 UGX</currency_map>
     <currency_map redirect="MGA">马达加斯加</currency_map>
 
-</User_Configuration>
+</config>

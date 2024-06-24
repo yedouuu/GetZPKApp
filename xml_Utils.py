@@ -231,13 +231,13 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
     """修改user_config文件为最新的版本号"""
     sftp = await ssh_client.get_sftp()
 
-    user_config_xml_path = get_text('remote_user_config_xml_path')
-    async with sftp.open(remote_directory + user_config_xml_path, 'rb') as user_config_xml:
+    remote_user_conf_xml_path = get_text('remote_user_config_xml_path')
+    async with sftp.open(remote_directory + remote_user_conf_xml_path, 'rb') as remote_user_conf_xml:
         try:
             # 异步读取文件内容（作为字节序列）
-            xml_content = await user_config_xml.read()
+            xml_content = await remote_user_conf_xml.read()
             # 使用fromstring来解析XML数据，确保输入为字节序列
-            user_config_tree = LXML_ET.fromstring(xml_content)
+            remote_user_conf_tree = LXML_ET.fromstring(xml_content)
         except LXML_ET.XMLSyntaxError as e:
             print(f"XML解析错误：{e}")
             return
@@ -246,7 +246,7 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
             return
 
         # 进行 XML 数据的修改操作
-        element = user_config_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
+        element = remote_user_conf_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
         element.set('value', file_name)  # 修改value属性
 
         root = open_xml("./user_config.xml").getroot()
@@ -255,18 +255,24 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
             for key, val in child.attrib.items():
                 # print(key, val)
                 if key == 'name':
-                    element = user_config_tree.xpath(f'/config/item[@name="{val}"]')[0]
+                    print(f"{key} = {val}")
+                    el_list = remote_user_conf_tree.xpath(f'/config/item[@name="{val}"]')
+                    if el_list:
+                        element = el_list[0]
+                    else:
+                        break    
                 else: 
                     element.set(key, val)  # 修改value属性
+                    print(f"Set {key} = {val}")
 
         # currencies = root.find("currencies_with_decimal").get("value")
-        # element = user_config_tree.xpath('/config/item[@name="currencies_with_decimal"]')[0]
+        # element = remote_user_conf_tree.xpath('/config/item[@name="currencies_with_decimal"]')[0]
         # element.set('value', currencies)  # 修改value属性
         
-        modified_xml = LXML_ET.tostring(user_config_tree, encoding="utf-8", xml_declaration=True)
+        modified_xml = LXML_ET.tostring(remote_user_conf_tree, encoding="utf-8", xml_declaration=True)
 
         # 将修改后的 XML 字节序列写回文件
-        async with sftp.open(remote_directory + user_config_xml_path, 'wb') as modified_file:
+        async with sftp.open(remote_directory + remote_user_conf_xml_path, 'wb') as modified_file:
             await modified_file.write(modified_xml)
 
 
