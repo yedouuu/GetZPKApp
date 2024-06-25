@@ -212,12 +212,18 @@ def generate_new_name(remote_directory:str, customer_path:str=""):
 
     return file_name
 
-def get_languages() -> list:
+def get_languages(remote_floder_name: str) -> list:
     """ 获取语言列表 """
     user_config_root = open_xml("./user_config.xml").getroot()
-    for child in user_config_root.findall("item"):
-        if child.get("name") == "default_language":
-            return child.get("range").split(",")
+    # for child in user_config_root.findall("language"):
+    #     if child.get("name") == "default_language":
+    #         return child.get("range").split(",")
+    remote_floder_name = str(remote_floder_name)
+    for child in user_config_root.findall("language_config"):
+        if remote_floder_name == child.get("name"):
+            print("Getting language list for folder: ", remote_floder_name)
+            return [x.strip() for x in child.get("range").split(",")]
+    return ['LANGUAGE_ENGLISH']
 
 def set_language(language:str):
     user_config_root = open_xml("./user_config.xml").getroot()

@@ -311,8 +311,6 @@ class Language(Static):
         self.border_title = "Language"
         # self.border_subtitle = "by Frank Herbert, in “Dune”"
         self.styles.border_title_align = "center"
-        self.clear_languages()
-        self.add_languages(get_languages())
 
     class LanguageSelected(Message):
         """Handle language selection."""
@@ -1062,17 +1060,6 @@ ZPKView {
                 self.screen.set_focus(None)
             sidebar.add_class("-hidden100")
 
-    def action_toggle_language_sidebar(self) -> None:
-        print("language sidebar")
-        language_sidebar = self.query_one(LanguageSidebar)
-        self.set_focus(None)
-        if language_sidebar.has_class("-hidden200"):
-            language_sidebar.remove_class("-hidden200")
-        else:
-            if language_sidebar.query("*:focus"):
-                self.screen.set_focus(None)
-            language_sidebar.add_class("-hidden200")
-
     def action_toggle_file_browser(self) -> None:
         """Toggle file browser."""
         self.set_focus(None)
@@ -1097,6 +1084,9 @@ ZPKView {
         self.query_one(Information).set_remote_folder(message.selected) 
         self.ui_view.update_by_folder(message.selected)
         self.information.refresh_country_code(self.remote_folder)
+
+        self.language.clear_languages()
+        self.language.add_languages(get_languages(self.remote_folder))
 
     @on(UIView.Selected)
     def handle_ui_view_selected(self, message:UIView.Selected) -> None:
