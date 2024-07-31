@@ -383,7 +383,7 @@ def handle_special_map(input: str):
 def select_country(input_str:str, remote_folder:str):
     """ Open selecttion according to  input country 
     :param input_str
-    :param remote_folder: 选择的远端目录(UN60_XXX、UN200), 获取对应的currency文件
+    :param remote_folder: 选择的远端目录(UN60_XXX、UN200_XXX), 获取对应的currency文件
     """
     
     """ 1. Get Input Country Name 
