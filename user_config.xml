@@ -1,17 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <config>
-    
+
     <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD,BHD" />
     <item name="save_bundle_csv" type="bool" value="false" range="true,false" />
     <item name="mag_integrative_detection" type="bool" value="true" range="true,false" />
-    <item name="default_language" type="str" value="LANGUAGE_ENGLISH" />
-    
-    <language_config name="UN60_ENZH" range="LANGUAGE_ENGLISH,LANGUAGE_CHINESES" />
+    <item name="mode_cfg_list" type="str" value="MDC,SDC,CNT,VER" range="MDC,SDC,VER,CNT" />
+    <item name="default_language" type="str" value="LANGUAGE_RUSSIAN" />
 
-    <language_config name="UN60_ENRU" range="LANGUAGE_ENGLISH,LANGUAGE_RUSSIAN" />
+    <language_config name="UN60_ENZH" range="LANGUAGE_ENGLISH,LANGUAGE_CHINESES" />
+                                             
+    <language_config name="UN60_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
+    <language_config name="UN200_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
 
     <currency_map redirect="TRL">土耳其 TRY</currency_map>
     <currency_map redirect="UGS">乌干达 UGX</currency_map>
     <currency_map redirect="MGA">马达加斯加</currency_map>
+    <currency_map redirect="KES">肯尼亚</currency_map>
 
 </config>

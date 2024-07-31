@@ -307,6 +307,13 @@ def get_languages(remote_floder_name: str) -> list:
             return [x.strip() for x in child.get("range").split(",")]
     return ['LANGUAGE_ENGLISH']
 
+def get_mode(remote_floder_name: str) -> str:
+    """ 获取模式 """
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "mode_cfg_list":
+            return child.get("value")
+
 def set_language(language:str):
     user_config_root = open_xml("./user_config.xml").getroot()
     for child in user_config_root.findall("item"):

@@ -25,6 +25,7 @@ from xml_Utils import (
     get_ui_file_time,
     set_language,
     get_languages,
+    get_mode,
 )
 from CopyFile import select_and_upload_file, open_file_path
 from SelectCountry import select_country
@@ -234,6 +235,7 @@ class DownloadDesc(Widget):
     """A widget to display download desc."""
     country_code = reactive([])
     remote_folder = reactive("")
+    mode = reactive("")
     ui_file = reactive("")
     
     def render(self) -> str:
@@ -244,16 +246,22 @@ class DownloadDesc(Widget):
             "Warning": "bold yellow",
             "Info": "bold blue"
         }
-        text.append("Folder:  ", style=styles["Info"])
+        text.append("Folder:   ", style=styles["Info"])
         text.append(self.remote_folder)
         text.append("\r\n")
 
-        text.append("UI:      ", style=styles["Info"])
+        text.append("UI:       ", style=styles["Info"])
         text.append(self.ui_file.replace("ui_resource_", "", 1))
         text.append("\r\n")
         
-        text.append("Country: ", style=styles["Info"])
-        text.append(", ".join(self.country_code))
+        text.append("Mode:     ", style=styles["Info"])
+        text.append(self.mode)
+        text.append("\r\n")
+
+        text.append("Country:  ", style=styles["Info"])
+        #text.append(  ", ".join(self.country_code) )
+        text.append(  "USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD" )
+        text.append( f"({len(self.country_code)-2})", style=styles["Info"] )
         text.append("\r\n")
         
         return text
@@ -296,6 +304,10 @@ class Information(Container):
     def set_ui_file(self, ui):
         """Set ui file."""
         self.query_one(DownloadDesc).ui_file = ui
+
+    def set_mode(self, mode):
+        """Set mode."""
+        self.query_one(DownloadDesc).mode = mode
 
 class Language(Static):
     languages = reactive([])
@@ -654,23 +666,24 @@ UIView {
 
   #main2_container {
     layout: grid;
-    grid-size: 8 8;
+    grid-size: 16 16;
     border: round #7e7e7e;
 
     #top {
-      row-span: 2;
-      column-span: 8;
+      row-span: 4;
+      column-span: 16;
     }
     #note {
-      row-span: 1;
-      column-span: 3;
+      row-span: 3;
+      column-span: 6;
       padding: 0 0 0 0;
       margin: 0 0 0 0;
+      height: 100%;
       border: panel $primary-lighten-2;
     }
     #information {
-      row-span: 1;
-      column-span: 5;
+      row-span: 3;
+      column-span: 10;
       border: panel $primary-lighten-2;
       margin: 0 0 0 0;
       padding: 0 1;
@@ -678,17 +691,17 @@ UIView {
       height: 100%;
     }
     #function_area {
-      row-span: 1;
-      column-span: 8;
-    #   border: panel $primary-lighten-2;
+      row-span: 3;
+      column-span: 10;
+      # border: panel $primary-lighten-2;
       margin: 1 0 0 0;
-      padding: 0 1;
+      padding: 0 0;
       width: 100%;
       height: 100%;
     }
     #language {
-      row-span: 2;
-      column-span: 3;
+      row-span: 4;
+      column-span: 6;
       border: panel $primary-lighten-2;
       margin: 1 0 0 0;
       width: 100%;
@@ -1084,9 +1097,11 @@ ZPKView {
         self.query_one(Information).set_remote_folder(message.selected) 
         self.ui_view.update_by_folder(message.selected)
         self.information.refresh_country_code(self.remote_folder)
+        self.information.set_mode(get_mode(self.remote_folder))
 
         self.language.clear_languages()
         self.language.add_languages(get_languages(self.remote_folder))
+        
 
     @on(UIView.Selected)
     def handle_ui_view_selected(self, message:UIView.Selected) -> None:
