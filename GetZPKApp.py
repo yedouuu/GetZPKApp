@@ -46,6 +46,7 @@ from textual.widgets import (
 from DownloadScreen import DownloadScreen
 from QuitScreen import QuitScreen
 from FileBrowser import FileBrowser
+from AutoComplete import AutoCompleteContainer
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -92,7 +93,7 @@ class FolderContainer(VerticalScroll):
 
     async def handle_delayed_update(self, value):
         """Handle the update with a delay."""
-        await asyncio.sleep(0.3)  # 非阻塞延时1秒
+        await asyncio.sleep(0.3)  # 非阻塞延时0.3秒
         # 执行需要延时后处理的任务
         self.filter(value)
 
@@ -166,7 +167,7 @@ ROWS = [
 class UIView(DataTable):
     
     def compose(self) -> ComposeResult:
-        yield Static("当前文件夹下没有ui文件", id="ui_message", classes="error_message hidden")
+        yield Static("当前文件夹下没有对应的ui文件", id="ui_message", classes="error_message hidden")
     
     ui_files = []
     origin_rows = []
@@ -255,12 +256,12 @@ class DownloadDesc(Widget):
         text.append("\r\n")
         
         text.append("Mode:     ", style=styles["Info"])
-        text.append(self.mode)
+        text.append(self.mode.replace(",", ", "))
         text.append("\r\n")
 
         text.append("Country:  ", style=styles["Info"])
-        #text.append(  ", ".join(self.country_code) )
-        text.append(  "USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD" )
+        text.append(  ", ".join(self.country_code) )
+        #text.append(  "USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD, USD" )
         text.append( f"({len(self.country_code)-2})", style=styles["Info"] )
         text.append("\r\n")
         
@@ -408,8 +409,9 @@ class Function_area(ScrollableContainer):
 class Note(TextArea):
     """A widget to display note."""
     
-    template = reactive("客户代码:\r\n备注:")
-    customer_code = ""
+    # template = reactive("客户代码:\r\n备注:")
+    template = reactive("备注:")
+    # customer_code = ""
     note = ""
 
     def on_mount(self):
@@ -418,9 +420,13 @@ class Note(TextArea):
         self.text = self.template
 
     def analyze_note(self):
-        customer, self.note = self.text.split("\n", 1)
-        self.customer_code = customer.split(":")[1].strip()
-        print(f"Customer Code1 = {customer.split(":")[1].strip()}")
+        # customer, self.note = self.text.split("\n", 1)
+        # self.customer_code = customer.split(":")[1].strip()
+        # print(f"Customer Code1 = {customer.split(":")[1].strip()}")
+        # print(f"Note = {self.note}")
+        # self.text = self.template
+
+        self.note = self.text
         print(f"Note = {self.note}")
         self.text = self.template
 
@@ -553,6 +559,7 @@ GetZPKApp {
     layout: vertical;
     background: $boost;
     min-width: 50;
+    scrollbar-size: 0 0;
 }
 
 FolderContainer {
@@ -617,6 +624,7 @@ UIView {
     height: 16;
     max-height: 16;
     margin: 0 0 0 0;
+    scrollbar-size: 0 0;
     .table_title {
     }
 
@@ -656,6 +664,7 @@ UIView {
   grid-size: 4 8;
   width: 100%;
   height: 200%;
+  scrollbar-size: 0 0;
 }
 #sider_container {
   row-span: 8;
@@ -663,15 +672,27 @@ UIView {
 #main_container {
   row-span: 8;
   column-span: 3;
+  scrollbar-size: 0 0;
 
   #main2_container {
     layout: grid;
     grid-size: 16 16;
     border: round #7e7e7e;
+    scrollbar-size: 0 0;
+    padding: 0 0 0 0;
 
     #top {
       row-span: 4;
       column-span: 16;
+    }
+    #autocomplete_container {
+      row-span: 1;
+      column-span: 16;
+      height: 100%;
+      overflow: auto;
+      layers: above;
+      scrollbar-size: 0 0;
+      margin: 0 0 0 0;
     }
     #note {
       row-span: 3;
@@ -679,6 +700,7 @@ UIView {
       padding: 0 0 0 0;
       margin: 0 0 0 0;
       height: 100%;
+      layers: below;
       border: panel $primary-lighten-2;
     }
     #information {
@@ -688,6 +710,7 @@ UIView {
       margin: 0 0 0 0;
       padding: 0 1;
       width: 100%;
+      layers: below;
       height: 100%;
     }
     #function_area {
@@ -979,6 +1002,9 @@ ZPKView {
                         show_cursor=True,
                         id="top"
                     ),
+                    AutoCompleteContainer(
+                        id="autocomplete_container"
+                    ),
                     Note(
                         id="note"
                     ),
@@ -998,9 +1024,9 @@ ZPKView {
             ),
             id = "container"
         )
-        yield Placeholder(
+        # yield Placeholder(
 
-        )
+        # )
         yield Footer(
 
         )
@@ -1015,6 +1041,7 @@ ZPKView {
         self.sidebar = self.query_one(Sidebar)
         self.function_area = self.query_one(Function_area)
         self.language = self.query_one(Language)
+        self.customer_path = None
         # self.mount(Footer())
 
     def on_load(self) -> None:
@@ -1032,7 +1059,16 @@ ZPKView {
 
     def create_readme(self, customer_path: str, latest_file: str) -> None:
         """Create a readme file."""
-        readme_file_path = f"{customer_path}/README.md"
+        if customer_path:
+            readme_file_path = f"{customer_path}/README.md"
+        else:
+            readme_base_path = os.path.join(get_text("local_zpk_path") ,self.remote_folder.replace("_", ""))
+            readme_file_path = os.path.join(readme_base_path, "README.md")
+            readme_file_path = os.path.abspath(readme_file_path)
+
+        # 确保目录存在
+        os.makedirs(os.path.dirname(readme_file_path), exist_ok=True)
+
         with open(readme_file_path, "a+", encoding="utf-8") as f:
             f.write(
                 f"""
@@ -1045,18 +1081,21 @@ ZPKView {
 
     async def action_get_zpk(self):
         """Get ZPK."""
+        zpk_path = get_text("local_zpk_path")
         self.note.analyze_note()
-        customer_code = self.note.get_customer_code()
-        customer_path = ""
-        if customer_code:
-            customer_path = f"./ZPK/{customer_code}/"
+        # customer_code = self.note.get_customer_code()
+        customer_path = self.customer_path
+        if customer_path:
+            customer_path = os.path.join(zpk_path, self.customer_path)
+            customer_path = os.path.abspath(customer_path)
+            print(f"customer_path: {customer_path}")
             if not os.path.exists(customer_path):
                 os.mkdir(customer_path)
 
         select_country(" ".join(self.information.get_country_code()), self.remote_folder)
         await self.push_screen(DownloadScreen())
         latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, customer_path)
-        # latest_file = "WLGL20_20230316_1532_1.ZPK"
+        #latest_file = "WLGL20_20230316_1532_1.ZPK"
         self.create_readme(customer_path, latest_file)
         self.note.refresh_note()
 
@@ -1145,6 +1184,11 @@ ZPKView {
     @on(Function_area.uploadBtnPressed)
     def handle_upload_ui(self, event:Button.Pressed) -> None:
         self.action_upload_ui_file()
+
+    @on(AutoCompleteContainer.Submitted)
+    def handle_auto_complete_input_submitted(self, event: AutoCompleteContainer.Submitted):
+        print(f"AutoCompleteContainer submitted with value: {event.value}")
+        self.customer_path = event.value
 
 if __name__ == "__main__":
     try:

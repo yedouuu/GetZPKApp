@@ -20,6 +20,7 @@ class SSH_Client:
         return await self.conn.start_sftp_client()
     
     async def run_command(self, command):
+        print("【DEBUG】Running command: " + command)
         result = await self.conn.run(command, check=True)
         return result.stdout.strip()
 

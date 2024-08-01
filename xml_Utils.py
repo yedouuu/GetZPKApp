@@ -285,13 +285,13 @@ def generate_new_name(remote_directory:str, customer_path:str=""):
     else:
         download_zpk_path = get_download_zpk_path(remote_directory)
 
-    print(f"download_zpk_path = {download_zpk_path}")
+    print(f"【DEBUG】download_zpk_path = {download_zpk_path}")
     """ 生成新的文件名 """
     current_date = datetime.date.today().strftime("%y%m%d")
     ver = get_version(download_zpk_path, current_date)
 
     file_name = f'WL_{directory_ver}_{current_date}' + ver
-
+    print(f"【DEBUG】new file name = {file_name}")
     return file_name
 
 def get_languages(remote_floder_name: str) -> list:
@@ -379,20 +379,54 @@ async def upload_currencys_xml(ssh_client:SSH_Client ,remote_directory:str):
     except Exception as e:
         print(f"【Error】上传货币配置文件失败：{e}")
 
+async def get_remote_ui_file_name(ssh_client:SSH_Client, remote_ui_file_path):
+    try:
+        sftp = await ssh_client.get_sftp()
+        # 执行远程命令获取匹配的文件名
+        result = await ssh_client.run_command(f'cd {remote_ui_file_path} && ls ui_resource*.bin')
+        
+        # 分析结果以获取文件名
+        file_names = result.splitlines()
+        # print(f"【Info】远程目录 {remote_ui_file_path} 下的文件名：{file_names}")
+        print(f"【DEBUG】result = {result}")
+        print(f"【DEBUG】file_names = {file_names}")
+        if len(file_names) > 1:
+            # 返回第一个文件名或根据需要处理多个文件
+            for ui_file in file_names:
+                ui_file = os.path.join(remote_ui_file_path, ui_file)
+                print(f"【DEBUG】Delete ui_file = {ui_file}")
+                await sftp.remove(ui_file)
+            return None
+        elif len(file_names) == 1:
+            return file_names[0]
+        else:
+            print("No matching files found.")
+            return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
 async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:str):
     """ 上传ui文件 """
     try:
         sftp = await ssh_client.get_sftp()
 
-        remote_ui_file_name = get_text('remote_ui_file_name',  scheme=get_scheme(remote_directory), config_tree="remote_config")
-        if not remote_ui_file_name.endswith('.bin'):
-            remote_ui_file_name += '.bin'
+        # remote_ui_file_name = get_text('remote_ui_file_name',  scheme=get_scheme(remote_directory), config_tree="remote_config")
+        # if not remote_ui_file_name.endswith('.bin'):
+        #     remote_ui_file_name += '.bin'
+
 
         local_ui_file_path = get_text('local_ui_file_path')
         remote_ui_file_path = get_text('remote_ui_file_path',  scheme=get_scheme(remote_directory), config_tree="remote_config")
+        remote_ui_file_path = os.path.join(remote_directory, remote_ui_file_path)
+
+        remote_ui_file_name = await get_remote_ui_file_name(ssh_client, remote_ui_file_path)
+
+        if remote_ui_file_name is None:
+            remote_ui_file_name = get_text('remote_ui_file_name',  scheme=get_scheme(remote_directory), config_tree="remote_config")
 
         print(f"【Info】上传{ui_file} -> {remote_ui_file_name}")
-        await sftp.put(local_ui_file_path+ui_file, remote_directory+remote_ui_file_path+remote_ui_file_name)
+        await sftp.put(local_ui_file_path+ui_file, remote_ui_file_path+remote_ui_file_name)
     except Exception as e:
         print(f"【Error】上传{ui_file}失败：{e}")
 
@@ -433,15 +467,17 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
     get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
     latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
 
-    remote_file_path = f"{remote_directory}{latest_file}"  # 注意路径分隔符
+    # remote_file_path = f"{remote_directory}{latest_file}"  # 注意路径分隔符
+    remote_file_path = os.path.join(remote_directory, latest_file)
     download_zpk_path = get_download_zpk_path(remote_directory)
 
     # 如果有输入客户代码，则下载到客户代码文件夹下
     if customer_path:
-        local_file_path = f"{customer_path}{latest_file}"  # 注意路径分隔符
+        local_file_path = os.path.join(customer_path, latest_file)
     else:
-        local_file_path = f"{download_zpk_path}{latest_file}"  # 注意路径分隔符
+        local_file_path = os.path.join(download_zpk_path, latest_file)
 
+    print(f"【DEBUG】local_file_path = {local_file_path}")
     # 获取远程文件的大小
     # remote_file_stat = await sftp.stat(remote_file_path)
     # total_size = remote_file_stat.size
