@@ -257,7 +257,7 @@ def get_scheme(remote_folder:str):
 
 
 def get_download_zpk_path(remote_directory:str):
-    """ 获取下载ZPK的路径 """
+    """ 获取默认下载ZPK的路径 """
     directory_ver = get_remote_directory_version(remote_directory, "full")
     directory_ver = directory_ver.replace("_", "")
 

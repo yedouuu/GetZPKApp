@@ -46,7 +46,7 @@ from textual.widgets import (
 from DownloadScreen import DownloadScreen
 from QuitScreen import QuitScreen
 from FileBrowser import FileBrowser
-from AutoComplete import AutoCompleteContainer
+from AutoComplete import AutoCompleteContainer, AutoCompleteInput
 # import os
 # import sys
 # BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -703,6 +703,9 @@ UIView {
       layers: below;
       border: panel $primary-lighten-2;
     }
+    #note:focus {
+      border: panel $secondary;
+    }
     #information {
       row-span: 3;
       column-span: 10;
@@ -730,6 +733,19 @@ UIView {
       width: 100%;
       height: 100%;
     }
+  }
+}
+
+
+AutoCompleteInput {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  border: round gray;
+  background: #1e1e1e;
+
+  &:focus {
+    text-style: bold;
+    border: round #ffa62b; 
   }
 }
 
@@ -1062,7 +1078,7 @@ ZPKView {
         if customer_path:
             readme_file_path = f"{customer_path}/README.md"
         else:
-            readme_base_path = os.path.join(get_text("local_zpk_path") ,self.remote_folder.replace("_", ""))
+            readme_base_path = os.path.join(get_text("local_zpk_path") ,str(self.remote_folder).replace("_", ""))
             readme_file_path = os.path.join(readme_base_path, "README.md")
             readme_file_path = os.path.abspath(readme_file_path)
 
@@ -1090,7 +1106,7 @@ ZPKView {
             customer_path = os.path.abspath(customer_path)
             print(f"customer_path: {customer_path}")
             if not os.path.exists(customer_path):
-                os.mkdir(customer_path)
+                os.makedirs(customer_path)
 
         select_country(" ".join(self.information.get_country_code()), self.remote_folder)
         await self.push_screen(DownloadScreen())

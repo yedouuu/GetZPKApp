@@ -100,6 +100,7 @@ Screen {
 #tree-view {
     display: none;
     scrollbar-gutter: stable;
+    scrollbar-size: 1 0; 
     overflow: auto;
     width: auto;
     height: 100%;
@@ -113,6 +114,12 @@ FileBrowser.-show-tree #tree-view {
 
 #file_filter_input {
     margin-top: 1;
+    border: round gray;
+    background: #1e1e1e;
+    color: white;
+}
+#file_filter_input:focus {
+    border: round #ffa62b;
 }
 
 #code-view {
@@ -154,7 +161,7 @@ ZPKView {
         
         yield Header()
         with Container():
-            yield Input(id="file_filter_input")
+            yield Input(id="file_filter_input", placeholder="请输入要搜索的文件夹名称, 若值为空则刷新目录树...")
             yield FilteredDirectoryTree(self.path, self.filter_text, id="tree-view")
             with ScrollableContainer(id="code-view"):
                 yield Static(id="code", expand=True)
