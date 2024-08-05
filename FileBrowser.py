@@ -11,17 +11,18 @@ import asyncio
 from pathlib import Path
 from rich.syntax import Syntax
 from rich.traceback import Traceback
+from rich.theme import Theme
 from pathlib import Path
 from typing import Iterable
 
 from textual.app import ComposeResult
 from textual.containers import Container, VerticalScroll, Horizontal, ScrollableContainer
+from textual.message import Message
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static, Button, Input
 from textual.screen import Screen
 from textual.reactive import reactive
 from textual.binding import Binding
-
 from CopyFile import copy_to_clipboard, open_file_path
 
 class ZPKView(Static):
@@ -36,13 +37,14 @@ class ZPKView(Static):
         yield Horizontal(
           Static(f"{self.path}", id="zpk_path"),
           Button("复制", id="copy", variant="primary"), 
-          Button("打开", id="open", variant="primary")
+          Button("打开", id="open", variant="primary"),
         )
     
     def set_path(self, path: str) -> None:
         self.set_folder_path(path)
         self.path = path
-        file_name = path.split("\\")[-1].split(".")
+        self.file_name = path.split("\\")[-1]
+        file_name = self.file_name.split(".")
         file_name = f"{file_name[0]}.{file_name[1][:4]}"
         self.query_one("#zpk_path", Static).update(file_name)
 
@@ -53,6 +55,12 @@ class ZPKView(Static):
         self.query_one("#zpk_path", Static).update(path)
         self.folder_path = path
 
+    class RepackZPK(Message):
+        def __init__(self, value) -> None:
+            self.value = value
+            super().__init__()
+
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "copy":
             abs_path = os.path.abspath(self.path)
@@ -61,7 +69,15 @@ class ZPKView(Static):
         elif event.button.id == "open":
             abs_path = os.path.abspath(self.folder_path)
             print(abs_path)
-            open_file_path(abs_path)
+            if ".ZPK" in abs_path:
+                print("post message: Repackzpk")
+                self.post_message(self.RepackZPK(self.path))
+            else:
+                open_file_path(abs_path)
+
+    def repack_zpk(self, path: str) -> None:
+        pass
+        
 
 class FilteredDirectoryTree(DirectoryTree):
 
@@ -151,6 +167,7 @@ ZPKView {
     show_tree = var(True)
     filter_text = var("")
     path = "./ZPK/"
+    current_line_idx = var(0)
 
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
@@ -171,6 +188,7 @@ ZPKView {
     def on_mount(self) -> None:
         self.query_one(FilteredDirectoryTree).focus()
         self.refresh_filetree()
+        self.code_view = self.query_one("#code-view")
 
     def on_load(self) -> None:
         """Called when the app has loaded."""
@@ -222,6 +240,7 @@ ZPKView {
             if ".ZPK" in path:
                 # code_view.update(path)
                 zpk_view.set_path(path)
+                self.on_function_click(os.path.basename(path))
             else:
               zpk_view.set_folder_path(path)
               syntax = Syntax.from_path(
@@ -237,8 +256,78 @@ ZPKView {
         else:
             if syntax != " ":
               code_view.update(syntax)  
-            self.query_one("#code-view").scroll_home(animate=False)
+            # self.query_one("#code-view").scroll_home(animate=False)
             self.sub_title = str(event.path)
+            if '.md' in self.sub_title or '.txt' in self.sub_title:
+                self.cur_readme_file = self.sub_title
+
+    def find_all_occurrences(self, file_path, target) -> list[tuple[int, int]]:
+        line_numbers = []
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for i, line in enumerate(file, 1):  # 使用enumerate从1开始计数行号
+                if target in line:
+                    line_numbers.append((i, 0))
+        if not line_numbers:
+            print(f"字符串 '{target}' 未在文件中找到。")
+        else:
+            print(f"字符串 '{target}' 在文件中的行号:")
+            for line_number in line_numbers:
+                print(line_number)
+        return line_numbers
+    def on_function_click(self, function_name: str):
+        """Handle function name click event."""
+        
+        print("【DEBUG】- FileBrowser - function_name:", function_name)
+        line_numbers = self.find_all_occurrences(self.cur_readme_file, function_name)
+        
+        matched_line_cnt = len(line_numbers)
+
+        if line_numbers:
+            # self.query_one("#code-view").scroll_home(animate=False)
+            self.scroll_to_function(line_numbers[self.current_line_idx])
+            self.current_line_idx = (self.current_line_idx + 1 + matched_line_cnt) % matched_line_cnt
+            print("【DEBUG】- FileBrowser - current_line_idx:", self.current_line_idx, "matched_line_cnt:", matched_line_cnt)
+    def scroll_to_function(self, position: tuple[int, int]):
+        """Scroll to the function position."""
+        code_view = self.query_one("#code-view", ScrollableContainer)
+        # 假设 position 是 (line, column) 格式
+        
+        line, column = position
+        # 计算滚动到的像素位置，这里需要根据具体情况调整
+        # y_position = line * 10  # 假设每行高度为 10 像素
+        # y_position = line * 20 # 假设每行高度为 20 像素
+        # self.highlight_line(line)
+        self.highlight_line(line)
+        y_position = line-2 if line > 3 else 0
+        print("code view scroll to y:", y_position)
+        code_view.scroll_to(y=y_position, duration=0.3, easing="in_out_cubic")
+
+
+
+    # 定义一个主题，其中包含高亮行的样式
+    custom_theme = Theme({
+        "background_color": "default",
+        "highlighted": "#ffaaaa",  # 设置高亮行背景色为浅红色
+        "highlighted.number": "bold white",  # 设置高亮行数字为白色加粗
+        "highlighted.string": "bold green",  # 设置高亮行字符串为绿色加粗
+        "highlighted.keyword": "bold yellow",  # 设置高亮行关键字为黄色加粗
+        "highlighted.comment": "italic blue",  # 设置高亮行注释为蓝色斜体
+    })
+
+    def highlight_line(self, line_number: int):
+        """Highlight a specific line in the code view."""
+        code_view = self.query_one("#code", Static)
+        syntax = code_view.renderable
+
+        if isinstance(syntax, Syntax):
+            code_lines = syntax.code.split('\n')
+            if 0 <= line_number < len(code_lines):
+                # Add ANSI escape sequence for red color and reset at the end
+                
+                # code_lines[line_number] = f"\033[1;31m{code_lines[line_number]}\033[0m"
+                highlighted_code = '\n'.join(code_lines)
+                syntax = Syntax(highlighted_code, "markdown", theme="github-dark", highlight_lines={line_number}, line_numbers=syntax.line_numbers)
+                code_view.update(syntax)
 
     def action_toggle_files(self) -> None:
         """Called in response to key binding."""
