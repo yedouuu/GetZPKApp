@@ -15,6 +15,7 @@ from rich.theme import Theme
 from pathlib import Path
 from typing import Iterable
 
+from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, VerticalScroll, Horizontal, ScrollableContainer
 from textual.message import Message
@@ -69,9 +70,9 @@ class ZPKView(Static):
         elif event.button.id == "open":
             abs_path = os.path.abspath(self.folder_path)
             print(abs_path)
-            if ".ZPK" in abs_path:
+            if ".ZPK" in self.file_name:
                 print("post message: Repackzpk")
-                self.post_message(self.RepackZPK(self.path))
+                self.post_message(self.RepackZPK(self.file_name))
             else:
                 open_file_path(abs_path)
 
@@ -224,8 +225,22 @@ ZPKView {
     def on_directory_tree_directory_selected(self, event: DirectoryTree.DirectorySelected):
         path = str(event.path)
         zpk_view = self.query_one(ZPKView)
+        code_view = self.query_one("#code", Static)
         print("fodler selected path", path)
         zpk_view.set_folder_path(path)
+
+        for file in os.listdir(path):
+            file_path = os.path.join(path, file)
+            if os.path.isfile(file_path) and (file.endswith("md") or file.endswith("txt")):
+                self.cur_readme_file = file_path
+                code_view.update(Syntax.from_path(
+                        file_path,
+                        line_numbers=True,
+                        word_wrap=False,
+                        indent_guides=True,
+                        theme="github-dark",
+                    ))
+        
 
     def on_directory_tree_file_selected(
         self, event: DirectoryTree.FileSelected
@@ -260,6 +275,12 @@ ZPKView {
             self.sub_title = str(event.path)
             if '.md' in self.sub_title or '.txt' in self.sub_title:
                 self.cur_readme_file = self.sub_title
+
+    @on(ZPKView.RepackZPK)
+    def handler_repack_zpk(self, event: ZPKView.RepackZPK) -> None:
+        """Handle repack zpk button click event."""
+        print("FileBrowser RepackZPK message:", event.value)
+
 
     def find_all_occurrences(self, file_path, target) -> list[tuple[int, int]]:
         line_numbers = []
