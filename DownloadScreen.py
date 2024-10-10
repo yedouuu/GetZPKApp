@@ -11,6 +11,7 @@ from xml_Utils import (
     pack_zpk,
     download_zpk,
     get_ssh_config,
+    set_auto_currency,
 )
 from SSHClient import SSH_Client
 
@@ -87,10 +88,11 @@ class DownloadScreen(ModalScreen):
         self.app.refresh()
 
 
-    async def download(self, remote_folder, ui_file, customer_path="") -> str:
+    async def download(self, remote_folder, ui_file, currency_list:str, customer_path="") -> str:
         try:
             self.change_status("上传currencys.xml...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
+            await set_auto_currency(self.ssh_client, remote_folder, currency_list)
             self.query_one("#progress").advance(5)
 
             self.change_status("上传ui_file...")

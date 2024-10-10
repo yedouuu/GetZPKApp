@@ -33,6 +33,7 @@
         <remote_run_script>./hengli_zpk_repack.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/bin/IMG_AUTO/</remote_currencys_xml_path>
         <remote_user_config_xml_path>upgrade/bin/xml_new/user_config.xml</remote_user_config_xml_path>
+        <remote_system_config_xml_path>upgrade/bin/xml_new/system_parameter.xml</remote_system_config_xml_path>
         <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
         <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
     </IMG_DesignScheme>

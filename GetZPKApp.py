@@ -1108,10 +1108,11 @@ ZPKView {
             if not os.path.exists(customer_path):
                 os.makedirs(customer_path)
 
-        select_country(" ".join(self.information.get_country_code()), self.remote_folder)
+        currency_list_str = ",".join(self.information.get_country_code())
+        select_country(currency_list_str, self.remote_folder)
         await self.push_screen(DownloadScreen())
-        latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, customer_path)
-        #latest_file = "WLGL20_20230316_1532_1.ZPK"
+        latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, currency_list_str, customer_path)
+        # latest_file = "WLGL20_20230316_1532_1.ZPK"
         self.create_readme(customer_path, latest_file)
         self.note.refresh_note()
 

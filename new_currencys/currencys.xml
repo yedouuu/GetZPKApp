@@ -144,6 +144,24 @@
 		<rsm_thred val="64" />
 		<selecttion val="Y" />
 	</Country>
+	<Country tag="GBP">
+		<denom_1 val="50">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_1>
+		<denom_2 val="20">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_2>
+		<denom_3 val="10">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_3>
+		<denom_4 val="5">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_4>
+		<mm_thred val="64" />
+		<lsm_thred val="64" />
+		<rsm_thred val="64" />
+		<selecttion val="Y" />
+	</Country>
 	<Country tag="KES">
 		<denom_1 val="50">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
@@ -682,24 +700,6 @@
 		<denom_5 val="5000">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_5>
-		<mm_thred val="64" />
-		<lsm_thred val="64" />
-		<rsm_thred val="64" />
-		<selecttion val="N" />
-	</Country>
-	<Country tag="GBP">
-		<denom_1 val="50">
-			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
-		</denom_1>
-		<denom_2 val="20">
-			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
-		</denom_2>
-		<denom_3 val="10">
-			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
-		</denom_3>
-		<denom_4 val="5">
-			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
-		</denom_4>
 		<mm_thred val="64" />
 		<lsm_thred val="64" />
 		<rsm_thred val="64" />

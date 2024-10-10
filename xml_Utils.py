@@ -430,6 +430,42 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
     except Exception as e:
         print(f"【Error】上传{ui_file}失败：{e}")
 
+async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currency_list:str):
+    """ A33方案设置需要自动的货币 """
+    if (get_scheme(remote_directory) != 'A33'):
+        return
+    
+    sftp = await ssh_client.get_sftp()
+    sys_config_xml_path = get_text('remote_system_config_xml_path',  scheme=get_scheme(remote_directory), config_tree="remote_config")
+
+    async with sftp.open(remote_directory + sys_config_xml_path, 'rb') as remote_sys_config_xml:
+        try:
+            # 异步读取文件内容（作为字节序列）
+            xml_content = await remote_sys_config_xml.read()
+            # 使用fromstring来解析XML数据，确保输入为字节序列
+            remote_sys_config_tree = LXML_ET.fromstring(xml_content)
+        except LXML_ET.XMLSyntaxError as e:
+            print(f"XML解析错误：{e}")
+            return
+        except IOError as e:
+            print(f"文件读取错误：{e}")
+            return
+        # 定义命名空间映射
+        namespaces = {'ns': 'AK47-BK1'}
+        currency_list = currency_list.replace("AUT,MIX,", "")
+        
+        element = remote_sys_config_tree.xpath('//ns:Auto_Currency', namespaces=namespaces)
+        if (element):
+            element[0].set('current_inherit', currency_list)  # 修改value属性
+            print(f"Set Auto_Currency = {currency_list}")
+        else:
+            print("No Auto_Currency element found.")
+
+        modified_xml = LXML_ET.tostring(remote_sys_config_tree, encoding="utf-8", xml_declaration=True)
+
+        # 将修改后的 XML 字节序列写回文件
+        async with sftp.open(remote_directory + sys_config_xml_path, 'wb') as modified_file:
+            await modified_file.write(modified_xml)
 
 async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path: str, callback):
     """打包zpk文件并下载"""
