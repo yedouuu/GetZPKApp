@@ -379,6 +379,25 @@ def handle_special_map(input: str):
         
     return None
 
+def filter_and_sort_countries(root, country_code):
+    """
+    Filter countries from XML and sort them according to specified order
+    :param root: XML root element
+    :param country_code: List of country codes in desired order
+    :return: Tuple of (sorted country list, missing codes)
+    """
+    # Get all countries and filter those in country_code
+    countries = root.findall('Country')
+    filtered_countries = [c for c in countries if c.attrib['tag'] in country_code]
+    
+    # Sort filtered countries according to country_code order
+    filtered_countries.sort(key=lambda x: get_priority(country_code, x.attrib['tag']))
+    
+    # Find missing codes
+    added_codes = {country.get('tag') for country in filtered_countries}
+    missing_codes = set(country_code) - added_codes
+    
+    return filtered_countries, missing_codes
 
 def select_country(input_str:str, remote_folder:str):
     """ Open selecttion according to  input country 
@@ -437,11 +456,8 @@ def select_country(input_str:str, remote_folder:str):
     root = tree.getroot()
     root_attrib = root.attrib
     # print(f"【info】type(root_attrib) = {type(root_attrib)}")
-    """ 调整币种顺序 """
-    sorted_countries = sorted(root.findall('Country'), key=lambda x: get_priority(country_code, x.attrib['tag']))
-    
-    added_code = {country.get('tag') for country in sorted_countries}
-    missing_codes = set(country_code) - added_code
+    """ 过滤币种 & 调整币种顺序 & 获取缺少的币种 """
+    sorted_countries, missing_codes = filter_and_sort_countries(root, country_code)
 
     if missing_codes:
         print_red_text(f"【Error】以下币种在XML文件中不存在： {', '.join(missing_codes)}")
