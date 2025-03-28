@@ -203,6 +203,18 @@ def get_remote_directory_version(remote_directory, type="ver"):
     elif "ver" in type:
         return directory_name.split('_')[-1].upper()
 
+def get_local_currencyXML_path():
+    """ 获取本地currency.xml路径
+
+    return origin_xml_path, new_xml_path
+    """
+
+    origin_xml_path = os.path.abspath(get_text("local_original_currencys_xml_path"))
+    new_xml_path = os.path.abspath(get_text("local_currencys_xml_path"))
+    new_xml_path = os.path.join(new_xml_path, "currencys.xml")
+
+    return origin_xml_path, new_xml_path
+
 def get_open_country(remote_folder:str):
     """ 获取开启的国家 """
     # currency_path = get_currency_by_folder(remote_folder)

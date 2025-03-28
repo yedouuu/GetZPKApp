@@ -26,8 +26,9 @@ from xml_Utils import (
     set_language,
     get_languages,
     get_mode,
+    get_local_currencyXML_path
 )
-from CopyFile import select_and_upload_file, open_file_path
+from CopyFile import select_and_upload_file, open_file_path, copy_to_clipboard
 from SelectCountry import select_country
 from textual.widgets import (
     Static, 
@@ -360,7 +361,7 @@ class Function_area(ScrollableContainer):
         yield Horizontal(
             Button("查看文件","primary", id="information_filebrowser"),
             Button("打开配置文件", "primary", id="user_config_btn"),
-            
+            Button("复制货币文件", "primary", id="information_copy_currency_btn")
         )
 
     def on_mount(self) -> None:
@@ -389,6 +390,11 @@ class Function_area(ScrollableContainer):
         """Handle download button presses."""
         def __init__(self) -> None:
             super().__init__()
+
+    class CopyCurrencyXMLBtnPressed(Message):
+        """Handle download button presses."""
+        def __init__(self) -> None:
+            super().__init__()
             
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
@@ -403,6 +409,10 @@ class Function_area(ScrollableContainer):
         elif event.button.id == "user_config_btn":
             print("user_config_btn Pressed PostMessage")
             open_file_path("./user_config.xml")
+        elif event.button.id == "information_copy_currency_btn":
+           self.post_message(self.CopyCurrencyXMLBtnPressed())
+
+            
 
 
 
@@ -1197,6 +1207,11 @@ ZPKView {
     async def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
         await self.action_get_zpk()
         # self.test_note()
+
+    @on(Function_area.CopyCurrencyXMLBtnPressed)
+    def handle_copy_currency_xml(self, event:Button.Pressed) -> None:
+        origin_xml_path, new_xml_path = get_local_currencyXML_path()
+        copy_to_clipboard(new_xml_path)
 
     @on(Function_area.uploadBtnPressed)
     def handle_upload_ui(self, event:Button.Pressed) -> None:
