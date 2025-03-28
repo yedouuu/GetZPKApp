@@ -1101,6 +1101,7 @@ ZPKView {
 # 文件名: {latest_file}
 - 时间: {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))}
 - UI文件: {self.ui_file}
+- 模式:  {get_mode()}
 - 币种 : {", ".join(self.information.get_country_code())}
 - 备注 : {self.note.get_note().split("备注:")[-1].replace("\r\n", "\n")}\r\n
 """)
