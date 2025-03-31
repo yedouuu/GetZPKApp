@@ -9,3 +9,6 @@ ZPK/
 dist/
 build/
 ui/
+*.GIN
+vendor.bin
+vendor.ini
