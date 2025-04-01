@@ -17,4 +17,10 @@
     <local_ui_file_path>./ui/</local_ui_file_path>
     <local_zpk_path>./ZPK/</local_zpk_path>
 
+    <local_GLTool_path>./1_WLGL18_240411/GLTooL_V3.0.1.exe</local_GLTool_path>
+    <local_main_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b_main</local_main_rootfs_path>
+    <local_template_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b_template</local_template_rootfs_path>
+    <local_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b</local_rootfs_path>
+    <local_create_rootfs_image_bat_path>./1_WLGL18_240411/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
+    <local_GIN_path>./GIN/</local_GIN_path>
 </SSH_Configuration>

@@ -1,4 +1,3 @@
-import win32clipboard
 import tkinter as tk
 import subprocess
 import re
@@ -8,44 +7,9 @@ from tkinter import (
     filedialog, 
     messagebox, 
 )
-
+import shutil
+import xml_Utils
 # import logging
-
-# 设置日志
-# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-class DROPFILES(Structure):
-    _fields_ = [
-        ("pFiles", c_uint),
-        ("x", c_long),
-        ("y", c_long),
-        ("fNC", c_int),
-        ("fWide", c_bool),
-    ]
-
-pDropFiles = DROPFILES()
-pDropFiles.pFiles = sizeof(DROPFILES)
-pDropFiles.fWide = True
-metadata = bytes(pDropFiles)
-
-def setClipboardFiles(paths):
-    if not all(os.path.exists(path) for path in paths):
-        # logging.error("One or more files do not exist.")
-        print("One or more files do not exist.")
-        return
-
-    files = ("\0".join(paths)).replace("/", "\\")
-    data = files.encode("U16")[2:] + b"\0\0"
-    try:
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardData(win32clipboard.CF_HDROP, metadata + data)
-        print("Files copied to clipboard successfully.")
-    except Exception as e:
-        print(f"Failed to set clipboard data: {e}")
-    finally:
-        win32clipboard.CloseClipboard()
-
-
 
 def copy_to_clipboard(paths):
     """
@@ -151,6 +115,201 @@ def upload_file(source_path, destination_path):
     subprocess.run(command, check=True)
 
 
+def create_empty_rootfs():
+    """ 从空白模板创建 rootfs 
+        return : rootfs_path
+        Ex: ./1_WLGL18_240411/rootfs/rootfs_20011b
+    """
+    rootfs_template_path = xml_Utils.get_text("local_template_rootfs_path")
+    rootfs_path = xml_Utils.get_text("local_rootfs_path")
+    if not os.path.exists(rootfs_template_path):
+        xml_Utils.print_red_text(f"rootfs_template_path:{rootfs_template_path} not exists")
+        return None
+    
+    if os.path.exists(rootfs_path):
+        try:
+            shutil.rmtree(rootfs_path)
+            print(f"Existing rootfs_path '{rootfs_path}' has been removed.")
+        except Exception as e:
+            xml_Utils.print_red_text(f"Failed to remove existing rootfs_path '{rootfs_path}': {e}")
+            return None
+
+
+    shutil.copytree(rootfs_template_path, rootfs_path)
+    if not os.path.exists(rootfs_path):
+        xml_Utils.print_red_text(f"rootfs_path:{rootfs_path} create failed")
+        return None
+    return rootfs_path
+
+def copy_files_to_rootfs(src, dst):
+    """Copy currency-specific files from source to destination rootfs.
+    
+    Args:
+        src: Source rootfs path
+        dst: Destination rootfs path
+    """
+    if not all(os.path.exists(path) for path in [src, dst]):
+        xml_Utils.print_red_text("【Error】Source or destination path not found")
+        return None
+
+    # Get currency codes to copy
+    currency_codes = set(xml_Utils.get_open_country("UN60D")) - {"AUT", "MIX", "USD"}
+    print(f"【Info】Copying files for currencies: {currency_codes}")
+
+    # Define directory mappings and their copy modes
+    DIRS = {
+        "CashTemplate_COLOR": "file",
+        "CashTemplate_NEW": "dir",
+        "IMG_AUTO": "file"
+    }
+
+    def copy_item(src_path, dst_path, copy_mode="file"):
+        """Copy a single file or directory if it matches the currency code"""
+        try:
+            if copy_mode == "file":
+                shutil.copy2(src_path, dst_path)
+            else:
+                shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
+            print(f"【Info】Copied: {os.path.basename(src_path)}")
+            return True
+        except Exception as e:
+            print(f"【Error】Failed to copy {src_path}: {e}")
+            return False
+
+    # Process template files and counterfiet xml files
+    for dirname, copy_mode in DIRS.items():
+        src_dir = os.path.join(src, dirname)
+        dst_dir = os.path.join(dst, dirname)
+        
+        if not os.path.exists(src_dir):
+            print(f"【Warning】Source directory not found: {src_dir}")
+            continue
+
+        os.makedirs(dst_dir, exist_ok=True)
+        
+        for item in os.listdir(src_dir):
+            if any(code in item for code in currency_codes):
+                src_item = os.path.join(src_dir, item)
+                dst_item = os.path.join(dst_dir, item)
+                copy_item(src_item, dst_item, copy_mode)
+
+    # Process currecnys.xml, user_config.xml
+    src_dir = xml_Utils.get_text("local_currencys_xml_path")
+
+    dst_dir = xml_Utils.get_text("local_rootfs_path")
+    dst_dir = os.path.join(dst_dir, "IMG_AUTO")
+
+    FILES = {
+        "currencys.xml": "file",
+        "user_config.xml": "file",
+    }
+
+    for item in os.listdir(src_dir):
+        if item in FILES.keys():
+            src_dir = os.path.join(src_dir, item)
+            dst_dir = os.path.join(dst_dir, item)
+            copy_item(src_dir, dst_dir, FILES[item])
+ 
+def GL18_modify_user_config(src, dst):
+    """ GL18修改user_config中自定义内容 
+        Arg:
+            src: str, 源文件路径
+            dst: str, 目标文件路径
+    """
+    src_root = xml_Utils.LXML_ET.parse(src).getroot()
+    # dst_root = xml_Utils.open_xml(dst).getroot()
+    dst_tree = xml_Utils.LXML_ET.parse(dst)
+
+    for child in src_root.findall("item"):
+        for key, val in child.attrib.items():
+            # print(key, val)
+            if key == 'name':
+                print(f"{key} = {val}")
+                el_list = dst_tree.xpath(f'/item[@name="{val}"]')
+                if el_list:
+                    element = el_list[0]
+                else:
+                    break    
+            else: 
+                element.set(key, val)  # 修改value属性
+                print(f"Set {key} = {val}")
+
+
+def create_rootfs_image(bat_path: str = "") -> bool:
+    """Create rootfs image using specified bat file
+    
+    Args:
+        bat_path: Path to the bat file, if empty will use default from config
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    if not bat_path:
+        bat_path = xml_Utils.get_text("local_create_rootfs_image_bat_path")
+    
+    # Validate bat file exists
+    if not os.path.exists(bat_path):
+        xml_Utils.print_red_text(f"bat_path: {bat_path} not exists")
+        return False
+
+    try:
+        # Convert to absolute path and normalize slashes
+        abs_bat_path = os.path.abspath(bat_path)
+        
+        # Run bat file from its directory
+        bat_dir = os.path.dirname(abs_bat_path)
+        bat_name = os.path.basename(abs_bat_path)
+        
+        # Change to bat directory and execute
+        current_dir = os.getcwd()
+        os.chdir(bat_dir)
+        
+        result = subprocess.run(
+            f"cmd /c {bat_name}", 
+            shell=True,
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        
+        # Print output for debugging
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+            
+        return True
+
+    except subprocess.CalledProcessError as e:
+        xml_Utils.print_red_text(f"Failed to run bat file: {e}")
+        if e.output:
+            print(f"Error output: {e.output}")
+        return False
+        
+    finally:
+        # Restore original working directory
+        os.chdir(current_dir)
+
+def GL18_create_rootfs_image(customer_code: str = ""):
+    """ 创建 GL18 rootfs """
+
+    src = xml_Utils.get_text("local_main_rootfs_path")
+    dst = create_empty_rootfs()
+    copy_files_to_rootfs(src, dst)
+
+    user_config_src = "./user_config.xml"
+    user_config_dst = os.path.join(dst, "IMG_AUTO", "user_config.xml")
+    GL18_modify_user_config(user_config_src, user_config_dst)
+
+    create_rootfs_image_path = xml_Utils.get_text("local_create_rootfs_image_bat_path")
+    rootfs_image_path = dst + ".bin"
+    print(f"【Info】create_rootfs_image_path:{create_rootfs_image_path}")
+    print(f"【Info】rootfs_image_path:{rootfs_image_path}")
+
+    create_rootfs_image(create_rootfs_image_path)
+
+    return rootfs_image_path
+
+
 if __name__ == '__main__':
     filename = [r"D:\004_laboratory\GetZPK\ZPK\88.001288_以色列\WL_UN60NEW_240409B.93BE741F50EDED2A.ZPK"]
     # filename = [r"D:\004_laboratory\GetZPK\ZPK\88.001288_以色列\README.md"]
@@ -158,3 +317,6 @@ if __name__ == '__main__':
     # open_file_path("D:\\200_WL\\210_GL20双CIS")
     # select_and_upload_file("D:\\200_WL\\210_GL20双CIS")
     # show_message()
+
+    file_system = GL18_create_rootfs_image()
+    print(f"file system = {file_system}")
