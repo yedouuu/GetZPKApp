@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<mag_para version="1.7">
+		<Country tag="PKR">
+			<sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70"/>
+			<denom val="5000">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="1000">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="500">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="100">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="75">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="50">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="20">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="10">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="5">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>	
+		</Country>
+		<Country tag="LAK">
+			<sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70"/>
+			<denom val="100000">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="4" peak_min="1" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM1" alg_en="Y" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="Y" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="50000">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="4" peak_min="1" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="10" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="12" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM1" alg_en="Y" peak_level="4" peak_max="14" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="Y" peak_level="4" peak_max="16" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM2" alg_en="Y" peak_level="4" peak_max="18" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM2" alg_en="Y" peak_level="4" peak_max="20" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>		
+		</Country>
+		<Country tag="MYR">
+			<sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70"/>
+			<denom val="100">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="4" peak_min="1" l_range="60" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="65" r_range="103" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="50">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="8" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="20">
+				<version val="2">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="8" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="10">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="4" peak_max="2" peak_min="0" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="8" peak_min="0" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+		</Country>
+	    <Country tag="EUR">
+			<sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70"/>
+			<denom val="5">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="75" r_range="118" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="62" r_range="103" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="79" r_range="111" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="75" r_range="118" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="72" r_range="107" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="104" r_range="115" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="10">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="78" r_range="112" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="66" r_range="102" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="78" r_range="111" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="78" r_range="114" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="73" r_range="111" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="105" r_range="114" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+			</denom>	
+			<denom val="20">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="78" r_range="111" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="69" r_range="108" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="111" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="4" peak_max="10" peak_min="2" l_range="78" r_range="111" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="70" r_range="111" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="102" r_range="111" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="50">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="75" r_range="108" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="72" r_range="108" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="108" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="80" r_range="108" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="72" r_range="108" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="108" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="100">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="75" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="86" r_range="104" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="86" r_range="104" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="200">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="78" r_range="101" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="79" r_range="101" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="101" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="86" r_range="101" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="79" r_range="101" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="99" r_range="101" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="500">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="10" peak_min="2" l_range="82" r_range="98" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="82" r_range="98" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="101" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+		</Country>	
+		<Country tag="INR">
+			<denom val="10">
+				<version val="6">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="113" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="N"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="N"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="N"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="N"/>
+				</version>
+				<version val="4">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="65" r_range="103" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM1" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="Y"/>
+					<para type="RSM1" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="0" r_range="176" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="20">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="50">
+				<version val="6">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="160" r_range="200" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+			</denom>
+			<denom val="100">
+				<version val="6">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+			</denom>
+			<denom val="200">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+			</denom>
+			<denom val="500">
+				<version val="5">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+			</denom>
+			<denom val="2000">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="4" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+				</version>
+			</denom>
+		</Country>
+	    <Country tag="RUB">
+			<sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70"/>
+			<denom val="5">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="10" peak_min="2" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="180" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="10">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="10" peak_min="2" l_range="78" r_range="112" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="1" peak_min="1" l_range="66" r_range="102" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="Y" peak_level="5" peak_max="1" peak_min="1" l_range="78" r_range="111" location_en="Y"/>
+					<para type="RSM1" alg_en="Y" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+			</denom>	
+			<denom val="50">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="10" peak_min="2" l_range="75" r_range="108" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="2" peak_max="8" peak_min="0" l_range="72" r_range="108" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="2" peak_max="8" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+			</denom>	
+			<denom val="100">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="10" peak_min="2" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+				<version val="2">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="10" peak_min="2" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="6">
+					<para type="BM" alg_en="Y" peak_level="1" peak_max="10" peak_min="2" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="200">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="1" peak_max="8" peak_min="1" l_range="78" r_range="101" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="79" r_range="101" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="500">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="4" peak_max="8" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="8" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="8" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="1000">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="1" peak_max="8" peak_min="0" l_range="75" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="1" peak_max="8" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="1" peak_max="8" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>	
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="1" peak_max="8" peak_min="0" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="1" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="1" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="8" peak_min="0" l_range="83" r_range="104" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="4" peak_max="1" peak_min="0" l_range="76" r_range="104" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="4" peak_max="1" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>	
+			<denom val="2000">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="1" peak_max="10" peak_min="2" l_range="78" r_range="101" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="3" peak_max="8" peak_min="0" l_range="79" r_range="101" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="3" peak_max="8" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+					<para type="LSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="84" r_range="101" location_en="Y"/>
+					<para type="RSM1" alg_en="N" peak_level="5" peak_max="1" peak_min="1" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="5000">
+				<version val="1">
+					<para type="BM" alg_en="N" peak_level="5" peak_max="8" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="1" peak_max="8" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="82" r_range="98" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="4" peak_max="4" peak_min="0" l_range="0" r_range="0" location_en="Y"/>
+				</version>
+			</denom>
+		</Country>
+	    <Country tag="USD">
+			<denom val="1">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="2">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="5">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="N" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="N" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="10">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="20">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="50">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+			<denom val="100">
+				<version val="1">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="2">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+				<version val="3">
+					<para type="BM" alg_en="Y" peak_level="5" peak_max="8" peak_min="1" l_range="-5" r_range="5" location_en="N"/>
+					<para type="LSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+					<para type="RSM" alg_en="Y" peak_level="5" peak_max="5" peak_min="1" l_range="-5" r_range="5" location_en="Y"/>
+				</version>
+			</denom>
+		</Country>	
+	</mag_para>

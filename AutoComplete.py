@@ -215,6 +215,7 @@ class AutoCompleteContainer(ScrollableContainer):
     def compose(self) -> ComposeResult:
         yield AutoCompleteInput(
             id="auto-complete-input", 
+            classes="grey_input",
             placeholder="请输入要保存的文件夹...",
             validators=[
                 ValidFolderName()

@@ -5,7 +5,7 @@ import lxml.etree as LXML_ET
 from colorama import Fore, Style, init
 import time
 from SSHClient import SSH_Client
-from CopyFile import copy_to_clipboard
+from file_Utils import copy_to_clipboard
 
 def print_red_text(text):
     print(Fore.RED + text + Style.RESET_ALL)
@@ -260,6 +260,8 @@ def get_version(current_folder, current_date):
 
 def get_scheme(remote_folder:str):
     """ 获取远端目录的方案 """
+    remote_folder = str(remote_folder)
+
     server = get_server()
     for _remote_folder in server.findall("remote_directory"):
         if remote_folder in _remote_folder.text:
@@ -283,9 +285,9 @@ def get_download_zpk_path(remote_directory:str):
     return download_zpk_path
 
 
-def generate_new_name(remote_directory:str, customer_path:str=""):
+def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"):
     """ 获取最新的文件名字 
-    return: f'WL_{directory_ver}_{current_date}' + ver
+    return: f'{customer_code}_{directory_ver}_{current_date}' + ver
     """
 
     """ 6.1 获取ZPK版本 """
@@ -302,7 +304,7 @@ def generate_new_name(remote_directory:str, customer_path:str=""):
     current_date = datetime.date.today().strftime("%y%m%d")
     ver = get_version(download_zpk_path, current_date)
 
-    file_name = f'WL_{directory_ver}_{current_date}' + ver
+    file_name = f'{customer_code}_{directory_ver}_{current_date}' + ver
     print(f"【DEBUG】new file name = {file_name}")
     return file_name
 
@@ -325,6 +327,36 @@ def get_mode(remote_floder_name: str = "") -> str:
     for child in user_config_root.findall("item"):
         if child.get("name") == "mode_cfg_list":
             return child.get("value")
+        
+def GL18_get_image_app_path():
+    ret = ""
+    image_app_path = get_text("local_image_app_path")
+    os.makedirs(image_app_path, exist_ok=True)
+
+    for item in os.listdir(image_app_path):
+        if item.endswith(".bin") and item.startswith("GL18"):
+            ret = os.path.join(image_app_path, item)
+    return ret
+
+def GL18_get_boot_path():
+    ret = ""
+    boot_path = get_text("local_boot_path")
+    os.makedirs(boot_path, exist_ok=True)
+
+    for item in os.listdir(boot_path):
+        if item.endswith(".bin") and "BOOT" in item:
+            ret = os.path.join(boot_path, item)
+    return ret
+
+def GL18_get_mainboard_app_path():
+    ret = ""
+    mainboard_app_path = get_text("local_mainboard_app_path")
+    os.makedirs(mainboard_app_path, exist_ok=True)
+
+    for item in os.listdir(mainboard_app_path):
+        if item.endswith(".bin") and item.startswith("M4"):
+            ret = os.path.join(mainboard_app_path, item)
+    return ret
 
 def set_language(language:str):
     user_config_root = open_xml("./user_config.xml").getroot()
@@ -479,13 +511,15 @@ async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currenc
         async with sftp.open(remote_directory + sys_config_xml_path, 'wb') as modified_file:
             await modified_file.write(modified_xml)
 
-async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path: str, callback):
+async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path, customer_code, callback):
     """打包zpk文件并下载"""
     sftp = await ssh_client.get_sftp()
     
     # 如果有输入客户代码，则下载到客户代码文件夹下
     if customer_path:
-        file_name = generate_new_name(remote_directory, customer_path)
+        file_name = generate_new_name(remote_directory, customer_path, customer_code)
+    elif customer_code:
+        file_name = generate_new_name(remote_directory, customer_code=customer_code)
     else:
         file_name = generate_new_name(remote_directory)
 
@@ -507,7 +541,7 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path:
     print(f"打包完成")
 
 
-async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path: str, update_progress) -> str:
+async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path, update_progress) -> str:
     # 建立 SFTP 客户端连接
     sftp = await ssh_client.get_sftp()
 
@@ -540,3 +574,9 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
     sftp.exit()
     print("ZPK文件下载完成：", local_file_path)
     return latest_file
+
+
+if __name__ == '__main__':
+    remote_directory = "/home/lin/Desktop/UN60_OLD/"
+    directory_name = os.path.basename(remote_directory)
+    print(directory_name)

@@ -5,6 +5,9 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import pyperclip 
+import shutil
+import xml_Utils
+from pathlib import Path
 
 exe_path = r"D:\\200_WL\\280_Project\\WL_GL18\\04_Software\\1_WLGL18_240411\\GLTooL_V3.0.1.exe"
 
@@ -65,7 +68,7 @@ def find_with_retry(img_path, region=None, max_retries=3, confidence=0.9):
 def executer(img_path, file_system_path, mainboard_path, boot_path, ui_path, GIN_name, factory_code="WL"):
     pyautogui.hotkey('ctrl', 'win', 'd')
 
-    pyautogui.alert("即将开始自动化操作，请不要操作鼠标键盘！")
+    # pyautogui.alert("即将开始自动化操作，请不要操作鼠标键盘！")
     pyautogui.PAUSE = 0.1  # 减少操作间隔
 
     # 启动程序
@@ -133,15 +136,39 @@ def executer(img_path, file_system_path, mainboard_path, boot_path, ui_path, GIN
     return True
 
 
-def pack_GIN(img_path, model, file_system_path, mainboard_path, boot_path, ui_path, factory_code="WL"):
-  GIN_name = f"{factory_code}_\
-{model}_\
-{mainboard_path.split(".")[0].split('_')[-1]}_\
-{img_path.split(".")[0].split('_')[-1]}_\
-{file_system_path.split(".")[0].split('_')[-1]}"
+def pack_GIN(PACK_INFO):
+#   GIN_name = f"{factory_code}_\
+# {model}_\
+# {mainboard_path.split(".")[0].split('_')[-1]}_\
+# {img_path.split(".")[0].split('_')[-1]}_\
+# {file_system_path.split(".")[0].split('_')[-1]}"
+  img_path         = PACK_INFO["img_path"]
+  model            = PACK_INFO["model"]
+  remote_path      = PACK_INFO["remote_path"]
+  file_system_path = PACK_INFO["file_system_path"]
+  mainboard_path   = PACK_INFO["mainboard_path"]
+  boot_path        = PACK_INFO["boot_path"]
+  ui_path          = PACK_INFO["ui_path"]
+  factory_code     = PACK_INFO["factory_code"]
+  customer_path    = PACK_INFO["customer_path"]
+
+  GIN_name = xml_Utils.generate_new_name(remote_path, customer_path, factory_code)
   print(GIN_name)
 
   executer(img_path, file_system_path, mainboard_path, boot_path, ui_path, GIN_name, factory_code="WL")
+  GIN_path = os.path.join(os.path.abspath("./"), GIN_name + "_GLImage.GIN")
+  if not os.path.exists(GIN_path):
+    print(f"【Error】Source GIN file not found: {GIN_path}")
+    return None, None
+  
+  dst_dir = os.path.abspath(xml_Utils.get_text("local_zpk_path"))
+  dst_dir = os.path.join(dst_dir, customer_path if customer_path else model.replace("_", ""))
+  dst_path = copy_gin_file(GIN_path, dst_dir)
+        
+  # 删除源文件
+  os.remove(GIN_path)
+  return os.path.basename(dst_path), dst_path
+
 
 def main():
   try:
@@ -154,12 +181,42 @@ def main():
   except Exception as e:
     print(f"错误：{e}")
 
+def copy_gin_file(src_file, dst_dir):
+  """Copy GIN file to target directory with error handling"""
+  try:
+    # Ensure source file exists
+    if not os.path.exists(src_file):
+      print(f"【Error】Source file not found: {src_file}")
+      return False
+        
+    # Create destination directory if it doesn't exist
+    Path(dst_dir).mkdir(parents=True, exist_ok=True)
+    
+    # Construct destination path
+    dst_file = os.path.join(dst_dir, os.path.basename(src_file))
+    
+    # Copy file with metadata
+    print(f"【Info】Copying file:\nFrom: {src_file}\nTo: {dst_file}")
+    dst_path = shutil.copy2(src_file, dst_file)
+    
+    # Verify copy was successful
+    if os.path.exists(dst_file):
+      print(f"【Success】File copied successfully")
+      return dst_path
+    else:
+      print(f"【Error】Copy verification failed")
+      return False
+          
+  except Exception as e:
+    print(f"【Error】Failed to copy file: {str(e)}")
+    return False
 
 if __name__ == "__main__":
-  img_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\GL18_6140.bin"
-  file_system_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\rootfs_20011b.bin"
-  mainboard_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\M4_WLGL20_B00_AT8236_4257A.bin"
-  boot_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\BOOT.bin"
-  ui_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\ui_resource_UN60_ENRU.bin"
+  # img_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\GL18_6140.bin"
+  # file_system_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\rootfs_20011b.bin"
+  # mainboard_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\M4_WLGL20_B00_AT8236_4257A.bin"
+  # boot_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\BOOT.bin"
+  # ui_path = r"D:\200_WL\280_Project\WL_GL18\04_Software\1_WLGL18_240411\ui_resource_UN60_ENRU.bin"
   
-  pack_GIN(img_path, file_system_path, mainboard_path, boot_path, ui_path)
+  # pack_GIN(img_path, "UN60D", file_system_path, mainboard_path, boot_path, ui_path)
+  copy_gin_file()

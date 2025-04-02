@@ -7,6 +7,7 @@ from rich.console import RenderableType
 # 不能删除这个模块(win32timezone)，否则PyInstaller打包后执行会报错
 import win32timezone
 import tkinter as tk
+import exe_handler
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -26,9 +27,18 @@ from xml_Utils import (
     set_language,
     get_languages,
     get_mode,
-    get_local_currencyXML_path
+    get_local_currencyXML_path,
+    get_scheme,
+    GL18_get_image_app_path,
+    GL18_get_boot_path,
+    GL18_get_mainboard_app_path
 )
-from CopyFile import select_and_upload_file, open_file_path, copy_to_clipboard
+from CopyFile import (
+    select_and_upload_file, 
+    open_file_path, 
+    copy_to_clipboard, 
+    GL18_create_rootfs_image
+)
 from SelectCountry import select_country
 from textual.widgets import (
     Static, 
@@ -42,6 +52,7 @@ from textual.widgets import (
     DataTable,
     Switch,
     OptionList,
+    ContentSwitcher,
 )
 
 from DownloadScreen import DownloadScreen
@@ -233,6 +244,36 @@ class UIView(DataTable):
             self.query_one("#ui_message").add_class("hidden")
             self.post_message(self.Selected(self.origin_rows[0]))
 
+class Customercode_Input(Static):
+    customer_code = reactive("WL")
+
+    def compose(self) -> ComposeResult:
+        yield Input(placeholder="请输入客户编码", classes="grey_input")
+
+    def on_amount(self):
+        self.query_one(Input).value = self.customer_code
+
+    class Customercode_Changed(Message):
+        def __init__(self, customer_code) -> None:
+            self.value = customer_code
+            super().__init__()
+    async def on_input_changed(self, event: Input.Changed) -> None:
+        """Called when the user types in the input."""
+        self.customer_code = event.value
+        # 取消已有的延时任务，如果存在
+        if hasattr(self, 'delay_task') and not self.delay_task.done():
+            self.delay_task.cancel()
+        # 创建一个新的延时任务
+        self.delay_task = asyncio.create_task(self.handle_delayed_update(event.value))
+
+    async def handle_delayed_update(self, value):
+        """Handle the update with a delay."""
+        await asyncio.sleep(0.3)  # 非阻塞延时0.3秒
+        self.post_message(self.Customercode_Changed(self.customer_code))
+    
+    def get_custoemr_code(self):
+        return self.customer_code
+
 class DownloadDesc(Widget):
     """A widget to display download desc."""
     country_code = reactive([])
@@ -395,6 +436,11 @@ class Function_area(ScrollableContainer):
         """Handle download button presses."""
         def __init__(self) -> None:
             super().__init__()
+
+    class FileBrowserBtnPressed(Message):
+        """Handle download button presses."""
+        def __init__(self) -> None:
+            super().__init__()
             
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
@@ -410,10 +456,9 @@ class Function_area(ScrollableContainer):
             print("user_config_btn Pressed PostMessage")
             open_file_path("./user_config.xml")
         elif event.button.id == "information_copy_currency_btn":
-           self.post_message(self.CopyCurrencyXMLBtnPressed())
-
-            
-
+            self.post_message(self.CopyCurrencyXMLBtnPressed())
+        elif event.button.id == "information_filebrowser":
+            self.post_message(self.FileBrowserBtnPressed())       
 
 
 class Note(TextArea):
@@ -704,6 +749,14 @@ UIView {
       scrollbar-size: 0 0;
       margin: 0 0 0 0;
     }
+    #customer_code_input {
+      row-span: 1;
+      column-span: 10;
+      height: 100%;
+      layers: above;
+      scrollbar-size: 0 0;
+      margin: 0 0 0 0;
+    }
     #note {
       row-span: 3;
       column-span: 6;
@@ -727,7 +780,7 @@ UIView {
       height: 100%;
     }
     #function_area {
-      row-span: 3;
+      row-span: 4;
       column-span: 10;
       # border: panel $primary-lighten-2;
       margin: 1 0 0 0;
@@ -746,8 +799,7 @@ UIView {
   }
 }
 
-
-AutoCompleteInput {
+.grey_input {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
   border: round gray;
@@ -1041,6 +1093,9 @@ ZPKView {
                     Language(
                         id="language"
                     ),
+                    Customercode_Input(
+                        id="customer_code_input"
+                    ),
                     Function_area(
                         id="function_area"
                     ),
@@ -1068,6 +1123,7 @@ ZPKView {
         self.function_area = self.query_one(Function_area)
         self.language = self.query_one(Language)
         self.customer_path = None
+        self.customer_code = self.query_one(Customercode_Input).get_custoemr_code()
         # self.mount(Footer())
 
     def on_load(self) -> None:
@@ -1121,9 +1177,46 @@ ZPKView {
 
         currency_list_str = ",".join(self.information.get_country_code())
         select_country(currency_list_str, self.remote_folder)
-        await self.push_screen(DownloadScreen())
-        latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, self.ui_file, currency_list_str, customer_path)
+
+        if ( get_scheme(self.remote_folder) == "GL18" ):
+            print("【INFO】 PACK GL18 GIN")
+            image_app_path = os.path.abspath(GL18_get_image_app_path())
+            mainboard_path = os.path.abspath(GL18_get_mainboard_app_path())
+            boot_path = os.path.abspath(GL18_get_boot_path())
+            file_system_path = os.path.abspath(GL18_create_rootfs_image(self.customer_path))
+            ui_file_path = os.path.abspath(get_text("local_ui_file_path") + self.ui_file)
+            print(f"Paths:\r\n"
+                  f"  image_app_path:   {image_app_path}\r\n"
+                  f"  mainboard_path:   {mainboard_path}\r\n"
+                  f"  boot_path:        {boot_path}\r\n"
+                  f"  file_system_path: {file_system_path}\r\n"
+                  f"  ui_file_path:     {ui_file_path}")
+            PACK_INFO = {
+                "img_path":         image_app_path,
+                "model":            self.remote_folder,
+                "remote_path":      self.remote_folder_path,
+                "file_system_path": file_system_path,
+                "mainboard_path":   mainboard_path,
+                "boot_path":        boot_path,
+                "ui_path":          ui_file_path,
+                "factory_code":     self.customer_code,
+                "customer_path":    customer_path,
+            }
+            latest_file, file_path = exe_handler.pack_GIN(PACK_INFO)
+            if ( latest_file is None or file_path is None ):
+                print(f"【Error】 Pack GIN Error")
+                exit()
+            
+            copy_to_clipboard(file_path)
+        else:
+            await self.push_screen(DownloadScreen())
+            latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, 
+                                                                        self.ui_file, 
+                                                                        currency_list_str, 
+                                                                        customer_path, 
+                                                                        self.customer_code)
         # latest_file = "WLGL20_20230316_1532_1.ZPK"
+        
         self.create_readme(customer_path, latest_file)
         self.note.refresh_note()
 
@@ -1213,6 +1306,10 @@ ZPKView {
     def handle_copy_currency_xml(self, event:Button.Pressed) -> None:
         origin_xml_path, new_xml_path = get_local_currencyXML_path()
         copy_to_clipboard(new_xml_path)
+    
+    @on(Function_area.FileBrowserBtnPressed)
+    def handle_filebrowser_open(self, event:Button.Pressed) -> None:
+        self.action_toggle_file_browser()
 
     @on(Function_area.uploadBtnPressed)
     def handle_upload_ui(self, event:Button.Pressed) -> None:
@@ -1222,6 +1319,11 @@ ZPKView {
     def handle_auto_complete_input_submitted(self, event: AutoCompleteContainer.Submitted):
         print(f"AutoCompleteContainer submitted with value: {event.value}")
         self.customer_path = event.value
+
+    @on(Customercode_Input.Customercode_Changed)
+    def handle_customercode_changed(self, event:Customercode_Input.Customercode_Changed) -> None:
+        self.customer_code = event.value
+        print(f"Customercode_Input changed with value: {self.customer_code}")
 
 if __name__ == "__main__":
     try:

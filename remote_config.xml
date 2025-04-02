@@ -1,6 +1,7 @@
 <Remote_Configuration>
 
     <Server hostname="192.168.1.250">
+        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN60D_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_DEV/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENZH/</remote_directory>
@@ -10,6 +11,7 @@
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_TOUCH/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN200_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220_ENRU/</remote_directory>
+        <remote_template_path IMGDesignScheme="">/home/lin/Desktop/ZM_Template/</remote_template_path>
     </Server>
 
     <Server hostname="git.yedou.top">
@@ -18,10 +20,30 @@
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_TOUCH/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN200_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220_ENRU/</remote_directory>
+        <remote_template_path IMGDesignScheme="">/home/zpk/ZM_Template/</remote_template_path>
     </Server>
 
 
     <IMG_DesignScheme val="GL20">
+        <template>GL20</template>
+        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
+        <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
+        <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
+    </IMG_DesignScheme>
+
+    <IMG_DesignScheme val="GL18">
+        <template>GL18</template>
+        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
+        <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
+        <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
+    </IMG_DesignScheme>
+
+    <IMG_DesignScheme val="GL20MULTI">
+        <template>GL18</template>
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
         <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
@@ -30,6 +52,7 @@
     </IMG_DesignScheme>
 
     <IMG_DesignScheme val="A33">
+        <template>GL20</template>
         <remote_run_script>./hengli_zpk_repack.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/bin/IMG_AUTO/</remote_currencys_xml_path>
         <remote_user_config_xml_path>upgrade/bin/xml_new/user_config.xml</remote_user_config_xml_path>

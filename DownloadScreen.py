@@ -88,7 +88,7 @@ class DownloadScreen(ModalScreen):
         self.app.refresh()
 
 
-    async def download(self, remote_folder, ui_file, currency_list:str, customer_path="") -> str:
+    async def download(self, remote_folder, ui_file, currency_list:str, customer_path=None, customer_code="WL") -> str:
         try:
             self.change_status("上传currencys.xml...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
@@ -100,7 +100,7 @@ class DownloadScreen(ModalScreen):
             self.query_one("#progress").advance(5)
 
             self.change_status("打包zpk...")
-            await pack_zpk(self.ssh_client, remote_folder, customer_path, self.zpk_progress)
+            await pack_zpk(self.ssh_client, remote_folder, customer_path, customer_code, self.zpk_progress)
 
             self.change_status("下载ZPK...")
             latest_file = await download_zpk(self.ssh_client, remote_folder, customer_path, self.download_progress_handler)

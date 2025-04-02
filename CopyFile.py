@@ -9,16 +9,8 @@ from tkinter import (
 )
 import shutil
 import xml_Utils
+from file_Utils import copy_to_clipboard
 # import logging
-
-def copy_to_clipboard(paths):
-    """
-    :list paths: 文件路径列表
-    """
-    print(f"Attempting to copy files: {paths}")
-    # setClipboardFiles(paths)
-    command = f"powershell Set-Clipboard -LiteralPath {paths}"
-    os.system(command)
 
 def open_file_path(path):
     """
