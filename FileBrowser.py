@@ -30,6 +30,7 @@ class ZPKView(Static):
     
     path = reactive("")
     folder_path = reactive("./")
+    file_name = reactive("")
 
     def __init__(self, path: str) -> None:
         super().__init__()
@@ -252,7 +253,8 @@ ZPKView {
         syntax = " "
         try:
             path = str(event.path)
-            if ".ZPK" in path:
+            print(f"【DEBUG】 path = {path}")
+            if ".ZPK" in path or ".GIN" in path:
                 # code_view.update(path)
                 zpk_view.set_path(path)
                 self.on_function_click(os.path.basename(path))
@@ -265,9 +267,9 @@ ZPKView {
                   indent_guides=True,
                   theme="github-dark",
               )
-        except Exception:
+        except Exception as e:
             code_view.update(Traceback(theme="github-dark", width=None))
-            self.sub_title = "ERROR"
+            self.sub_title = f"ERROR: {e}"
         else:
             if syntax != " ":
               code_view.update(syntax)  
