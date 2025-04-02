@@ -80,7 +80,7 @@ class FolderContainer(VerticalScroll):
 
     def compose(self) -> ComposeResult:
         """Create child widgets of a stopwatch."""
-        yield Input(placeholder="输入文件夹名称")
+        yield Input(placeholder="输入文件夹名称", classes='grey_input')
         # yield Label("当前：", id="current_folder")
         
 
