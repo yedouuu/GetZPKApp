@@ -290,7 +290,7 @@ class DownloadDesc(Widget):
             "Info": "bold blue"
         }
         text.append("Folder:   ", style=styles["Info"])
-        text.append(self.remote_folder)
+        text.append(str(self.remote_folder))
         text.append("\r\n")
 
         text.append("UI:       ", style=styles["Info"])
@@ -1058,7 +1058,7 @@ ZPKView {
         Binding("ctrl+q", "request_quit", "退出", key_display="Q"),
     ]
     folder_list = ["UN60_NEW", "UN60_OLD", "UN60_RUB", "UN60_TOUCH"]
-    SCREENS = {"FileBrower": FileBrowser()}
+    SCREENS = {"FileBrower": FileBrowser}
     # MODES = {"FileBrower": FileBrowser()}
     show_sidebar = reactive(False)
 
@@ -1205,7 +1205,7 @@ ZPKView {
             latest_file, file_path = exe_handler.pack_GIN(PACK_INFO)
             if ( latest_file is None or file_path is None ):
                 print(f"【Error】 Pack GIN Error")
-                exit()
+                return
             
             copy_to_clipboard(file_path)
         else:
@@ -1252,7 +1252,7 @@ ZPKView {
 
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
-        self.remote_folder = message.selected
+        self.remote_folder = str(message.selected)
         self.remote_folder_path = message.selected_path
         self.query_one(Information).set_remote_folder(message.selected) 
         self.ui_view.update_by_folder(message.selected)
@@ -1330,6 +1330,8 @@ if __name__ == "__main__":
         app = GetZPKApp()
         app.run()
     except Exception as e:
+        import traceback
         print("Exception:", e)
-        input("Press Enter to exit...")
-        input("Press Enter to exit...")
+        print("\nStack trace:")
+        traceback.print_exc()
+        input("\nPress Enter to exit...")

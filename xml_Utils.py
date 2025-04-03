@@ -8,7 +8,13 @@ from SSHClient import SSH_Client
 from file_Utils import copy_to_clipboard
 
 def print_red_text(text):
+    init()
     print(Fore.RED + text + Style.RESET_ALL)
+    try:
+        with open("error_log.txt", "a", encoding="utf-8") as log_file:
+            log_file.write(f"【{datetime.datetime.now()}】: {text}\n")
+    except IOError as e:
+        print(f"Error writing to log file: {e}")
 
 def print_green_text(text):
     print(Fore.GREEN + text + Style.RESET_ALL)
