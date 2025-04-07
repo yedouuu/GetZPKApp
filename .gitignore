@@ -16,3 +16,4 @@ ui/
 *.GIN
 vendor.bin
 vendor.ini
+error_log.txt
