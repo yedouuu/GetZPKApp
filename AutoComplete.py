@@ -135,10 +135,11 @@ class AutoCompleteInput(Input):
     def update_suggestions_display(self):
         if self.suggestions:
             suggestions_text = "\n".join(
-                f"\033[1;32m> {s}\033[0m" if i == self.selected_index else f"{s}"
+                f"[green]> {s}[/]" if i == self.selected_index else f"{s}"
                 for i, s in enumerate(self.suggestions)
             )
             # suggestions_text = "\n".join(self.suggestions)
+            self.suggestions_box.markup = True
             self.suggestions_box.update(suggestions_text)
             self.suggestions_box.styles.display = "block"
         else:

@@ -1209,12 +1209,13 @@ ZPKView {
             
             copy_to_clipboard(file_path)
         else:
-            await self.push_screen(DownloadScreen())
-            latest_file = await self.query_one(DownloadScreen).download(self.remote_folder_path, 
-                                                                        self.ui_file, 
-                                                                        currency_list_str, 
-                                                                        customer_path, 
-                                                                        self.customer_code)
+            screen = DownloadScreen()
+            await self.push_screen(screen)
+            latest_file = await screen.download(self.remote_folder_path, 
+                                              self.ui_file, 
+                                              currency_list_str, 
+                                              customer_path, 
+                                              self.customer_code)
         # latest_file = "WLGL20_20230316_1532_1.ZPK"
         
         self.create_readme(customer_path, latest_file)
