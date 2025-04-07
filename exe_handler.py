@@ -254,15 +254,6 @@ class PywinautoHandler:
     
         try:
             # 定义要处理的项目
-            # uia_items = [
-            #     ("1000",    f"{img_path}"),
-            #     ("1001",    f"{file_system_path}"),
-            #     ("1002",    f"{mainboard_path}"),
-            #     # ("1018",    f"{boot_path}"),
-            #     ("1018",    f"{ui_path}"),
-            #     ("1003",    f"{factory_code}"),
-            #     ("1013",    f"{GIN_name}"),
-            # ]
 
             win32_items = [
                 ("图像板程序镜像",    f"{img_path}"),
@@ -275,10 +266,11 @@ class PywinautoHandler:
             ]
 
             # 使用线程池并行处理,填写各个路径字段
-            with ThreadPoolExecutor(max_workers=6) as executor:
+            with ThreadPoolExecutor(max_workers=3) as executor:
                 find_func = partial(self._fill_field)
                 list(executor.map(lambda x: find_func(x[0], x[1]), win32_items))
-            
+            time.sleep(0.1)
+
             # 点击制作镜像按钮
             self._click_button("制作镜像")
             time.sleep(0.3)

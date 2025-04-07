@@ -289,7 +289,7 @@ ZPKView {
         with open(file_path, 'r', encoding='utf-8') as file:
             for i, line in enumerate(file, 1):  # 使用enumerate从1开始计数行号
                 if target in line:
-                    line_numbers.append((i, 0))
+                    line_numbers.append((i, 0)) # i行 0列
         if not line_numbers:
             print(f"字符串 '{target}' 未在文件中找到。")
         else:
@@ -306,6 +306,9 @@ ZPKView {
         matched_line_cnt = len(line_numbers)
 
         if line_numbers:
+            if self.current_line_idx >= matched_line_cnt:
+                self.current_line_idx = 0
+
             # self.query_one("#code-view").scroll_home(animate=False)
             self.scroll_to_function(line_numbers[self.current_line_idx])
             self.current_line_idx = (self.current_line_idx + 1 + matched_line_cnt) % matched_line_cnt
