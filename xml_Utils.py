@@ -250,14 +250,19 @@ def get_ssh_config():
         }
 
 
-def get_version(current_folder, current_date):
+def get_version(remote_directory:str, current_folder, current_date):
     new_ver = 'A'
     
     contents = os.listdir(current_folder)  # Get the list of contents
     if len(contents) == 0:
         return new_ver
     # 获取当前文件夹下的所有文件
-    s = [content.split('.')[0][-1] for content in contents if 'ZPK' in content and f"{current_date}" in content]
+    if ( "GL18" == get_scheme(remote_directory)):
+        file_subfix = "_GLImage.GIN"
+    else:
+        file_subfix = ".ZPK"
+
+    s = [content.split(file_subfix)[0][-1] for content in contents if (file_subfix in content) and (f"{current_date}" in content)]
     if len(s) > 0:
         max_s = max(s)
         new_ver = chr((ord(max_s) - ord('A') + 1) % 26 + ord('A'))
@@ -308,7 +313,7 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
     print(f"【DEBUG】download_zpk_path = {download_zpk_path}")
     """ 生成新的文件名 """
     current_date = datetime.date.today().strftime("%y%m%d")
-    ver = get_version(download_zpk_path, current_date)
+    ver = get_version(remote_directory, download_zpk_path, current_date)
 
     file_name = f'{customer_code}_{directory_ver}_{current_date}' + ver
     print(f"【DEBUG】new file name = {file_name}")

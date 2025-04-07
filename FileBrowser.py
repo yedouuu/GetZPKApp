@@ -280,7 +280,7 @@ ZPKView {
 
     @on(ZPKView.RepackZPK)
     def handler_repack_zpk(self, event: ZPKView.RepackZPK) -> None:
-        """Handle repack zpk button click event."""
+        """TODO: Handle repack zpk button click event."""
         print("FileBrowser RepackZPK message:", event.value)
 
 
