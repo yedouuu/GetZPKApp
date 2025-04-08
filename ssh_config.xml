@@ -17,12 +17,22 @@
     <local_ui_file_path>./ui/</local_ui_file_path>
     <local_zpk_path>./ZPK/</local_zpk_path>
 
-    <local_GL18_base_proj_path>./1_WLGL18_240411/</local_GL18_base_proj_path>
+    <gl18_local_repo_path>./WL_GL18_PackProj</gl18_local_repo_path>
+    <gl18_remote_repo_path>ssh://git@git.yedou.top:2233/home/git/git/WL_GL18_PackProj.git</gl18_remote_repo_path>
+
+    <!-- <local_GL18_base_proj_path>./1_WLGL18_240411/</local_GL18_base_proj_path>
     <local_GLTool_path>./1_WLGL18_240411/GLTooL_V2.10.exe</local_GLTool_path>
     <local_main_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b_main</local_main_rootfs_path>
     <local_template_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b_template</local_template_rootfs_path>
     <local_rootfs_path>./1_WLGL18_240411/rootfs/rootfs_20011b</local_rootfs_path>
-    <local_create_rootfs_image_bat_path>./1_WLGL18_240411/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
+    <local_create_rootfs_image_bat_path>./1_WLGL18_240411/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path> -->
+
+    <local_GL18_base_proj_path>./WL_GL18_PackProj/</local_GL18_base_proj_path>
+    <local_GLTool_path>./WL_GL18_PackProj/GLTooL_V2.10.exe</local_GLTool_path>
+    <local_main_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main</local_main_rootfs_path>
+    <local_template_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_template</local_template_rootfs_path>
+    <local_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b</local_rootfs_path>
+    <local_create_rootfs_image_bat_path>./WL_GL18_PackProj/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
     <local_GIN_path>./GIN/</local_GIN_path>
     
     <local_image_app_path>image_app/</local_image_app_path>
