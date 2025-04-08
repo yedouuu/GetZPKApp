@@ -8,6 +8,7 @@ dist/
 build/
 ui/
 1_WLGL18_240411/
+WL_GL18_PackProj/
 
 *.ZPK
 *.pyc
