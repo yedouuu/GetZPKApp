@@ -1184,7 +1184,7 @@ ZPKView {
             image_app_path = os.path.abspath(GL18_get_image_app_path(str(self.remote_folder)))
             mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))
             boot_path = os.path.abspath(GL18_get_boot_path(str(self.remote_folder)))
-            return
+
             file_system_path = os.path.abspath(GL18_create_rootfs_image(self.customer_path))
             ui_file_path = os.path.abspath(get_text("local_ui_file_path") + self.ui_file)
             print(f"Paths:\r\n"
