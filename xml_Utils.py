@@ -339,34 +339,56 @@ def get_mode(remote_floder_name: str = "") -> str:
         if child.get("name") == "mode_cfg_list":
             return child.get("value")
         
-def GL18_get_image_app_path():
+def GL18_get_base_proj_path():
+    """ 获取GL18的基本项目路径 """
+    base_proj_path = get_text("local_GL18_base_proj_path")
+    base_proj_path = os.path.abspath(base_proj_path)
+    print(f"【DEBUG】base_proj_path = {base_proj_path}")
+    os.makedirs(base_proj_path, exist_ok=True)
+    return base_proj_path
+
+
+def GL18_get_image_app_path(remote_folder: str):
     ret = ""
+    base_path = GL18_get_base_proj_path()
     image_app_path = get_text("local_image_app_path")
+    image_app_path = os.path.join(base_path, remote_folder, image_app_path)
+    image_app_path = os.path.abspath(image_app_path)
+    print(f"【DEBUG】image_app_path = {image_app_path}")
     os.makedirs(image_app_path, exist_ok=True)
 
     for item in os.listdir(image_app_path):
         if item.endswith(".bin") and item.startswith("GL18"):
             ret = os.path.join(image_app_path, item)
+            print(f"【DEBUG】ret = {ret}")
     return ret
 
-def GL18_get_boot_path():
+def GL18_get_boot_path(remote_folder: str):
     ret = ""
+    base_path = GL18_get_base_proj_path()
     boot_path = get_text("local_boot_path")
+    boot_path = os.path.join(base_path, remote_folder, boot_path)
+    print(f"【DEBUG】boot_path = {boot_path}")
     os.makedirs(boot_path, exist_ok=True)
 
     for item in os.listdir(boot_path):
         if item.endswith(".bin") and "BOOT" in item:
             ret = os.path.join(boot_path, item)
+            print(f"【DEBUG】ret = {ret}")
     return ret
 
-def GL18_get_mainboard_app_path():
+def GL18_get_mainboard_app_path(remote_folder: str):
     ret = ""
+    base_path = GL18_get_base_proj_path()
     mainboard_app_path = get_text("local_mainboard_app_path")
+    mainboard_app_path = os.path.join(base_path, remote_folder, mainboard_app_path)
+    print(f"【DEBUG】mainboard_app_path = {mainboard_app_path}")
     os.makedirs(mainboard_app_path, exist_ok=True)
 
     for item in os.listdir(mainboard_app_path):
         if item.endswith(".bin") and item.startswith("M4"):
             ret = os.path.join(mainboard_app_path, item)
+            print(f"【DEBUG】ret = {ret}")
     return ret
 
 def set_language(language:str):

@@ -2,6 +2,7 @@
 
     <Server hostname="192.168.1.250">
         <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN60D_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN70D_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_DEV/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENZH/</remote_directory>

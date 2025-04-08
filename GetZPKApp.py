@@ -1164,6 +1164,7 @@ ZPKView {
 
     async def action_get_zpk(self):
         """Get ZPK."""
+        print("Get ZPK Start Processing...")
         zpk_path = get_text("local_zpk_path")
         self.note.analyze_note()
         # customer_code = self.note.get_customer_code()
@@ -1180,9 +1181,10 @@ ZPKView {
 
         if ( get_scheme(self.remote_folder) == "GL18" ):
             print("【INFO】 PACK GL18 GIN")
-            image_app_path = os.path.abspath(GL18_get_image_app_path())
-            mainboard_path = os.path.abspath(GL18_get_mainboard_app_path())
-            boot_path = os.path.abspath(GL18_get_boot_path())
+            image_app_path = os.path.abspath(GL18_get_image_app_path(str(self.remote_folder)))
+            mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))
+            boot_path = os.path.abspath(GL18_get_boot_path(str(self.remote_folder)))
+            return
             file_system_path = os.path.abspath(GL18_create_rootfs_image(self.customer_path))
             ui_file_path = os.path.abspath(get_text("local_ui_file_path") + self.ui_file)
             print(f"Paths:\r\n"
@@ -1300,6 +1302,7 @@ ZPKView {
 
     @on(Function_area.DownloadBtnPressed)
     async def handle_downloadBtn_pressed(self, event:Button.Pressed) -> None:
+        print("Function_area.DownloadBtnPressed")
         await self.action_get_zpk()
         # self.test_note()
 
