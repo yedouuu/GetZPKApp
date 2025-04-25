@@ -185,22 +185,33 @@ def copy_files_to_rootfs(src, dst):
                 dst_item = os.path.join(dst_dir, item)
                 copy_item(src_item, dst_item, copy_mode)
 
-    # Process currecnys.xml, user_config.xml
-    src_dir = xml_Utils.get_text("local_currencys_xml_path")
+    """ Process currecnys.xml, user_config.xml """
+    # src_dir = xml_Utils.get_text("local_currencys_xml_path")
+    
+    # src_dir = xml_Utils.get_text("local_main_rootfs_path")
+    # src_dir = os.path.join(xml_Utils.get_text("local_main_rootfs_path"), "IMG_AUTO")
 
     dst_dir = xml_Utils.get_text("local_rootfs_path")
     dst_dir = os.path.join(dst_dir, "IMG_AUTO")
 
     FILES = {
-        "currencys.xml": "file",
-        "user_config.xml": "file",
+        "currencys.xml": {
+            "type":"file", 
+            "src_dir":xml_Utils.get_text("local_currencys_xml_path"), 
+            "dst_dir":dst_dir
+        },
+        "user_config.xml": {
+            "type":"file", 
+            "src_dir":os.path.join(xml_Utils.get_text("local_main_rootfs_path"), "IMG_AUTO"), 
+            "dst_dir":dst_dir
+        },
     }
 
     for item in os.listdir(src_dir):
         if item in FILES.keys():
-            src_dir = os.path.join(src_dir, item)
-            dst_dir = os.path.join(dst_dir, item)
-            copy_item(src_dir, dst_dir, FILES[item])
+            src_dir = os.path.join(FILES[item]["src_dir"], item)
+            dst_dir = os.path.join(FILES[item]["dst_dir"], item)
+            copy_item(src_dir, dst_dir, FILES[item]["type"])
  
 def GL18_modify_user_config(src, dst):
     """ GL18修改user_config中自定义内容 

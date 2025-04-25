@@ -219,7 +219,7 @@ ZPKView {
     def on_input_submitted(self, event: Input.Submitted) -> None:
         """Called when the user presses enter in the input."""
         self.filter_text = event.value
-        self.query_one(FilteredDirectoryTree).remove()
+        self.query_one("#tree-view", FilteredDirectoryTree).remove()
         self.query_one(Container).mount(FilteredDirectoryTree(self.path, self.filter_text, id="tree-view"))
 
 
