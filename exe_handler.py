@@ -273,11 +273,11 @@ class PywinautoHandler:
 
             # 点击制作镜像按钮
             self._click_button("制作镜像")
-            time.sleep(0.3)
+            time.sleep(1.5)
 
             self.active_window = self.app.window(title="信息")
             self._click_button("确定")
-            time.sleep(0.3)
+            time.sleep(0.6)
 
             self.active_window = self.main_window
             self._click_button("退出")
