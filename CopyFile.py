@@ -237,6 +237,15 @@ def GL18_modify_user_config(src, dst):
                 element.set(key, val)  # 修改value属性
                 print(f"Set {key} = {val}")
 
+def GL18_modify_ZPK_version(new_file_name, dst):
+    dst_tree = xml_Utils.LXML_ET.parse(dst)
+    element = dst_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
+    print(f"【Info】ZpkVersion = {element.get('value')}")
+    element.set('value', new_file_name)
+    print(f"【Info】Set ZpkVersion = {new_file_name}")
+    # 保存修改到文件
+    dst_tree.write(dst, encoding='utf-8', pretty_print=True)
+    
 
 def create_rootfs_image(bat_path: str = "") -> bool:
     """Create rootfs image using specified bat file
@@ -292,7 +301,7 @@ def create_rootfs_image(bat_path: str = "") -> bool:
         # Restore original working directory
         os.chdir(current_dir)
 
-def GL18_create_rootfs_image(customer_code: str = ""):
+def GL18_create_rootfs_image(new_file_name:str, customer_code: str = ""):
     """ 创建 GL18 rootfs """
 
     src = xml_Utils.get_text("local_main_rootfs_path")
@@ -302,6 +311,7 @@ def GL18_create_rootfs_image(customer_code: str = ""):
     user_config_src = "./user_config.xml"
     user_config_dst = os.path.join(dst, "IMG_AUTO", "user_config.xml")
     GL18_modify_user_config(user_config_src, user_config_dst)
+    GL18_modify_ZPK_version(new_file_name, user_config_dst)
 
     create_rootfs_image_path = xml_Utils.get_text("local_create_rootfs_image_bat_path")
     rootfs_image_path = dst + ".bin"
@@ -321,5 +331,5 @@ if __name__ == '__main__':
     # select_and_upload_file("D:\\200_WL\\210_GL20双CIS")
     # show_message()
 
-    file_system = GL18_create_rootfs_image()
+    file_system = GL18_create_rootfs_image("WL_UN60DENRU_250425B")
     print(f"file system = {file_system}")

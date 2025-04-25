@@ -32,7 +32,8 @@ from xml_Utils import (
     get_scheme,
     GL18_get_image_app_path,
     GL18_get_boot_path,
-    GL18_get_mainboard_app_path
+    GL18_get_mainboard_app_path,
+    generate_new_name
 )
 from CopyFile import (
     select_and_upload_file, 
@@ -1188,7 +1189,8 @@ ZPKView {
             mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))
             boot_path = os.path.abspath(GL18_get_boot_path(str(self.remote_folder)))
 
-            file_system_path = os.path.abspath(GL18_create_rootfs_image(self.customer_path))
+            GIN_name = generate_new_name(self.remote_folder_path, customer_path, self.customer_code)
+            file_system_path = os.path.abspath(GL18_create_rootfs_image(GIN_name, self.customer_path))
             ui_file_path = os.path.abspath(get_text("local_ui_file_path") + self.ui_file)
             print(f"Paths:\r\n"
                   f"  image_app_path:   {image_app_path}\r\n"
