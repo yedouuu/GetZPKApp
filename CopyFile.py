@@ -220,7 +220,6 @@ def GL18_modify_user_config(src, dst):
             dst: str, 目标文件路径
     """
     src_root = xml_Utils.LXML_ET.parse(src).getroot()
-    # dst_root = xml_Utils.open_xml(dst).getroot()
     dst_tree = xml_Utils.LXML_ET.parse(dst)
 
     for child in src_root.findall("item"):
@@ -236,6 +235,8 @@ def GL18_modify_user_config(src, dst):
             else: 
                 element.set(key, val)  # 修改value属性
                 print(f"Set {key} = {val}")
+    # 保存修改到文件
+    dst_tree.write(dst, encoding='utf-8', pretty_print=True)
 
 def GL18_modify_ZPK_version(new_file_name, dst):
     dst_tree = xml_Utils.LXML_ET.parse(dst)
