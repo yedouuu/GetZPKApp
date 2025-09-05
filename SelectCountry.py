@@ -4,7 +4,7 @@ import os
 import msvcrt
 from fuzzywuzzy import process
 from colorama import Fore, Style, init
-from xml_Utils import get_text, open_xml
+from xml_Utils import get_text, open_xml, get_config_tree, get_scheme
 
 country_currency_map = {
     '自动AUT':  'AUT' ,
@@ -494,6 +494,34 @@ def select_country(input_str:str, remote_folder:str):
         os.makedirs('./new_currencys')
     sorted_tree.write('./new_currencys/currencys.xml', encoding="utf-8", xml_declaration=True)
 
+    """
+    3. Special Handling for GL18 Scheme
+       Check if the scheme is GL18, then check if local_main_rootfs_path has all currency folders
+       
+       Selected Currency Code: USD PKR
+       
+       Then check if the following folders exist:
+        Ex.: ./WL_GL18_PackProj/rootfs/rootfs_20011b_main/USD
+        Ex.: ./WL_GL18_PackProj/rootfs/rootfs_20011b_main/PKR
+    """
+    scheme = get_scheme(remote_folder)
+    print(f"Start to check GL18 rootfs folders for {remote_folder}, scheme={scheme}")
+    if (scheme == "GL18"):
+        print_green_text("【Info】GL18 Scheme detected")
+        main_rootfs_bin_path = get_text("local_main_rootfs_bin_path")
+        if not os.path.exists(main_rootfs_bin_path):
+            print_red_text(f"【Error】local_main_rootfs_bin_path:{main_rootfs_bin_path} not exists")
+            error_msg.append(f" 【Error】local_main_rootfs_bin_path:{main_rootfs_bin_path} not exists")
+        else:
+            for code in country_code:
+                country_folder = f"{code.upper()}"
+                country_folder_path = os.path.join(main_rootfs_bin_path, country_folder)
+                if not os.path.exists(country_folder_path):
+                    print_red_text(f"【Error】{country_folder_path} not exists")
+                    error_msg.append(f" 【Error】{country_folder_path} not exists")
+                else:
+                    print_green_text(f"【Info】{country_folder_path} exists")
+
     return error_msg
 
 def press_any_key_to_continue():
@@ -507,7 +535,7 @@ if __name__ == "__main__":
     
     while True:
         init()
-        select_country()
+        select_country("USD PHP TWD MNT", "UN60D")
 
         press_any_key_to_continue()
         # input("Press Any Key")

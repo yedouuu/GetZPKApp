@@ -16,6 +16,8 @@
     </Server>
 
     <Server hostname="git.yedou.top">
+        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN60D_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN70D_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_OLD/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_TOUCH/</remote_directory>
@@ -36,7 +38,7 @@
 
     <IMG_DesignScheme val="GL18">
         <template>GL18</template>
-        
+
         <local_template_rootfs_path>
             <path model="UN60D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
             <path model="UN70D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>

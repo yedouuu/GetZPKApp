@@ -1,16 +1,16 @@
 <SSH_Configuration>
-    <hostname>192.168.1.250</hostname>
+    <!-- <hostname>192.168.1.250</hostname>
     <username>lin</username>
     <password></password>
     <port>22</port>
-    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path>
+    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path> -->
 
 <!-- 服务器 -->
-    <!-- <hostname>git.yedou.top</hostname>
+    <hostname>git.yedou.top</hostname>
     <username>zpk</username>
     <password></password>
     <port>2233</port> 
-    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path> -->
+    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path>
 
     <local_currencys_xml_path>./new_currencys/</local_currencys_xml_path>
     <local_original_currencys_xml_path>./currencys/</local_original_currencys_xml_path>
@@ -30,6 +30,7 @@
     <local_GL18_base_proj_path>./WL_GL18_PackProj/</local_GL18_base_proj_path>
     <local_GLTool_path>./WL_GL18_PackProj/GLTooL_V2.10.exe</local_GLTool_path>
     <local_main_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main</local_main_rootfs_path>
+    <local_main_rootfs_bin_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main/CashTemplate_NEW</local_main_rootfs_bin_path>
     <local_template_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_template</local_template_rootfs_path>
     <local_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b</local_rootfs_path>
     <local_create_rootfs_image_bat_path>./WL_GL18_PackProj/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
