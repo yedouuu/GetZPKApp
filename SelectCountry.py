@@ -268,8 +268,7 @@ country_currency_map = {
 'Uniswap ': 'UNI',
 '美元 ': 'USD',
 '乌拉圭比索 ': 'UYU',
-'乌兹别克斯坦索姆 ': 'UZS',
-'委内瑞拉玻利瓦尔 ': 'VEF',
+'乌兹别克斯坦索姆 ': 'VEF',
 '委内瑞拉玻利瓦尔 ': 'VES',
 '越南盾 ': 'VND',
 '瓦努阿图瓦图 ': 'VUV',
@@ -393,6 +392,42 @@ def filter_and_sort_countries(root, country_code):
     # Sort filtered countries according to country_code order
     filtered_countries.sort(key=lambda x: get_priority(country_code, x.attrib['tag']))
     
+    # Sort the denomination elements within each country by face value in descending order
+    for country in filtered_countries:
+        # Find all denomination elements (denom_1, denom_2, etc.)
+        denominations = []
+        non_denom_elements = []
+        
+        # Separate denomination elements from other elements
+        for child in country:
+            if child.tag.startswith('denom_'):
+                denominations.append(child)
+            else:
+                non_denom_elements.append(child)
+        
+        if denominations:
+            # Sort denominations by face value in descending order
+            denominations.sort(key=lambda x: int(x.attrib['val']), reverse=True)
+            
+            # Store country attributes before clearing
+            country_attribs = country.attrib.copy()
+            
+            # Remove all child elements from country
+            country.clear()
+            
+            # Restore country attributes
+            for key, value in country_attribs.items():
+                country.set(key, value)
+            
+            # Re-add denomination elements with new sequential tags (denom_1, denom_2, etc.)
+            for i, denom in enumerate(denominations, 1):
+                denom.tag = f"denom_{i}"
+                country.append(denom)
+            
+            # Re-add non-denomination elements at the end
+            for elem in non_denom_elements:
+                country.append(elem)
+    
     # Find missing codes
     added_codes = {country.get('tag') for country in filtered_countries}
     missing_codes = set(country_code) - added_codes
@@ -402,7 +437,7 @@ def filter_and_sort_countries(root, country_code):
 def select_country(input_str:str, remote_folder:str):
     """ Open selecttion according to  input country 
     :param input_str
-    :param remote_folder: 选择的远端目录(UN60_XXX、UN200_XXX), 获取对应的currency文件
+    :param remote_folder: 选择的远端目录(UN60D、UN200_XXX), 获取对应的currency文件
     """
     
     """ 1. Get Input Country Name 
@@ -535,7 +570,7 @@ if __name__ == "__main__":
     
     while True:
         init()
-        select_country("USD PHP TWD MNT", "UN60D")
+        select_country("KES BWP MGA", "UN60")
 
         press_any_key_to_continue()
         # input("Press Any Key")
