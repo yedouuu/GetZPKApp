@@ -549,6 +549,8 @@ def select_country(input_str:str, remote_folder:str):
             error_msg.append(f" 【Error】local_main_rootfs_bin_path:{main_rootfs_bin_path} not exists")
         else:
             for code in country_code:
+                if code in ['AUT','MIX']:
+                    continue
                 country_folder = f"{code.upper()}"
                 country_folder_path = os.path.join(main_rootfs_bin_path, country_folder)
                 if not os.path.exists(country_folder_path):
