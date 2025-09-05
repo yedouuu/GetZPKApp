@@ -36,6 +36,13 @@
 
     <IMG_DesignScheme val="GL18">
         <template>GL18</template>
+        
+        <local_template_rootfs_path>
+            <path model="UN60D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
+            <path model="UN70D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
+            <path model="UN60W">./WL_GL18_PackProj/rootfs/rootfs_20011b_template_UN60W</path>
+        </local_template_rootfs_path>
+
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
         <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>

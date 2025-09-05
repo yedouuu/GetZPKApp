@@ -80,6 +80,16 @@ def get_server():
         input("按任意键退出...")
         exit()
 
+def get_config_tree(config_tree="ssh_config"):
+    """ 获取对应的xml树 """
+    if "ssh_config" in config_tree:
+        return ssh_config_tree
+    elif "remote_config" in config_tree:
+        return remote_config_tree
+    else:
+        print_red_text(f"【ERROR】未知的config_tree：{config_tree}")
+        input("按任意键退出...")
+        exit()
 
 def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
     """ 查找指定tag的text值

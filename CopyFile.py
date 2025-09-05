@@ -107,15 +107,30 @@ def upload_file(source_path, destination_path):
     subprocess.run(command, check=True)
 
 
-def create_empty_rootfs():
+def create_empty_rootfs(model=""):
     """ 从空白模板创建 rootfs 
+        Arg: 
+            model: str, 机型 (Ex: UN60W, UN60D, UN70D)
         return : rootfs_path
         Ex: ./1_WLGL18_240411/rootfs/rootfs_20011b
     """
-    rootfs_template_path = xml_Utils.get_text("local_template_rootfs_path")
+    config_tree = xml_Utils.get_config_tree("remote_config")
+    rootfs_template_paths = config_tree.findall("./IMG_DesignScheme[@val='GL18']/local_template_rootfs_path/path")
+
+    print(f"model = {model}")
+    print(f"rootfs_template_paths = {rootfs_template_paths}")
+    
+    rootfs_template_path = ""
+    for path in rootfs_template_paths:
+        if path.attrib.get("model", "") in model:
+            rootfs_template_path = path.text
+            print(f"Selected rootfs_template_path: {rootfs_template_path}")
+            break
+
+    # rootfs_template_path = xml_Utils.get_text("local_template_rootfs_path", config_tree="remote_config")
     rootfs_path = xml_Utils.get_text("local_rootfs_path")
     if not os.path.exists(rootfs_template_path):
-        xml_Utils.print_red_text(f"rootfs_template_path:{rootfs_template_path} not exists")
+        xml_Utils.print_red_text(f"rootfs_template_path:{ os.path.abspath(rootfs_template_path)} not exists")
         return None
     
     if os.path.exists(rootfs_path):
@@ -219,6 +234,7 @@ def GL18_modify_user_config(src, dst):
             src: str, 源文件路径
             dst: str, 目标文件路径
     """
+    print(f"【Info】Modifying user_config from {src} to {dst}")
     src_root = xml_Utils.LXML_ET.parse(src).getroot()
     dst_tree = xml_Utils.LXML_ET.parse(dst)
 
@@ -239,6 +255,7 @@ def GL18_modify_user_config(src, dst):
     dst_tree.write(dst, encoding='utf-8', pretty_print=True)
 
 def GL18_modify_ZPK_version(new_file_name, dst):
+    print(f"【Info】Modifying ZpkVersion to {new_file_name} in {dst}")
     dst_tree = xml_Utils.LXML_ET.parse(dst)
     element = dst_tree.xpath('/config/item[@name="ZpkVersion"]')[0]
     print(f"【Info】ZpkVersion = {element.get('value')}")
@@ -306,7 +323,7 @@ def GL18_create_rootfs_image(new_file_name:str, customer_code: str = ""):
     """ 创建 GL18 rootfs """
 
     src = xml_Utils.get_text("local_main_rootfs_path")
-    dst = create_empty_rootfs()
+    dst = create_empty_rootfs(new_file_name)
     copy_files_to_rootfs(src, dst)
 
     user_config_src = "./user_config.xml"
@@ -332,5 +349,5 @@ if __name__ == '__main__':
     # select_and_upload_file("D:\\200_WL\\210_GL20双CIS")
     # show_message()
 
-    file_system = GL18_create_rootfs_image("WL_UN60DENRU_250425B")
+    file_system = GL18_create_rootfs_image("WL_UN60WENRU_250425B")
     print(f"file system = {file_system}")
