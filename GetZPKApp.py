@@ -41,7 +41,7 @@ from CopyFile import (
     copy_to_clipboard, 
     GL18_create_rootfs_image
 )
-from SelectCountry import select_country
+from SelectCountry import check_mag_para, select_country
 from textual.widgets import (
     Static, 
     Button, 
@@ -1257,6 +1257,10 @@ ZPKView {
     def action_toggle_dark(self):
         """Toggle dark mode."""
         self.dark = not self.dark
+    
+    def update_mag_para(self, currency_code, remote_folder):
+        """Update mag_para file."""
+        check_mag_para(currency_code, remote_folder)
 
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
@@ -1279,11 +1283,13 @@ ZPKView {
 
     @on(Sidebar.Submitted)
     def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
-        """ 根据输入，更新对应的货币信息 """
+        """ 根据输入，更新对应的货币信息, 并且同步更新mag_para文件(如果有的话) """
         val = message.value
         if val:
             self.sidebar.query_one(ErrorMessage).msg = ""
-            error_msg = select_country(val, self.remote_folder)
+            currency_code, error_msg = select_country(val, self.remote_folder)
+            self.update_mag_para(currency_code, self.remote_folder)
+            
             if error_msg:
                 self.sidebar.query_one(ErrorMessage).msg = error_msg
             else:

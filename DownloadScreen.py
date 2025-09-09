@@ -7,6 +7,7 @@ import logging
 import asyncio
 from xml_Utils import (
     upload_currencys_xml,
+    upload_mag_para_xml,
     upload_ui_file,
     pack_zpk,
     download_zpk,
@@ -93,6 +94,7 @@ class DownloadScreen(ModalScreen):
             self.change_status("上传currencys.xml...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
             await set_auto_currency(self.ssh_client, remote_folder, currency_list)
+            await upload_mag_para_xml(self.ssh_client, remote_folder)
             self.query_one("#progress").advance(5)
 
             self.change_status("上传ui_file...")

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mag_para version="1.1">
+	<Country tag="USD">
+		<denom val="100">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="12">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="50">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="20">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="10">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="5">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="2">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="1">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+	</Country>
+	<Country tag="EUR">
+		<denom val="500">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="200">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="100">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="50">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="20">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="10">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="5">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="2">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+	</Country>
+	<Country tag="CNY">
+		<denom val="100">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="4">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="5">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="50">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="4">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="5">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="20">
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="5">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="13">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="10">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="5">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="5">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+			<version val="3">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+		<denom val="1">
+			<version val="1">
+				<para type="BM" alg_en="Y" mag_thred="210" />
+				<para type="LSM" alg_en="N" mag_thred="222" />
+				<para type="RSM" alg_en="N" mag_thred="223" />
+				<para type="LSM1" alg_en="Y" mag_thred="224" />
+				<para type="RSM1" alg_en="N" mag_thred="213" />
+				<para type="LSM2" alg_en="Y" mag_thred="254" />
+				<para type="RSM2" alg_en="N" mag_thred="244" />
+				<para type="HD" alg_en="Y" mag_thred="111" />
+			</version>
+		</denom>
+	</Country>
+</mag_para>

@@ -4,7 +4,7 @@ import os
 import msvcrt
 from fuzzywuzzy import process
 from colorama import Fore, Style, init
-from xml_Utils import get_text, open_xml, get_config_tree, get_scheme
+from xml_Utils import get_text, need_mag_para, open_xml, get_scheme
 
 country_currency_map = {
     '自动AUT':  'AUT' ,
@@ -559,7 +559,183 @@ def select_country(input_str:str, remote_folder:str):
                 else:
                     print_green_text(f"【Info】{country_folder_path} exists")
 
-    return error_msg
+    return country_code, error_msg
+
+def __parse_country(country_elem):
+    """
+    从 <Country> 节点中提取所有 denom_xx 的 val 属性，
+    以及内部 mag_sensitivity 的所有属性。
+    返回一个按 denom_val 从大到小排序的列表。
+    """
+    results = []
+    for child in country_elem:
+        if child.tag.startswith("denom_") and "val" in child.attrib:
+            denom_val = child.attrib["val"]
+            mag_elem = child.findall("mag_sensitivity")
+
+            print(f"denom_val: {denom_val}, mag_elem: {mag_elem}")
+            # 提取 mag_sensitivity 的所有属性
+            mag_info = [mag.attrib for mag in mag_elem] if mag_elem else []
+            results.append({
+                "denom_val": denom_val,
+                "mag_sensitivity": mag_info
+            })
+
+    # 按 denom_val 从大到小排序
+    results.sort(key=lambda x: int(x["denom_val"]), reverse=True)
+    print(f"results: {results}")
+    return results
+
+
+
+def __init_a33_mag_para_elements(parent_element, origin_mag_para):
+    """
+    为指定的父元素创建默认的 mag_para 配置
+    :param parent_element: 父元素，通常是 version 元素
+    """
+    # 完整的标准 mag_para 配置
+    mag_para = [
+        {'type': "BM",   'alg_en': "N", 'mag_thred': "210"},
+        {'type': "LSM",  'alg_en': "N", 'mag_thred': "222"},
+        {'type': "RSM",  'alg_en': "N", 'mag_thred': "223"},
+        {'type': "LSM1", 'alg_en': "N", 'mag_thred': "224"},
+        {'type': "RSM1", 'alg_en': "N", 'mag_thred': "213"},
+        {'type': "LSM2", 'alg_en': "N", 'mag_thred': "254"},
+        {'type': "RSM2", 'alg_en': "N", 'mag_thred': "244"},
+        {'type': "HD",   'alg_en': "N", 'mag_thred': "111"}
+    ]
+    for para_config in mag_para:
+        para_elem = ET.Element('para', attrib=para_config)
+        
+        if para_elem.get('type') == 'BM' and origin_mag_para:
+            para_elem.set('alg_en', origin_mag_para['bm_en'])
+            para_elem.set('mag_thred', origin_mag_para['bm_thred'])
+        elif (para_elem.get('type') == 'LSM' or para_elem.get('type') == 'RSM') and origin_mag_para:
+            para_elem.set('alg_en', origin_mag_para['sm_en'])
+            # para_elem.set('mag_thred', origin_mag_para['sm_thred'])
+            
+        parent_element.append(para_elem)
+    return parent_element
+
+def __init_gl20multi_mag_para_elements(parent_element: ET.Element, origin_mag_para):
+    """
+    为指定的父元素创建 GL20MULTI 的 mag_para 配置
+    :param parent_element: 父元素，通常是 version 元素
+    """
+    # 完整的标准 mag_para 配置
+    # <para type="BM" alg_en="N" peak_level="3" peak_max="4" peak_min="0" l_range="60" r_range="113" location_en="N" />
+    mag_para = [
+        {'type': "BM",   'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "LSM",  'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "RSM",  'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        # {'type': "LSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        # {'type': "RSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        # {'type': "LSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        # {'type': "RSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        # {'type': "HD",   'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"}
+    ]
+        
+    for para_config in mag_para:
+        para_elem = ET.Element('para', attrib=para_config)
+        
+        if para_elem.get('type') == 'BM' and origin_mag_para:
+            para_elem.set('alg_en', origin_mag_para['bm_en'])
+            para_elem.set('peak_level', origin_mag_para['bm_level'])
+            para_elem.set('peak_max', origin_mag_para['bm_max'])
+            para_elem.set('peak_min', origin_mag_para['bm_min'])
+        elif (para_elem.get('type') == 'LSM' or para_elem.get('type') == 'RSM') and origin_mag_para:
+            para_elem.set('alg_en', origin_mag_para['sm_en'])
+            para_elem.set('peak_level', origin_mag_para['sm_level'])
+            para_elem.set('peak_max', origin_mag_para['sm_max'])
+            para_elem.set('peak_min', origin_mag_para['sm_min'])
+
+        parent_element.append(para_elem)
+    return parent_element
+
+
+def check_mag_para(currency_code_list: list, remote_folder: str):
+    """
+    Check if mag_para.xml contains the correct tags for the currency codes in currency_code_list
+    1. If a currency code from currency_code_list is not found in mag_para.xml:
+        then add a new <currency tag="XXX">...</currency> section with denominations that match currencys.xml
+        
+    2. Resort the <currency tag="XXX">...</currency> sections in mag_para.xml according to the order in currency_code_list
+    
+    3. Resort the <denom val="xxx">...<denom val="xxx"> elements within each <currency> section
+    
+    4. Save the modified mag_para.xml
+    """
+    scheme = get_scheme(remote_folder)
+    print(f"Start to check mag_para.xml for {remote_folder}, scheme={scheme}")
+    
+    if ( need_mag_para(remote_folder) == False ):
+        print_yellow_text(f"【Warning】check_mag_para Unsupported scheme: {scheme}. Only A33 and GL20MULTI are supported in mag_para.xml.")
+        return
+
+    local_mag_xml_file_path = get_text("local_mag_xml_file_path", scheme=scheme, config_tree="remote_config")
+    local_currencys_xml_path = get_text("local_currencys_xml_path")
+    local_currencys_xml_file_path = get_text("local_currencys_xml_path") + "/currencys.xml"
+    mag_xml_tree = open_xml(local_mag_xml_file_path)
+    currencys_xml_tree = open_xml(local_currencys_xml_file_path)
+    
+    if mag_xml_tree is None or currencys_xml_tree is None:
+        print_red_text("【Error】Failed to open mag_para.xml or currencys.xml")
+        return
+    
+    mag_xml_root = mag_xml_tree.getroot()
+    currencys_xml_root = currencys_xml_tree.getroot()
+    
+    # Step 1: Check and add missing currency sections
+    existing_currency_tags = {currency.get('tag') for currency in mag_xml_root.findall('currency')}
+    for code in currency_code_list:
+        if code in ['AUT','MIX']:
+            continue
+        if code not in existing_currency_tags:
+            # Find the corresponding country in currencys.xml
+            country_elem = currencys_xml_root.find(f".//Country[@tag='{code}']")
+            if country_elem is not None:
+                # Create a new currency element
+                new_currency_elem = ET.Element('Country', attrib={'tag': code})
+                
+                if scheme == "GL20MULTI":
+                    # <sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70" />
+                    sample_config = {'mm_thred': "70",   'lsm_thred': "70",  'rsm_thred': "70",  \
+                                     'lsm1_thred': "70", 'rsm1_thred': "70", 'lsm2_thred': "70", \
+                                     'rsm2_thred': "70", 'HD_thred': "70"}
+                    new_currency_elem.append(ET.Element('sample', attrib=sample_config))
+
+                # Add denomination elements
+                for denom in __parse_country(country_elem):
+                    new_denom_elem = ET.Element('denom', attrib={'val': denom["denom_val"]})
+                    # print(f"denom: {denom['denom_val']}, mag_para: {denom['mag_sensitivity']}")
+                    for mag_para in denom["mag_sensitivity"]:
+                        # print(f"Adding mag_para for {code} denom {denom['denom_val']}: {mag_para}")
+                        new_ver_elem = ET.Element('version', attrib={'val': mag_para["ver"]})
+                        if ( scheme == "A33" ):
+                            new_ver_elem = __init_a33_mag_para_elements(new_ver_elem, mag_para)
+                        elif ( scheme == "GL20MULTI" ):
+                            new_ver_elem = __init_gl20multi_mag_para_elements(new_ver_elem, mag_para)
+
+                        #TODO: Set alg_en and mag_thred, according to mag_para attributes
+                        new_denom_elem.append(new_ver_elem)
+                    new_currency_elem.append(new_denom_elem)
+                
+                # Append the new currency element to mag_para.xml root
+                mag_xml_root.append(new_currency_elem)
+                print_green_text(f"【Info】Added missing currency section for {code}")
+            else:
+                print_red_text(f"【Error】Currency code {code} not found in currencys.xml")
+    
+    # Step 2: Resort currency sections in mag_para.xml
+    mag_xml_root[:] = sorted(mag_xml_root, key=lambda x: get_priority(currency_code_list, x.get('tag')))
+    
+
+    # save after adding missing sections
+    new_mag_xml_path = os.path.join(os.path.dirname(local_currencys_xml_path), "mag_para.xml")
+    ET.indent(mag_xml_tree, space="\t", level=0)
+    
+    mag_xml_tree.write(new_mag_xml_path, encoding="utf-8", xml_declaration=True)
+
 
 def press_any_key_to_continue():
     print("按任意键继续, 按q键退出...")
@@ -572,7 +748,9 @@ if __name__ == "__main__":
     
     while True:
         init()
-        select_country("KES BWP MGA", "UN60")
+        # select_country("KES BWP MGA", "UN60")
+        # check_A33_mag_para(['BWP'], "UN220")
+        check_mag_para(['KES'], "UN220")
 
         press_any_key_to_continue()
         # input("Press Any Key")
@@ -586,6 +764,9 @@ if __name__ == "__main__":
         # keyboard.unhook_all()
         # print("继续执行程序...")
 
+""" Query an element """
+# element = root.find('Country')
+# print(element)
 
 """ Modify an element """
 # element = root.find('Country')

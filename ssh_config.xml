@@ -1,16 +1,16 @@
 <SSH_Configuration>
-    <!-- <hostname>192.168.1.250</hostname>
+    <hostname>192.168.1.250</hostname>
     <username>lin</username>
     <password></password>
     <port>22</port>
-    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path> -->
+    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path>
 
 <!-- 服务器 -->
-    <hostname>git.yedou.top</hostname>
+    <!-- <hostname>git.yedou.top</hostname>
     <username>zpk</username>
     <password></password>
     <port>2233</port> 
-    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path>
+    <key_path>C:/Users/Administrator/.ssh/id_rsa</key_path> -->
 
     <local_currencys_xml_path>./new_currencys/</local_currencys_xml_path>
     <local_original_currencys_xml_path>./currencys/</local_original_currencys_xml_path>

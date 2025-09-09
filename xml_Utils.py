@@ -457,6 +457,32 @@ async def modify_user_config(ssh_client, remote_directory, file_name):
             await modified_file.write(modified_xml)
 
 
+def need_mag_para(remote_folder):
+    """
+    Check if the specified remote folder requires mag_para.xml processing
+    :param remote_folder: 远程文件夹(UN60_XXX, UN200)
+    :return: True if mag_para.xml processing is needed, False otherwise
+    """
+    scheme = get_scheme(remote_folder)
+    if scheme in ["A33", "GL20MULTI"]:
+        return True
+    return False
+
+
+async def upload_mag_para_xml(ssh_client:SSH_Client ,remote_directory:str):
+    """ 上传mag_para.xml """
+    if ( need_mag_para(remote_directory) == False ):
+        print("No need to upload mag_para.xml")
+        return
+    
+    try:
+        sftp = await ssh_client.get_sftp()
+        remote_mag_xml_path = get_text('remote_mag_xml_path',  scheme=get_scheme(remote_directory), config_tree="remote_config")
+        local_mag_xml_file_path = get_text("local_mag_xml_file_path", scheme=get_scheme(remote_directory), config_tree="remote_config")
+        await sftp.put(local_mag_xml_file_path, remote_directory+remote_mag_xml_path+'mag_para.xml')
+    except Exception as e:
+        print(f"【Error】上传mag_para.xml失败：{e}")
+
 async def upload_currencys_xml(ssh_client:SSH_Client ,remote_directory:str):
     """ 上传货币配置文件 """
     try:
