@@ -686,7 +686,7 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
     currencys_xml_root = currencys_xml_tree.getroot()
     
     # Step 1: Check and add missing currency sections
-    existing_currency_tags = {currency.get('tag') for currency in mag_xml_root.findall('currency')}
+    existing_currency_tags = {currency.get('tag') for currency in mag_xml_root.findall('Country')}
     for code in currency_code_list:
         if code in ['AUT','MIX']:
             continue
@@ -729,6 +729,22 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
     # Step 2: Resort currency sections in mag_para.xml
     mag_xml_root[:] = sorted(mag_xml_root, key=lambda x: get_priority(currency_code_list, x.get('tag')))
     
+    # Step 3: Resort denomination elements within each currency section
+    for currency in mag_xml_root.findall('Country'):
+        if ( existing_currency_tags.__contains__(currency.get('tag')) == False ):
+            continue
+        
+        denominations = [denom for denom in currency if denom.tag == 'denom']
+        denominations.sort(key=lambda x: int(x.get('val')), reverse=True)
+        
+        # Clear existing denomination elements
+        for denom in currency.findall('denom'):
+            currency.remove(denom)
+        
+        # Re-add sorted denomination elements
+        for denom in denominations:
+            currency.append(denom)
+    
 
     # save after adding missing sections
     new_mag_xml_path = os.path.join(os.path.dirname(local_currencys_xml_path), "mag_para.xml")
@@ -748,9 +764,9 @@ if __name__ == "__main__":
     
     while True:
         init()
-        select_country("KES BWP MGA", "UN60D")
+        # select_country("USD EUR KES BWP MGA", "UN60M")
         # check_A33_mag_para(['BWP'], "UN220")
-        # check_mag_para(['KES'], "UN220")
+        check_mag_para(['KES', 'USD', 'EUR'], "UN60D")
 
         press_any_key_to_continue()
         # input("Press Any Key")
