@@ -543,7 +543,7 @@ def select_country(input_str:str, remote_folder:str):
     print(f"Start to check GL18 rootfs folders for {remote_folder}, scheme={scheme}")
     if (scheme == "GL18"):
         print_green_text("【Info】GL18 Scheme detected")
-        main_rootfs_bin_path = get_text("local_main_rootfs_bin_path")
+        main_rootfs_bin_path = get_text("local_main_rootfs_bin_path", scheme="GL18", config_tree="remote_config")
         if not os.path.exists(main_rootfs_bin_path):
             print_red_text(f"【Error】local_main_rootfs_bin_path:{main_rootfs_bin_path} not exists")
             error_msg.append(f" 【Error】local_main_rootfs_bin_path:{main_rootfs_bin_path} not exists")
@@ -554,10 +554,10 @@ def select_country(input_str:str, remote_folder:str):
                 country_folder = f"{code.upper()}"
                 country_folder_path = os.path.join(main_rootfs_bin_path, country_folder)
                 if not os.path.exists(country_folder_path):
-                    print_red_text(f"【Error】{country_folder_path} not exists")
-                    error_msg.append(f" 【Error】{country_folder_path} not exists")
+                    print_red_text(f"【Error】{code} Template not exists")
+                    error_msg.append(f" 【Error】{code} Template not exists")
                 else:
-                    print_green_text(f"【Info】{country_folder_path} exists")
+                    print_green_text(f"【Info】{code} Template exists")
 
     return country_code, error_msg
 
@@ -748,9 +748,9 @@ if __name__ == "__main__":
     
     while True:
         init()
-        # select_country("KES BWP MGA", "UN60")
+        select_country("KES BWP MGA", "UN60D")
         # check_A33_mag_para(['BWP'], "UN220")
-        check_mag_para(['KES'], "UN220")
+        # check_mag_para(['KES'], "UN220")
 
         press_any_key_to_continue()
         # input("Press Any Key")

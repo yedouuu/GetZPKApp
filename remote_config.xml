@@ -47,6 +47,15 @@
             <path model="UN60W">./WL_GL18_PackProj/rootfs/rootfs_20011b_template_UN60W</path>
         </local_template_rootfs_path>
 
+        <!-- <local_GL18_base_proj_path>./WL_GL18_PackProj/</local_GL18_base_proj_path>
+        <local_GLTool_path>./WL_GL18_PackProj/GLTooL_V2.10.exe</local_GLTool_path>
+        <local_main_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main</local_main_rootfs_path> -->
+        <local_main_rootfs_bin_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main/CashTemplate_NEW</local_main_rootfs_bin_path>
+        <!-- <local_template_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_template</local_template_rootfs_path>
+        <local_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b</local_rootfs_path>
+        <local_create_rootfs_image_bat_path>./WL_GL18_PackProj/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
+        <local_GIN_path>./GIN/</local_GIN_path> -->
+
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
         <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
