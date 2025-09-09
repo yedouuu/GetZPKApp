@@ -478,7 +478,7 @@ async def upload_mag_para_xml(ssh_client:SSH_Client ,remote_directory:str):
     try:
         sftp = await ssh_client.get_sftp()
         remote_mag_xml_path = get_text('remote_mag_xml_path',  scheme=get_scheme(remote_directory), config_tree="remote_config")
-        local_mag_xml_file_path = get_text("local_mag_xml_file_path", scheme=get_scheme(remote_directory), config_tree="remote_config")
+        local_mag_xml_file_path = get_text("local_new_mag_xml_file_path", scheme=get_scheme(remote_directory), config_tree="remote_config")
         await sftp.put(local_mag_xml_file_path, remote_directory+remote_mag_xml_path+'mag_para.xml')
     except Exception as e:
         print(f"【Error】上传mag_para.xml失败：{e}")

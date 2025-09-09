@@ -66,6 +66,7 @@
     <IMG_DesignScheme val="GL20MULTI">
         <template>GL18</template>
         <local_mag_xml_file_path>./currencys/GL20MULTI_mag_para.xml</local_mag_xml_file_path>
+        <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
 
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/part/IMG_AUTO/</remote_mag_xml_path>
@@ -79,6 +80,7 @@
         <template>GL20</template>
         
         <local_mag_xml_file_path>./currencys/A33_mag_para.xml</local_mag_xml_file_path>
+        <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
 
         <remote_run_script>./hengli_zpk_repack.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/bin/IMG_AUTO/</remote_mag_xml_path>
