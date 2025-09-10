@@ -1180,6 +1180,7 @@ ZPKView {
 
         currency_list_str = ",".join(self.information.get_country_code())
         select_country(currency_list_str, self.remote_folder)
+        check_mag_para(currency_list_str, self.remote_folder)
 
         if ( get_scheme(self.remote_folder) == "GL18" ):
             print("GL18 pull repo")
