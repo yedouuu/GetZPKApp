@@ -13,6 +13,7 @@
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_TOUCH/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN200_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_ENRU/</remote_directory>
         <remote_template_path IMGDesignScheme="">/home/lin/Desktop/ZM_Template/</remote_template_path>
     </Server>
 

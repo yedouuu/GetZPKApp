@@ -595,25 +595,33 @@ def __init_a33_mag_para_elements(parent_element, origin_mag_para):
     """
     # 完整的标准 mag_para 配置
     mag_para = [
-        {'type': "BM",   'alg_en': "N", 'mag_thred': "210"},
-        {'type': "LSM",  'alg_en': "N", 'mag_thred': "222"},
-        {'type': "RSM",  'alg_en': "N", 'mag_thred': "223"},
-        {'type': "LSM1", 'alg_en': "N", 'mag_thred': "224"},
-        {'type': "RSM1", 'alg_en': "N", 'mag_thred': "213"},
-        {'type': "LSM2", 'alg_en': "N", 'mag_thred': "254"},
-        {'type': "RSM2", 'alg_en': "N", 'mag_thred': "244"},
-        {'type': "HD",   'alg_en': "N", 'mag_thred': "111"}
+        {'type': "BM",   'alg_en': "N", 'mag_thred': "0"},
+        {'type': "LSM",  'alg_en': "N", 'mag_thred': "0"},
+        {'type': "RSM",  'alg_en': "N", 'mag_thred': "0"},
+        {'type': "LSM1", 'alg_en': "N", 'mag_thred': "0"},
+        {'type': "RSM1", 'alg_en': "N", 'mag_thred': "0"},
+        {'type': "LSM2", 'alg_en': "N", 'mag_thred': "0"},
+        {'type': "RSM2", 'alg_en': "N", 'mag_thred': "0"},
+        {'type': "HD",   'alg_en': "N", 'mag_thred': "0"}
     ]
     for para_config in mag_para:
         para_elem = ET.Element('para', attrib=para_config)
         
         if para_elem.get('type') == 'BM' and origin_mag_para:
+            bm_level  = int(origin_mag_para['bm_level'])
+            bm_max    = int(origin_mag_para['bm_max'])
+            bm_min    = int(origin_mag_para['bm_min'])
+            peak_step = (bm_max - bm_min) / 8
             para_elem.set('alg_en', origin_mag_para['bm_en'])
-            para_elem.set('mag_thred', origin_mag_para['bm_thred'])
+            para_elem.set('mag_thred', str(int(bm_level * peak_step + bm_min)))
         elif (para_elem.get('type') == 'LSM' or para_elem.get('type') == 'RSM') and origin_mag_para:
+            sm_level  = int(origin_mag_para['sm_level'])
+            sm_max    = int(origin_mag_para['sm_max'])
+            sm_min    = int(origin_mag_para['sm_min'])
+            peak_step = (sm_max - sm_min) / 8
             para_elem.set('alg_en', origin_mag_para['sm_en'])
-            # para_elem.set('mag_thred', origin_mag_para['sm_thred'])
-            
+            para_elem.set('mag_thred', str(int(sm_level * peak_step + sm_min)))
+
         parent_element.append(para_elem)
     return parent_element
 
@@ -765,8 +773,7 @@ if __name__ == "__main__":
     while True:
         init()
         # select_country("USD EUR KES BWP MGA", "UN60M")
-        # check_A33_mag_para(['BWP'], "UN220")
-        check_mag_para(['KES', 'USD', 'EUR'], "UN60D")
+        check_mag_para(['KES', 'USD', 'EUR'], "UN220")
 
         press_any_key_to_continue()
         # input("Press Any Key")
