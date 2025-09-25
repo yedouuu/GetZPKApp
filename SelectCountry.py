@@ -636,11 +636,11 @@ def __init_gl20multi_mag_para_elements(parent_element: ET.Element, origin_mag_pa
         {'type': "BM",   'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
         {'type': "LSM",  'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
         {'type': "RSM",  'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
-        # {'type': "LSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
-        # {'type': "RSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
-        # {'type': "LSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
-        # {'type': "RSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
-        # {'type': "HD",   'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"}
+        {'type': "LSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "RSM1", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "LSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "RSM2", 'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"},
+        {'type': "HD",   'alg_en': "N", 'peak_level': "3", 'peak_max': "4", 'peak_min': "0", 'l_range': "0", 'r_range': "0", 'location_en': "N"}
     ]
         
     for para_config in mag_para:
@@ -753,12 +753,19 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
         for denom in denominations:
             currency.append(denom)
     
+    # Step 4: Create a new mag_para.xml file only containing the currency sections in currency_code_list
+    new_mag_xml_root = ET.Element('mag_para', attrib={'version': "1.1"})
+    for currency in mag_xml_root.findall('Country'):
+        if currency.get('tag') in currency_code_list:
+            new_mag_xml_root.append(currency)
 
     # save after adding missing sections
     new_mag_xml_path = os.path.join(os.path.dirname(local_currencys_xml_path), "mag_para.xml")
-    ET.indent(mag_xml_tree, space="\t", level=0)
-    
-    mag_xml_tree.write(new_mag_xml_path, encoding="utf-8", xml_declaration=True)
+    ET.indent(new_mag_xml_root, space="\t", level=0)
+    new_mag_xml_tree = ET.ElementTree(new_mag_xml_root)
+    new_mag_xml_tree.write(new_mag_xml_path, encoding="utf-8", xml_declaration=True)
+
+    # mag_xml_tree.write(new_mag_xml_path, encoding="utf-8", xml_declaration=True)
 
 
 def press_any_key_to_continue():
