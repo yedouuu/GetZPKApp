@@ -544,7 +544,7 @@ async def upload_ui_file(ssh_client:SSH_Client ,remote_directory:str, ui_file:st
         print(f"【Error】上传{ui_file}失败：{e}")
 
 async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currency_list:str):
-    """ A33方案设置需要自动的货币 """
+    """ A33方案设置需要自动的货币, 最多32个国家 """
     if (get_scheme(remote_directory) != 'A33'):
         return
     
@@ -567,6 +567,9 @@ async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currenc
         namespaces = {'ns': 'AK47-BK1'}
         currency_list = currency_list.replace("AUT,MIX,", "")
         
+        # 限制国家数量, 取前32个国家
+        currency_list = ','.join(currency_list.split(',')[:32])
+
         element = remote_sys_config_tree.xpath('//ns:Auto_Currency', namespaces=namespaces)
         if (element):
             element[0].set('current_inherit', currency_list)  # 修改value属性
