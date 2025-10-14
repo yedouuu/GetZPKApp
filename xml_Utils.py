@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import os
 import xml.etree.ElementTree as ET
@@ -91,6 +92,16 @@ def get_config_tree(config_tree="ssh_config"):
         input("按任意键退出...")
         exit()
 
+def get_tags(tag, scheme=None, config_tree="ssh_config"):
+    """ 获取指定标签的所有子标签 """
+    tree = get_config_tree(config_tree)
+    if scheme is not None:
+        xpath_expr = f"./IMG_DesignScheme[@val='{scheme}']"
+        scheme_node = tree.find(xpath_expr)
+        return scheme_node.findall(tag)
+    else:
+        return tree.findall(tag)
+
 def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
     """ 查找指定tag的text值
 
@@ -121,7 +132,7 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
     elif "remote_config" in config_tree:
         try:
             """ 区分对应的服务器, 获取对应服务器上的目录 """
-            if "remote_directory" in tag:
+            if ("remote_directory" in tag) or ("remote_template_path" in tag):
                 server = get_server()
                 return [dir.text for dir in server.findall(tag)]
             
@@ -583,6 +594,236 @@ async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currenc
         async with sftp.open(remote_directory + sys_config_xml_path, 'wb') as modified_file:
             await modified_file.write(modified_xml)
 
+async def create_currency_templates(ssh_client: SSH_Client, remote_directory: str, currency_list: str):
+    """
+    生成货币模板文件
+    
+    从 remote_template_path 路径下拷贝对应的文件到 remote_directory 路径下
+    
+    - bin_folder:    货币模板
+    - xml_folder:    鉴伪区域配置
+    - sensit_folder: 鉴伪灵敏度配置
+    """
+    
+    sftp = await ssh_client.get_sftp()
+    
+    # 1. 获取远端模板路径
+    remote_template_path = get_text('remote_template_path', config_tree="remote_config")
+    remote_template_path = remote_template_path[0]  # 取第一个路径
+    
+    remote_template_folder_tag = get_tags('remote_template_folder', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    remote_template_folder_tag = remote_template_folder_tag[0]
+
+    remote_template_bin_folder       = remote_template_folder_tag.find(f"bin_folder").text
+    remote_template_color_bin_folder = remote_template_folder_tag.find(f"color_bin_folder").text
+    remote_template_xml_folder       = remote_template_folder_tag.find(f"xml_folder").text
+    remote_template_sensit_folder    = remote_template_folder_tag.find(f"sensit_folder").text
+    remote_template_ocr_folder       = remote_template_folder_tag.find(f"ocr_folder").text
+
+    custom_xml_folder_tag = remote_template_folder_tag.find("custom_xml_folder")
+    custom_xml_folder = None
+    if custom_xml_folder_tag is not None:
+        print(f"remote_custom_xml_folder = {custom_xml_folder_tag.text}")
+        if custom_xml_folder_tag.attrib.get("model") in remote_directory:
+            custom_xml_folder = custom_xml_folder_tag.text
+            
+    print(f"remote_template_path = {remote_template_path}")
+    print(f"remote_template_bin_folder = {remote_template_bin_folder}")
+    print(f"remote_template_color_bin_folder = {remote_template_color_bin_folder}")
+    print(f"remote_template_xml_folder = {remote_template_xml_folder}")
+    print(f"remote_template_sensit_folder = {remote_template_sensit_folder}")
+    print(f"remote_template_ocr_folder = {remote_template_ocr_folder}")
+
+    remote_template_bin_path        = os.path.join(remote_template_path, remote_template_bin_folder).replace('\\', '/')
+    remote_template_color_bin_path  = os.path.join(remote_template_path, remote_template_color_bin_folder).replace('\\', '/')
+    remote_template_xml_path        = os.path.join(remote_template_path, remote_template_xml_folder).replace('\\', '/')
+    remote_template_sensit_path     = os.path.join(remote_template_path, remote_template_sensit_folder).replace('\\', '/')
+    remote_template_ocr_path        = os.path.join(remote_template_path, remote_template_ocr_folder).replace('\\', '/')
+    remote_template_custom_xml_path = None
+    
+    if custom_xml_folder is not None:
+        remote_template_custom_xml_path = os.path.join(remote_template_path, custom_xml_folder).replace('\\', '/')
+        print(f"remote_template_custom_xml_path = {remote_template_custom_xml_path}")
+    
+    remote_bin_path    = get_text('remote_bin_path', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    remote_xml_path    = get_text('remote_xml_path', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    remote_sensit_path = get_text('remote_sensit_path', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    remote_ocr_path    = get_text('remote_ocr_path', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    remote_color_bin_path = get_text('remote_color_bin_path', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    
+    remote_bin_path = os.path.join(remote_directory, remote_bin_path)
+    remote_xml_path = os.path.join(remote_directory, remote_xml_path)
+    
+    if remote_color_bin_path is not None:
+        remote_color_bin_path = os.path.join(remote_directory, remote_color_bin_path)
+    
+    if remote_sensit_path is not None:
+        remote_sensit_path = os.path.join(remote_directory, remote_sensit_path)
+    
+    if remote_ocr_path is not None:
+        remote_ocr_path = os.path.join(remote_directory, remote_ocr_path)
+
+    # 2. 移除原有的 remote_bin_path 和 remote_color_bin_path 下所有文件夹, 保留txt文件
+    try:
+        contents = await sftp.listdir(remote_bin_path)
+        for content in contents:
+            if not content.endswith('.txt') and content not in ['.', '..', 'USD']:
+                full_path = os.path.join(remote_bin_path, content).replace('\\', '/')
+                print(f"Remove {full_path}")
+                try:
+                    # 使用SSH命令递归删除，比SFTP更可靠
+                    await ssh_client.run_command(f'rm -rf "{full_path}"')
+                    print(f"Successfully removed {full_path}")
+                except Exception as e:
+                    print(f"Error removing {full_path}: {e}")
+    except Exception as e:
+        print(f"Error while cleaning remote_bin_path: {e}")
+        return
+
+    if remote_color_bin_path is not None:
+        try:
+            contents = await sftp.listdir(remote_color_bin_path)
+            for content in contents:
+                if not content.endswith('.txt') and content not in ['.', '..']:
+                    full_path = os.path.join(remote_color_bin_path, content).replace('\\', '/')
+                    print(f"Remove {full_path}")
+                    try:
+                        # 使用SSH命令递归删除，比SFTP更可靠
+                        await ssh_client.run_command(f'rm -rf "{full_path}"')
+                        print(f"Successfully removed {full_path}")
+                    except Exception as e:
+                        print(f"Error removing {full_path}: {e}")
+        except Exception as e:
+            print(f"Error while cleaning remote_color_bin_path: {e}")
+            return
+
+    # 3. 拷贝对应的bin文件到 remote_directory 路径下
+    """
+    currency_list = "USD,CNY,EUR"
+    1. 从 remote_template_path + remote_template_bin_folder 拷贝文件夹USD, CNY, EUR到 remote_bin_path
+    """
+    for currency in currency_list.split(','):
+        if "GL20MULTI" == get_scheme(remote_directory):
+            remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency)
+        remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency).replace('\\', '/')
+        remote_currency_bin_path = os.path.join(remote_bin_path, currency).replace('\\', '/')
+        print(f"Copy {remote_currency_template_bin_path} -> {remote_currency_bin_path}")
+        try:
+            await ssh_client.run_command(f'cp -r "{remote_currency_template_bin_path}" "{remote_currency_bin_path}"')
+            print(f"Successfully copied {currency} bin folder")
+        except Exception as e:
+            print(f"Error while copying {currency} bin folder: {e}")
+
+    if remote_color_bin_path is not None:
+        for currency in currency_list.split(','):
+            remote_currency_template_color_bin_path = remote_template_color_bin_path.replace("XXX", currency)
+            remote_currency_template_color_bin_path = os.path.join(remote_currency_template_color_bin_path, f"{currency}_color.bin").replace('\\', '/')
+            remote_currency_color_bin_path = os.path.join(remote_color_bin_path, f"{currency}_color.bin").replace('\\', '/')
+            print(f"Copy {remote_currency_template_color_bin_path} -> {remote_currency_color_bin_path}")
+            try:
+                await ssh_client.run_command(f'cp "{remote_currency_template_color_bin_path}" "{remote_currency_color_bin_path}"')
+                print(f"Successfully copied {currency} color bin folder")
+            except Exception as e:
+                print(f"Error while copying {currency} color bin folder: {e}")
+
+    # 4. 移除原有的 remote_xml_path 和 remote_sensit_path 下所有xml文件
+    """
+    只移除 XXX_ir_parameter.xml, XXX_sensitivity.xml 这样命名的文件
+    """
+    icc_xml_type = get_text('icc_xml_type', scheme=get_scheme(remote_directory), config_tree="remote_config")
+    if icc_xml_type is None:
+        icc_xml_type = '1'
+    print(f"remote_directory = {remote_directory}, icc_xml_type = {icc_xml_type}")
+    
+    try:
+        contents = await sftp.listdir(remote_xml_path)
+        for content in contents:
+            if content.endswith('.xml') and content not in ['.', '..']:
+                full_path = os.path.join(remote_xml_path, content).replace('\\', '/')
+                if '_ir_parameter.xml' in content or '_sensitivity.xml' in content:
+                    print(f"Remove {full_path}")
+                    try:
+                        await ssh_client.run_command(f'rm -f "{full_path}"')
+                        print(f"Successfully removed {full_path}")
+                    except Exception as e:
+                        print(f"Error removing {full_path}: {e}")
+    except Exception as e:
+        print(f"Error while cleaning remote_xml_path: {e}")
+        return
+    
+    if icc_xml_type == '2' and remote_sensit_path is not None:
+        try:
+            contents = await sftp.listdir(remote_sensit_path)
+            for content in contents:
+                if content.endswith('.xml') and content not in ['.', '..']:
+                    full_path = os.path.join(remote_sensit_path, content).replace('\\', '/')
+                    if '_sensitivity.xml' in content:
+                        print(f"Remove {full_path}")
+                        try:
+                            await ssh_client.run_command(f'rm -f "{full_path}"')
+                            print(f"Successfully removed {full_path}")
+                        except Exception as e:
+                            print(f"Error removing {full_path}: {e}")
+        except Exception as e:
+            print(f"Error while cleaning remote_sensit_path: {e}")
+            return
+
+    # 5. 拷贝对应的xml文件到 remote_directory 路径下
+    """
+    currency_list = "USD,CNY,EUR"
+    1. 先再 remote_template_custom_xml_path 中查找是否有对应的文件,
+       有则拷贝 custom_xml_folder 下的文件到 remote_xml_path
+    
+    2. 若没有则从 remote_template_xml_path 拷贝文件 
+       如: USD_ir_parameter.xml, CNY_ir_parameter.xml, EUR_ir_parameter.xml 到 remote_xml_path
+    """
+    
+    for currency in currency_list.split(','):
+        remote_currency_xml_template_path = os.path.join(remote_template_xml_path, f"{currency}_ir_parameter.xml").replace('\\', '/')
+        remote_currency_sensit_template_path = os.path.join(remote_template_sensit_path, f"{currency}_sensitivity.xml").replace('\\', '/')
+        
+        if custom_xml_folder is not None:
+            for file_name in await sftp.listdir(remote_template_custom_xml_path):
+                if file_name in ['.', '..']:
+                    continue
+                if file_name == f"{currency}_ir_parameter.xml":
+                    remote_currency_xml_template_path = os.path.join(remote_template_custom_xml_path, file_name).replace('\\', '/')
+                elif icc_xml_type == '2' and file_name == f"{currency}_sensitivity.xml":
+                    remote_currency_sensit_template_path = os.path.join(remote_template_custom_xml_path, file_name).replace('\\', '/')
+                    print(f"Found custom sensitivity xml file for {currency}: {remote_currency_sensit_template_path}")
+            
+                print(f"Found custom xml file: {file_name} in {remote_template_custom_xml_path}")
+        
+        print(f"Copy {remote_currency_xml_template_path} -> {remote_xml_path}")
+        
+        if icc_xml_type == '2':
+            print(f"Copy {remote_currency_sensit_template_path} -> {remote_sensit_path}")
+        
+        try:
+            await ssh_client.run_command(f'cp "{remote_currency_xml_template_path}" "{remote_xml_path}"')
+            print(f"Successfully copied {currency}_ir_parameter.xml")
+            if icc_xml_type == '2':
+                await ssh_client.run_command(f'cp "{remote_currency_sensit_template_path}" "{remote_sensit_path}"')
+                print(f"Successfully copied {currency}_sensitivity.xml")
+        except Exception as e:
+            print(f"Error while copying {currency}_ir_parameter.xml or {currency}_sensitivity.xml: {e}")
+
+    # 6. 拷贝OCR配置文件到 remote_directory 路径下
+    """
+    拷贝 remote_template_ocr_folder 下所有文件到 remote_ocr_path
+    """
+    if remote_template_ocr_folder is not None:
+        try:
+            for file_name in await sftp.listdir(remote_template_ocr_path):
+                if file_name in ['.', '..']:
+                    continue
+                await ssh_client.run_command(f'cp "{os.path.join(remote_template_ocr_path, file_name).replace("\\", "/")}" "{remote_ocr_path}"')
+            print(f"Successfully copied OCR configuration files from {remote_template_ocr_path} to {remote_ocr_path}")
+        except Exception as e:
+            print(f"Error while copying OCR configuration files: {e}")
+
+
+
 async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path, customer_code, callback):
     """打包zpk文件并下载"""
     sftp = await ssh_client.get_sftp()
@@ -647,8 +888,17 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
     print("ZPK文件下载完成：", local_file_path)
     return latest_file
 
+async def main():
+    ssh_config = get_ssh_config()
+    ssh_client = SSH_Client(ssh_config["hostname"], \
+                            ssh_config["port"],     \
+                            ssh_config["username"], \
+                            ssh_config["key_path"], \
+                            ssh_config["password"] )
+    await ssh_client.connect()
+    
+    remote_directory = "/home/lin/Desktop/UN220M_TEST/"
+    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY")
 
 if __name__ == '__main__':
-    remote_directory = "/home/lin/Desktop/UN60_OLD/"
-    directory_name = os.path.basename(remote_directory)
-    print(directory_name)
+    asyncio.run(main())

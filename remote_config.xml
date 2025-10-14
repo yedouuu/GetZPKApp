@@ -6,15 +6,20 @@
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_DEV/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20MULTI" >/home/lin/Desktop/UN60M_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" >/home/lin/Desktop/UN70M_TEST/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_ENZH/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_SMC/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_NEW/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_OLD/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_TOUCH/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN200_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" >/home/lin/Desktop/UN60_TEST/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20_OLD" >/home/lin/Desktop/UN200_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20_OLD" >/home/lin/Desktop/UN200_TEST/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_ENRU/</remote_directory>
-        <remote_template_path IMGDesignScheme="">/home/lin/Desktop/ZM_Template/</remote_template_path>
+        <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_DEV/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_TEST/</remote_directory>
+        <remote_template_path IMGDesignScheme="">/home/lin/Desktop/WL_ICC_Template/</remote_template_path>
     </Server>
 
     <Server hostname="git.yedou.top">
@@ -24,16 +29,58 @@
         <remote_directory IMGDesignScheme="GL20MULTI" >/home/zpk/UN60M_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_OLD/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_TOUCH/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN200_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20_OLD" >/home/zpk/UN200_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220_ENRU/</remote_directory>
-        <remote_template_path IMGDesignScheme="">/home/zpk/ZM_Template/</remote_template_path>
+        <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220M_ENRU/</remote_directory>
+        <remote_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/</remote_template_path>
     </Server>
 
 
     <IMG_DesignScheme val="GL20">
         <template>GL20</template>
+        <icc_xml_type>2</icc_xml_type>
+
+        <!-- 对应 remote_template_path 下的文件 -->
+        <remote_template_folder>
+            <bin_folder>03_GL20_Template</bin_folder>
+            <color_bin_folder>04_GL20MULT_Packed/XXX/CashTemplate_COLOR</color_bin_folder>
+            <ocr_folder>01_OCR_Configuration</ocr_folder>
+            <xml_folder>02_Configuration_NEW</xml_folder>
+            <sensit_folder>02_Configuration_NEW</sensit_folder>
+        </remote_template_folder>
+
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
+        <remote_sensit_path>upgrade/part/IMG_SENS/</remote_sensit_path>
+        <remote_ocr_path>upgrade/part/OCR_PARA/</remote_ocr_path>
+        <remote_bin_path>upgrade/part/CashTemplate_NEW/</remote_bin_path>
+        <remote_color_bin_path></remote_color_bin_path>
+        <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
+        <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
+        <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
+    </IMG_DesignScheme>
+
+    <IMG_DesignScheme val="GL20_OLD">
+        <template>GL20</template>
+        <icc_xml_type>1</icc_xml_type>
+
+        <!-- 对应 remote_template_path 下的文件 -->
+        <remote_template_folder>
+            <bin_folder>03_GL20_Template</bin_folder>
+            <color_bin_folder>04_GL20MULT_Packed/XXX/CashTemplate_COLOR</color_bin_folder>
+            <ocr_folder>01_OCR_Configuration</ocr_folder>
+            <xml_folder>02_Configuration_NEW</xml_folder>
+            <sensit_folder>02_Configuration_NEW</sensit_folder>
+        </remote_template_folder>
+
+        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
+        <remote_sensit_path>upgrade/part/IMG_SENS/</remote_sensit_path>
+        <remote_ocr_path>upgrade/part/OCR_PARA/</remote_ocr_path>
+        <remote_bin_path>upgrade/part/CashTemplate_NEW/</remote_bin_path>
+        <remote_color_bin_path></remote_color_bin_path>
         <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
         <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
         <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
@@ -41,6 +88,7 @@
 
     <IMG_DesignScheme val="GL18">
         <template>GL18</template>
+        <icc_xml_type>1</icc_xml_type>
 
         <local_template_rootfs_path>
             <path model="UN60D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
@@ -65,13 +113,29 @@
     </IMG_DesignScheme>
 
     <IMG_DesignScheme val="GL20MULTI">
-        <template>GL18</template>
+        <template>GL20MULTI</template>
+        <icc_xml_type>1</icc_xml_type>
+
         <local_mag_xml_file_path>./currencys/GL20MULTI_mag_para.xml</local_mag_xml_file_path>
         <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
+
+        <!-- 对应 remote_template_path 下的文件 -->
+        <remote_template_folder>
+            <bin_folder>05-GL20MULT_Packed</bin_folder>
+            <color_bin_folder>05-GL20MULT_Packed/XXX/CashTemplate_COLOR</color_bin_folder>
+            <ocr_folder>01_OCR_Configuration</ocr_folder>
+            <xml_folder>01_Configuration</xml_folder>
+            <sensit_folder>02_Configuration_NEW</sensit_folder>
+        </remote_template_folder>
 
         <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/part/IMG_AUTO/</remote_mag_xml_path>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
+        <remote_sensit_path>upgrade/part/IMG_SENS/</remote_sensit_path>
+        <remote_ocr_path>upgrade/part/OCR_PARA/</remote_ocr_path>
+        <remote_bin_path>upgrade/part/CashTemplate_NEW_GL18/</remote_bin_path>
+        <remote_color_bin_path>upgrade/part/CashTemplate_COLOR/</remote_color_bin_path>
         <remote_user_config_xml_path>upgrade/part/xml_new/user_config.xml</remote_user_config_xml_path>
         <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
         <remote_ui_file_name>ui_resource_WLGL20</remote_ui_file_name>
@@ -79,13 +143,31 @@
 
     <IMG_DesignScheme val="A33">
         <template>GL20</template>
+        <icc_xml_type>2</icc_xml_type>
         
         <local_mag_xml_file_path>./currencys/A33_mag_para.xml</local_mag_xml_file_path>
         <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
 
+        <!-- 对应 remote_template_path 下的文件 -->
+        <remote_template_folder>
+            <bin_folder>03_GL20_Template</bin_folder>
+            <color_bin_folder>04_GL20MULT_Packed/XXX/CashTemplate_COLOR</color_bin_folder>
+            <ocr_folder>01_OCR_Configuration</ocr_folder>
+            <xml_folder>02_Configuration_NEW</xml_folder>
+            <sensit_folder>02_Configuration_NEW</sensit_folder>
+            
+            <!-- <custom_xml_folder model="UN220">01_YKB_Configuration</custom_xml_folder>
+            <custom_sensit_folder model="UN220">01_YKB_Configuration</custom_sensit_folder> -->
+        </remote_template_folder>
+
         <remote_run_script>./hengli_zpk_repack.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/bin/IMG_AUTO/</remote_mag_xml_path>
         <remote_currencys_xml_path>upgrade/bin/IMG_AUTO/</remote_currencys_xml_path>
+        <remote_xml_path>upgrade/bin/IMG_AUTO/</remote_xml_path>
+        <remote_sensit_path>upgrade/bin/IMG_SENS/</remote_sensit_path>
+        <remote_ocr_path>upgrade/bin/OCR_PARA/</remote_ocr_path>
+        <remote_bin_path>upgrade/bin/CashTemplate_NEW/</remote_bin_path>
+        <remote_color_bin_path></remote_color_bin_path>
         <remote_user_config_xml_path>upgrade/bin/xml_new/user_config.xml</remote_user_config_xml_path>
         <remote_system_config_xml_path>upgrade/bin/xml_new/system_parameter.xml</remote_system_config_xml_path>
         <remote_ui_file_path>upgrade/mcu/</remote_ui_file_path>
