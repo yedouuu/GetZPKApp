@@ -705,7 +705,7 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
     for currency in currency_list.split(','):
         if "GL20MULTI" == get_scheme(remote_directory):
             remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency)
-        remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency).replace('\\', '/')
+        remote_currency_template_bin_path = os.path.join(remote_currency_template_bin_path, currency).replace('\\', '/')
         remote_currency_bin_path = os.path.join(remote_bin_path, currency).replace('\\', '/')
         print(f"Copy {remote_currency_template_bin_path} -> {remote_currency_bin_path}")
         try:
@@ -897,7 +897,7 @@ async def main():
                             ssh_config["password"] )
     await ssh_client.connect()
     
-    remote_directory = "/home/lin/Desktop/UN220M_TEST/"
+    remote_directory = "/home/lin/Desktop/UN70M_TEST/"
     await create_currency_templates(ssh_client, remote_directory, "GBP,CNY")
 
 if __name__ == '__main__':
