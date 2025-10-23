@@ -160,7 +160,7 @@ def copy_files_to_rootfs(src, dst):
         return None
 
     # Get currency codes to copy
-    currency_codes = set(xml_Utils.get_open_country("UN60D")) - {"AUT", "MIX", "USD"}
+    currency_codes = set(xml_Utils.get_open_country()) - {"AUT", "MIX", "USD"}
     print(f"【Info】Copying files for currencies: {currency_codes}")
 
     # Define directory mappings and their copy modes
@@ -170,9 +170,12 @@ def copy_files_to_rootfs(src, dst):
         "IMG_AUTO": "file"
     }
 
-    def copy_item(src_path, dst_path, copy_mode="file"):
+    def copy_item(src_path, dst_path, copy_mode="file", overwrite=True):
         """Copy a single file or directory if it matches the currency code"""
         try:
+            if not overwrite and os.path.exists(dst_path):
+                print(f"【Info】Skipped (exists): {os.path.basename(src_path)}")
+                return True
             if copy_mode == "file":
                 shutil.copy2(src_path, dst_path)
             else:
@@ -198,7 +201,7 @@ def copy_files_to_rootfs(src, dst):
             if any(code in item for code in currency_codes):
                 src_item = os.path.join(src_dir, item)
                 dst_item = os.path.join(dst_dir, item)
-                copy_item(src_item, dst_item, copy_mode)
+                copy_item(src_item, dst_item, copy_mode, overwrite=False)
 
     """ Process currecnys.xml, user_config.xml """
     # src_dir = xml_Utils.get_text("local_currencys_xml_path")
@@ -220,6 +223,11 @@ def copy_files_to_rootfs(src, dst):
             "src_dir":os.path.join(xml_Utils.get_text("local_main_rootfs_path"), "IMG_AUTO"), 
             "dst_dir":dst_dir
         },
+        "mag_para.xml": {
+            "type":"file",
+            "src_dir":xml_Utils.get_text("local_currencys_xml_path"),
+            "dst_dir":dst_dir
+        }
     }
 
     for item in os.listdir(src_dir):

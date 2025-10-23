@@ -90,6 +90,9 @@
         <template>GL18</template>
         <icc_xml_type>1</icc_xml_type>
 
+        <local_mag_xml_file_path>./currencys/GL18_mag_para.xml</local_mag_xml_file_path>
+        <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
+
         <local_template_rootfs_path>
             <path model="UN60D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
             <path model="UN70D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>

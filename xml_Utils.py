@@ -242,7 +242,7 @@ def get_local_currencyXML_path():
 
     return origin_xml_path, new_xml_path
 
-def get_open_country(remote_folder:str):
+def get_open_country(remote_folder:str = ""):
     """ 获取开启的国家 """
     # currency_path = get_currency_by_folder(remote_folder)
     path = get_text("local_currencys_xml_path")
@@ -475,7 +475,7 @@ def need_mag_para(remote_folder):
     :return: True if mag_para.xml processing is needed, False otherwise
     """
     scheme = get_scheme(remote_folder)
-    if scheme in ["A33", "GL20MULTI"]:
+    if scheme in ["A33", "GL20MULTI", "GL18"]:
         return True
     return False
 

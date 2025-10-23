@@ -705,7 +705,7 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
                 # Create a new currency element
                 new_currency_elem = ET.Element('Country', attrib={'tag': code})
                 
-                if scheme == "GL20MULTI":
+                if scheme == "GL20MULTI" or scheme == "GL18":
                     # <sample mm_thred="70" lsm_thred="70" rsm_thred="70" lsm1_thred="70" rsm1_thred="70" lsm2_thred="70" rsm2_thred="70" HD_thred="70" />
                     sample_config = {'mm_thred': "70",   'lsm_thred': "70",  'rsm_thred': "70",  \
                                      'lsm1_thred': "70", 'rsm1_thred': "70", 'lsm2_thred': "70", \
@@ -721,7 +721,7 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
                         new_ver_elem = ET.Element('version', attrib={'val': mag_para["ver"]})
                         if ( scheme == "A33" ):
                             new_ver_elem = __init_a33_mag_para_elements(new_ver_elem, mag_para)
-                        elif ( scheme == "GL20MULTI" ):
+                        elif ( scheme == "GL20MULTI" or scheme == "GL18" ):
                             new_ver_elem = __init_gl20multi_mag_para_elements(new_ver_elem, mag_para)
 
                         #TODO: Set alg_en and mag_thred, according to mag_para attributes
