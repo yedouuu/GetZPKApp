@@ -704,8 +704,8 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
     """
     for currency in currency_list.split(','):
         if "GL20MULTI" == get_scheme(remote_directory):
-            remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency)
-        remote_currency_template_bin_path = os.path.join(remote_currency_template_bin_path, currency).replace('\\', '/')
+            remote_template_bin_path = os.path.join(remote_template_bin_path, currency)
+        remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency).replace('\\', '/')
         remote_currency_bin_path = os.path.join(remote_bin_path, currency).replace('\\', '/')
         print(f"Copy {remote_currency_template_bin_path} -> {remote_currency_bin_path}")
         try:
