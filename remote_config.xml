@@ -19,7 +19,7 @@
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_DEV/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_TEST/</remote_directory>
-        <remote_template_path IMGDesignScheme="">/home/lin/Desktop/WL_ICC_Template/</remote_template_path>
+        <remote_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/</remote_template_path>
     </Server>
 
     <Server hostname="git.yedou.top">
