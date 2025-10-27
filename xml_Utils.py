@@ -703,9 +703,15 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
     1. 从 remote_template_path + remote_template_bin_folder 拷贝文件夹USD, CNY, EUR到 remote_bin_path
     """
     for currency in currency_list.split(','):
+        if currency in ['AUT', 'MIX', 'AUTO', 'MULT']:
+            continue
+        
         if "GL20MULTI" == get_scheme(remote_directory):
-            remote_template_bin_path = os.path.join(remote_template_bin_path, currency)
-        remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency).replace('\\', '/')
+            multi_remote_template_bin_path = os.path.join(remote_template_bin_path, currency)
+            remote_currency_template_bin_path = os.path.join(multi_remote_template_bin_path, currency).replace('\\', '/')
+        else:
+            remote_currency_template_bin_path = os.path.join(remote_template_bin_path, currency).replace('\\', '/')
+        
         remote_currency_bin_path = os.path.join(remote_bin_path, currency).replace('\\', '/')
         print(f"Copy {remote_currency_template_bin_path} -> {remote_currency_bin_path}")
         try:
@@ -897,8 +903,8 @@ async def main():
                             ssh_config["password"] )
     await ssh_client.connect()
     
-    remote_directory = "/home/lin/Desktop/UN70M_TEST/"
-    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY")
+    remote_directory = "/home/lin/Desktop/UN60_TEST/"
+    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
 
 if __name__ == '__main__':
     asyncio.run(main())
