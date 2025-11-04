@@ -70,7 +70,7 @@
             <bin_folder>03_GL20_Template</bin_folder>
             <color_bin_folder>04_GL20MULT_Packed/XXX/CashTemplate_COLOR</color_bin_folder>
             <ocr_folder>01_OCR_Configuration</ocr_folder>
-            <xml_folder>02_Configuration_NEW</xml_folder>
+            <xml_folder>01_Configuration</xml_folder>
             <sensit_folder>02_Configuration_NEW</sensit_folder>
         </remote_template_folder>
 
