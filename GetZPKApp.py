@@ -19,6 +19,8 @@ from textual.timer import Timer
 from textual.message import Message
 from textual.widget import Widget
 from xml_Utils import (
+    get_language,
+    get_motor_type,
     get_open_country,
     scan_ui_files,
     get_text,
@@ -33,7 +35,7 @@ from xml_Utils import (
     GL18_get_image_app_path,
     GL18_get_boot_path,
     GL18_get_mainboard_app_path,
-    generate_new_name
+    generate_new_name,
 )
 from CopyFile import (
     select_and_upload_file, 
@@ -282,6 +284,8 @@ class DownloadDesc(Widget):
     remote_folder = reactive("")
     mode = reactive("")
     ui_file = reactive("")
+    language = reactive("")
+    motor = reactive("")
     
     def render(self) -> str:
         text = Text()
@@ -301,6 +305,14 @@ class DownloadDesc(Widget):
         
         text.append("Mode:     ", style=styles["Info"])
         text.append(self.mode.replace(",", ", "))
+        text.append("\r\n")
+        
+        text.append("Language: ", style=styles["Info"])
+        text.append(self.language)
+        text.append("\r\n")
+
+        text.append("Motor:    ", style=styles["Info"])
+        text.append(self.motor)
         text.append("\r\n")
 
         text.append("Country:  ", style=styles["Info"])
@@ -353,6 +365,14 @@ class Information(Container):
     def set_mode(self, mode):
         """Set mode."""
         self.query_one(DownloadDesc).mode = mode
+        
+    def set_language(self, language):
+        """Set language."""
+        self.query_one(DownloadDesc).language = language
+    
+    def set_motor(self, motor):
+        """Set motor."""
+        self.query_one(DownloadDesc).motor = motor
 
 class Language(Static):
     languages = reactive([])
@@ -1136,6 +1156,7 @@ ZPKView {
         self.folder_container.folder_refresh()
         self.information.refresh_country_code(self.remote_folder)
         self.note.refresh_note()
+        self.information.set_motor(get_motor_type(self.remote_folder))
         # self.mount(Note())
 
     def action_request_quit(self) -> None:
@@ -1160,6 +1181,8 @@ ZPKView {
 - 时间: {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))}
 - UI文件: {self.ui_file}
 - 模式:  {get_mode()}
+- 语言: {get_language()}
+- 小电机: {get_motor_type(self.remote_folder)}
 - 币种 : {", ".join(self.information.get_country_code())}
 - 备注 : {self.note.get_note().split("备注:")[-1].replace("\r\n", "\n")}\r\n
 """)
@@ -1274,6 +1297,8 @@ ZPKView {
 
         self.language.clear_languages()
         self.language.add_languages(get_languages(self.remote_folder))
+        self.information.set_motor(get_motor_type(self.remote_folder))
+        self.information.set_language(get_language())
         
 
     @on(UIView.Selected)
@@ -1281,6 +1306,7 @@ ZPKView {
         """ ui_resource_UN60_NEW.bin """
         self.ui_file = message.selected
         self.query_one(Information).set_ui_file(message.selected)
+        self.information.set_motor(get_motor_type(self.remote_folder))
 
     @on(Sidebar.Submitted)
     def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
@@ -1304,6 +1330,7 @@ ZPKView {
         language = message.selected
         # print(language)
         set_language(language)
+        self.query_one(Information).set_language(language)
 
 
     @on(Function_area.CurrenciesBtnPressed)

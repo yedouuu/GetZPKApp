@@ -338,7 +338,7 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
     current_date = datetime.date.today().strftime("%y%m%d")
     ver = get_version(remote_directory, download_zpk_path, current_date)
 
-    file_name = f'{customer_code}_{directory_ver}_{current_date}' + ver
+    file_name = f'{customer_code}_{directory_ver}_{get_motor_type()}_{current_date}' + ver
     print(f"【DEBUG】new file name = {file_name}")
     return file_name
 
@@ -420,6 +420,29 @@ def set_language(language:str):
         if child.get("name") == "default_language":
             child.set("value", language)
     save_xml(user_config_root, "./user_config.xml")
+
+def get_language() -> str:
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "default_language":
+            return child.get("value")
+    return "LANGUAGE_ENGLISH"
+
+def set_motor_type(motor:str):
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "default_smotor_type":
+            child.set("value", motor)
+    save_xml(user_config_root, "./user_config.xml")
+
+def get_motor_type(remote_folder:str = "") -> str:
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("item"):
+        if child.get("name") == "default_smotor_type":
+            return child.get("value")
+    return ""
+
+
 
 async def modify_user_config(ssh_client, remote_directory, file_name):
     """修改user_config文件为最新的版本号"""
