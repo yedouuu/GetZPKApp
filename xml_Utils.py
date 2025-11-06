@@ -280,10 +280,12 @@ def get_version(remote_directory:str, current_folder, current_date):
     # 获取当前文件夹下的所有文件
     if ( "GL18" == get_scheme(remote_directory)):
         file_subfix = "_GLImage.GIN"
+        s = [content.split(file_subfix)[0][-1] for content in contents if (file_subfix in content) and (f"{current_date}" in content)]
     else:
         file_subfix = ".ZPK"
+        s = [content.split('.')[0][-1] for content in contents if (file_subfix in content) and (f"{current_date}" in content)]
 
-    s = [content.split(file_subfix)[0][-1] for content in contents if (file_subfix in content) and (f"{current_date}" in content)]
+    print(f"Existing versions for date {current_date}: {s}")
     if len(s) > 0:
         max_s = max(s)
         new_ver = chr((ord(max_s) - ord('A') + 1) % 26 + ord('A'))
@@ -903,7 +905,8 @@ async def main():
                             ssh_config["password"] )
     await ssh_client.connect()
     
-    remote_directory = "/home/lin/Desktop/UN60_TEST/"
+    remote_directory = "/home/zpk/UN70M_ENRU/"
+    # remote_directory = "/home/lin/Desktop/UN200_ENRU/"
     await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
 
 if __name__ == '__main__':
