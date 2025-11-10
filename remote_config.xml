@@ -21,6 +21,7 @@
         <remote_directory IMGDesignScheme="A33" >/home/lin/Desktop/UN220M_TEST/</remote_directory>
         <remote_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/</remote_template_path>
         <remote_currency_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/01_Currencys</remote_currency_template_path>
+        <remote_ui_file_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/20_UI</remote_ui_file_path>
     </Server>
 
     <Server hostname="git.yedou.top">
@@ -34,6 +35,8 @@
         <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220_ENRU/</remote_directory>
         <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220M_ENRU/</remote_directory>
         <remote_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/</remote_template_path>
+        <remote_currency_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/01_Currencys</remote_currency_template_path>
+        <remote_ui_file_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/20_UI</remote_ui_file_path>
     </Server>
 
 

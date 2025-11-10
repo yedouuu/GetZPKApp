@@ -133,7 +133,8 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
     elif "remote_config" in config_tree:
         try:
             """ 区分对应的服务器, 获取对应服务器上的目录 """
-            if ("remote_directory" in tag) or ("remote_template_path" in tag) or ("remote_currency_template_path" in tag):
+            if ("remote_directory" in tag) or ("remote_template_path" in tag) or \
+               ("remote_currency_template_path" in tag) or ("remote_ui_file_path" in tag):
                 server = get_server()
                 return [dir.text for dir in server.findall(tag)]
             
@@ -142,7 +143,6 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
                 scheme_node = remote_config_root.find(xpath_expr)
                 #print(scheme_node)
                 return scheme_node.find(tag).text
-            
             else:
                 print_red_text(f"【ERROR】请输入设计方案")
                 input("按任意键退出...")
@@ -683,6 +683,56 @@ async def sync_currencys_xml(ssh_client:SSH_Client) -> bool:
         print(f"Error syncing currencys.xml files: {e}")
 
 
+async def sync_ui_files(ssh_client:SSH_Client):
+    """ 同步远端的currencys.xml到本地
+    
+    比较remote_ui_file_path 下所有文件和本地文件的修改时间, 只下载更新的文件
+    
+    1. 获取远端所有 bin 文件列表
+    2. 逐个与本地bin文件对比
+    3. 若远端文件修改时间更新, 则下载覆盖本地文件, 包含元信息
+    4. 若本地文件不存在, 则直接下载
+    
+    return: 有无文件更新
+    """
+    updated = False
+    
+    sftp = await ssh_client.get_sftp()
+    remote_ui_file_path = get_text('remote_ui_file_path', config_tree="remote_config")
+    remote_ui_file_path = remote_ui_file_path[0]  # 取第一个路径
+    remote_ui_file_path = os.path.join(remote_ui_file_path).replace('\\', '/')
+    
+    local_ui_file_path = path_valide(get_text("local_ui_file_path"))
+    
+    print(f"Syncing UI files from {remote_ui_file_path} to {local_ui_file_path}")
+    try:
+        remote_files = await sftp.listdir(remote_ui_file_path)
+        for remote_file in remote_files:
+            if remote_file.endswith('.bin'):
+                remote_file_path = os.path.join(remote_ui_file_path, remote_file).replace('\\', '/')
+                local_file_path = os.path.join(local_ui_file_path, remote_file)
+                
+                # 获取远端文件的修改时间
+                remote_attr = await sftp.stat(remote_file_path)
+                remote_mtime = remote_attr.mtime
+                
+                # 获取本地文件的修改时间
+                if os.path.exists(local_file_path):
+                    local_mtime = os.path.getmtime(local_file_path)
+                else:
+                    local_mtime = 0  # 本地文件不存在
+                
+                # 比较修改时间
+                if remote_mtime > local_mtime:
+                    updated = True
+                    print(f"Downloading updated file: {remote_file}")
+                    await sftp.get(remote_file_path, local_file_path, preserve=True)
+                else:
+                    print(f"Local file is up-to-date: {remote_file}")
+        return updated
+    except Exception as e:
+        print(f"Error syncing UI files: {e}")
+
 async def create_currency_templates(ssh_client: SSH_Client, remote_directory: str, currency_list: str):
     """
     生成货币模板文件
@@ -994,7 +1044,8 @@ async def main():
     # remote_directory = "/home/zpk/UN220M_ENRU/"
     remote_directory = "/home/lin/Desktop/UN220M_ENRU/"
     # await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
-    print(await sync_currencys_xml(ssh_client))
+    # print(await sync_currencys_xml(ssh_client))
+    await sync_ui_files(ssh_client)
 
 if __name__ == '__main__':
     asyncio.run(main())

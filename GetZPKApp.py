@@ -41,6 +41,7 @@ from xml_Utils import (
     GL18_get_mainboard_app_path,
     generate_new_name,
     sync_currencys_xml,
+    sync_ui_files,
 )
 from CopyFile import (
     select_and_upload_file, 
@@ -1078,7 +1079,7 @@ ZPKView {
 
     BINDINGS = [
         Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B"),
-        Binding("ctrl+u", "upload_ui_file", "上传UI文件", key_display="U"),
+        Binding("ctrl+u", "download_ui_file", "下载UI文件", key_display="U"),
         Binding("ctrl+d", "get_zpk", "下载", key_display="D"),
         Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F"),
         Binding("ctrl+r", "refresh_floder", "刷新", key_display="R"),
@@ -1308,6 +1309,24 @@ ZPKView {
         self.set_focus(None)
         self.app.push_screen("FileBrower")
         # self.query_one(FileBrowser).refresh_filetree()
+
+    async def action_download_ui_file(self) -> None:
+        try:
+            ssh_config = get_ssh_config()
+            ssh_client = SSH_Client(ssh_config["hostname"], \
+                                    ssh_config["port"],     \
+                                    ssh_config["username"], \
+                                    ssh_config["key_path"], \
+                                    ssh_config["password"] )
+            await ssh_client.connect()
+            await sync_ui_files(ssh_client);
+        except Exception as e:
+            logging.error(f"Sync currency XML Error: {e}")
+        finally:
+            if ssh_client:
+                await ssh_client.close()
+        
+        self.ui_view.update_by_folder(str(self.remote_folder))
 
     def action_upload_ui_file(self) -> None:
         """Upload ui file."""
