@@ -10,6 +10,7 @@ import win32timezone
 import tkinter as tk
 from SSHClient import SSH_Client
 import exe_handler
+from file_Utils import copy_text_to_clipboard
 import git_service
 
 from textual import on
@@ -1281,6 +1282,8 @@ ZPKView {
             self.sidebar.query_one(Input).focus(True)
             sidebar.remove_class("-hidden100")
             
+            copy_text_to_clipboard(self.sidebar.query_one(Input).value)
+                    
             try:
                 ssh_config = get_ssh_config()
                 ssh_client = SSH_Client(ssh_config["hostname"], \
