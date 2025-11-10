@@ -1281,7 +1281,6 @@ ZPKView {
         if sidebar.has_class("-hidden100"):
             self.sidebar.query_one(Input).value = " ".join(get_open_country(self.remote_folder)[2:])
             self.sidebar.query_one(Input).focus(True)
-            sidebar.remove_class("-hidden100")
             
             copy_text_to_clipboard(self.sidebar.query_one(Input).value)
                     
@@ -1293,12 +1292,16 @@ ZPKView {
                                         ssh_config["key_path"], \
                                         ssh_config["password"] )
                 await ssh_client.connect()
+                remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
+                await git_service.pull_remote_repo(ssh_client, remote_template_path)
                 await sync_currencys_xml(ssh_client);
             except Exception as e:
                 logging.error(f"Sync currency XML Error: {e}")
             finally:
                 if ssh_client:
                     await ssh_client.close()
+                    
+            sidebar.remove_class("-hidden100")
         else:
             if sidebar.query("*:focus"):
                 self.screen.set_focus(None)
@@ -1319,6 +1322,9 @@ ZPKView {
                                     ssh_config["key_path"], \
                                     ssh_config["password"] )
             await ssh_client.connect()
+            
+            remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
+            await git_service.pull_remote_repo(ssh_client, remote_template_path)
             await sync_ui_files(ssh_client);
         except Exception as e:
             logging.error(f"Sync currency XML Error: {e}")
