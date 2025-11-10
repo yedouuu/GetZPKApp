@@ -1,3 +1,4 @@
+import logging
 import time
 import os
 import asyncio
@@ -7,6 +8,7 @@ from rich.console import RenderableType
 # 不能删除这个模块(win32timezone)，否则PyInstaller打包后执行会报错
 import win32timezone
 import tkinter as tk
+from SSHClient import SSH_Client
 import exe_handler
 import git_service
 
@@ -22,6 +24,7 @@ from xml_Utils import (
     get_language,
     get_motor_type,
     get_open_country,
+    get_ssh_config,
     scan_ui_files,
     get_text,
     get_remote_directorys,
@@ -36,6 +39,7 @@ from xml_Utils import (
     GL18_get_boot_path,
     GL18_get_mainboard_app_path,
     generate_new_name,
+    sync_currencys_xml,
 )
 from CopyFile import (
     select_and_upload_file, 
@@ -1202,6 +1206,22 @@ ZPKView {
                 os.makedirs(customer_path)
 
         currency_list_str = ",".join(self.information.get_country_code())
+        
+        try:
+            ssh_config = get_ssh_config()
+            ssh_client = SSH_Client(ssh_config["hostname"], \
+                                    ssh_config["port"],     \
+                                    ssh_config["username"], \
+                                    ssh_config["key_path"], \
+                                    ssh_config["password"] )
+            await ssh_client.connect()
+            await sync_currencys_xml(ssh_client);
+        except Exception as e:
+            logging.error(f"Sync currency XML Error: {e}")
+        finally:
+            if ssh_client:
+                await ssh_client.close()
+        
         select_country(currency_list_str, self.remote_folder)
         check_mag_para(self.information.get_country_code(), self.remote_folder)
 
@@ -1252,7 +1272,7 @@ ZPKView {
         self.create_readme(customer_path, latest_file)
         self.note.refresh_note()
 
-    def action_toggle_sidebar(self) -> None:
+    async def action_toggle_sidebar(self) -> None:
         sidebar = self.query_one(Sidebar)
         print("currency sidebar")
         self.set_focus(None)
@@ -1260,6 +1280,21 @@ ZPKView {
             self.sidebar.query_one(Input).value = " ".join(get_open_country(self.remote_folder)[2:])
             self.sidebar.query_one(Input).focus(True)
             sidebar.remove_class("-hidden100")
+            
+            try:
+                ssh_config = get_ssh_config()
+                ssh_client = SSH_Client(ssh_config["hostname"], \
+                                        ssh_config["port"],     \
+                                        ssh_config["username"], \
+                                        ssh_config["key_path"], \
+                                        ssh_config["password"] )
+                await ssh_client.connect()
+                await sync_currencys_xml(ssh_client);
+            except Exception as e:
+                logging.error(f"Sync currency XML Error: {e}")
+            finally:
+                if ssh_client:
+                    await ssh_client.close()
         else:
             if sidebar.query("*:focus"):
                 self.screen.set_focus(None)
@@ -1309,7 +1344,7 @@ ZPKView {
         self.information.set_motor(get_motor_type(self.remote_folder))
 
     @on(Sidebar.Submitted)
-    def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
+    async def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
         """ 根据输入，更新对应的货币信息, 并且同步更新mag_para文件(如果有的话) """
         val = message.value
         if val:
@@ -1323,7 +1358,7 @@ ZPKView {
                 self.sidebar.query_one(ErrorMessage).msg = [" 【Success】Success!"]
             self.query_one(Information).refresh_country_code(self.remote_folder)
         else:
-            self.action_toggle_sidebar()
+            await self.action_toggle_sidebar()
 
     @on(Language.LanguageSelected)
     def handle_language_selected(self, message:Language.LanguageSelected) -> None:
@@ -1334,9 +1369,9 @@ ZPKView {
 
 
     @on(Function_area.CurrenciesBtnPressed)
-    def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
+    async def handle_currencyBtn_pressed(self, event:Button.Pressed) -> None:
         print("Function_area.CurrencyBtnPressed")
-        self.action_toggle_sidebar()
+        await self.action_toggle_sidebar()
 
 
     @on(Function_area.DownloadBtnPressed)

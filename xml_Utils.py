@@ -111,7 +111,8 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
         - one: (默认值)返回一个元素的text
         - all: 以List返回所有查找到的元素的text
 
-    scheme: 对应的设计方案, 如: GL20, A33
+    scheme: 对应的设计方案, 如: GL20, A33, 
+        - remote_directory 和 remote_template_path 不需要指定 scheme
 
     config_tree: 指定要查找的xml文件, 默认ssh_config.xml
     """
@@ -132,7 +133,7 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
     elif "remote_config" in config_tree:
         try:
             """ 区分对应的服务器, 获取对应服务器上的目录 """
-            if ("remote_directory" in tag) or ("remote_template_path" in tag):
+            if ("remote_directory" in tag) or ("remote_template_path" in tag) or ("remote_currency_template_path" in tag):
                 server = get_server()
                 return [dir.text for dir in server.findall(tag)]
             
@@ -619,6 +620,69 @@ async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currenc
         async with sftp.open(remote_directory + sys_config_xml_path, 'wb') as modified_file:
             await modified_file.write(modified_xml)
 
+def get_remote_template_path():
+    """ 获取远端模板路径 """
+    remote_template_path = get_text('remote_template_path', config_tree="remote_config")
+    remote_template_path = remote_template_path[0]  # 取第一个路径
+    return remote_template_path
+
+def get_remote_currency_template_path():
+    """ 获取远端货币模板路径 """
+    remote_currency_template_path = get_text('remote_currency_template_path', config_tree="remote_config")
+    remote_currency_template_path = remote_currency_template_path[0]  # 取第一个路径
+    return remote_currency_template_path
+
+async def sync_currencys_xml(ssh_client:SSH_Client) -> bool:
+    """ 同步远端的currencys.xml到本地
+    
+    比较remote_currency_template_path 下所有文件和本地文件的修改时间, 只下载更新的文件
+    
+    1. 获取远端所有xml文件列表
+    2. 逐个与本地xml文件对比
+    3. 若远端文件修改时间更新, 则下载覆盖本地文件, 包含元信息
+    4. 若本地文件不存在, 则直接下载
+    
+    return: 有无文件更新
+    """
+    updated = False
+    
+    sftp = await ssh_client.get_sftp()
+    remote_currency_template_path = get_remote_currency_template_path()
+    
+    remote_currency_template_path = os.path.join(remote_currency_template_path).replace('\\', '/')
+    local_currencys_xml_path = path_valide(get_text("local_original_currencys_xml_path"))
+    
+    
+    print(f"Syncing currencys.xml files from {remote_currency_template_path} to {local_currencys_xml_path}")
+    try:
+        remote_files = await sftp.listdir(remote_currency_template_path)
+        for remote_file in remote_files:
+            if remote_file.endswith('.xml'):
+                remote_file_path = os.path.join(remote_currency_template_path, remote_file).replace('\\', '/')
+                local_file_path = os.path.join(local_currencys_xml_path, remote_file)
+                
+                # 获取远端文件的修改时间
+                remote_attr = await sftp.stat(remote_file_path)
+                remote_mtime = remote_attr.mtime
+                
+                # 获取本地文件的修改时间
+                if os.path.exists(local_file_path):
+                    local_mtime = os.path.getmtime(local_file_path)
+                else:
+                    local_mtime = 0  # 本地文件不存在
+                
+                # 比较修改时间
+                if remote_mtime > local_mtime:
+                    updated = True
+                    print(f"Downloading updated file: {remote_file}")
+                    await sftp.get(remote_file_path, local_file_path, preserve=True)
+                else:
+                    print(f"Local file is up-to-date: {remote_file}")
+        return updated
+    except Exception as e:
+        print(f"Error syncing currencys.xml files: {e}")
+
+
 async def create_currency_templates(ssh_client: SSH_Client, remote_directory: str, currency_list: str):
     """
     生成货币模板文件
@@ -633,8 +697,7 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
     sftp = await ssh_client.get_sftp()
     
     # 1. 获取远端模板路径
-    remote_template_path = get_text('remote_template_path', config_tree="remote_config")
-    remote_template_path = remote_template_path[0]  # 取第一个路径
+    remote_template_path = get_remote_template_path()
     
     remote_template_folder_tag = get_tags('remote_template_folder', scheme=get_scheme(remote_directory), config_tree="remote_config")
     remote_template_folder_tag = remote_template_folder_tag[0]
@@ -928,9 +991,10 @@ async def main():
                             ssh_config["password"] )
     await ssh_client.connect()
     
-    remote_directory = "/home/zpk/UN70M_ENRU/"
-    # remote_directory = "/home/lin/Desktop/UN200_ENRU/"
-    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
+    # remote_directory = "/home/zpk/UN220M_ENRU/"
+    remote_directory = "/home/lin/Desktop/UN220M_ENRU/"
+    # await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
+    print(await sync_currencys_xml(ssh_client))
 
 if __name__ == '__main__':
     asyncio.run(main())

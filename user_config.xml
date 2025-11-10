@@ -1,20 +1,29 @@
 <?xml version='1.0' encoding='utf-8'?>
 <config>
 
-    <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD,BHD" />
-    <item name="save_bundle_csv" type="bool" value="false" range="true,false" />
+    <item name="currencies_with_decimal" value="KWD,BHD,OMR,BSD" />
+    <item name="save_bundle_csv" type="bool" value="true" range="true,false" />
     <item name="mag_integrative_detection" type="bool" value="true" range="true,false" />
-    <item name="mode_cfg_list" type="str" value="MDC,SDC,CNT,VER" range="MDC,SDC,VER,CNT" />
+    <item name="CNT_UV_ENABLE" type="bool" value="true" range="true,false" />
+    <item name="mix_report_to_page" type="str" value="currency_detail" range="denom_detail, currency_detail" />
+    <item name="mode_cfg_list" type="str" value="MDC,SDC,CNT" range="MDC,SDC,VER,CNT" />
+    <item name="sort_cfg_list" type="str" value="CLOSE,FACE,ORIENT,F_O" range="CLOSE,FACE,ORIENT,F_O,ISSURE" />
     <item name="default_language" type="str" value="LANGUAGE_ENGLISH" />
+    <item name="default_smotor_type" type="str" value="N12" range="N09,N12" />
+    <item name="OCR_ENABLE" type="str" value="ALL" range="ALL,USD,EUR,HKD,GBP,JPY,CAD,KRW,TWD,SGD,AUD,MOP,INR,CHF,NOK,GHS,BRL,NZD,VND,MNT,RUB,AED,SAR,THB,IDR,DKK,SEK,MYR,PHP,ZAR,KHR,MXN,TRL" />
+    
 
-    <language_config name="UN60_ENZH" range="LANGUAGE_ENGLISH,LANGUAGE_CHINESES" />
-                                             
+    <language_config name="UN60_ENZH" range="LANGUAGE_ENGLISH, LANGUAGE_CHINESES" />
     <language_config name="UN60_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
     <language_config name="UN200_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
+    <language_config name="UN220_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
 
-    <currency_map redirect="TRL">土耳其 TRY</currency_map>
+    <currency_map redirect="TRY">土耳其 TRL 土耳其里拉</currency_map>
     <currency_map redirect="UGS">乌干达 UGX</currency_map>
     <currency_map redirect="MGA">马达加斯加</currency_map>
     <currency_map redirect="KES">肯尼亚</currency_map>
+    <currency_map redirect="NIP">北爱尔兰</currency_map>
+    <currency_map redirect="SBP">苏格兰</currency_map>
+    <currency_map redirect="VED">委内瑞拉 VES</currency_map>
 
 </config>
