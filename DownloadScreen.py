@@ -7,6 +7,8 @@ import logging
 import asyncio
 from xml_Utils import (
     get_text,
+    sync_currencys_xml,
+    sync_ui_files,
     upload_currencys_xml,
     upload_mag_para_xml,
     upload_ui_file,
@@ -125,6 +127,31 @@ class DownloadScreen(ModalScreen):
         except Exception as e:
             logging.exception(e)
             return ""
+        finally:
+            if self.ssh_client:
+                await self.ssh_client.close()
+                
+    async def sync_files(self):
+        try:
+            self.change_status("更新文件中...")
+            self.query_one("#progress").advance(5)
+            remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
+            await git_service.pull_remote_repo(self.ssh_client, remote_template_path)
+
+            self.query_one("#progress").advance(15)
+            self.change_status("同步货币文件中...")
+            await sync_currencys_xml(self.ssh_client)
+            
+            self.query_one("#progress").advance(30)
+            self.change_status("同步UI文件中...")
+            await sync_ui_files(self.ssh_client)
+            
+            self.query_one("#progress").update(total=100, progress=100)
+            self.query_one("#ok").disabled = False
+            self.change_status("同步完成...")
+            
+        except Exception as e:
+            logging.exception(e)
         finally:
             if self.ssh_client:
                 await self.ssh_client.close()

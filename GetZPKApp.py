@@ -1079,8 +1079,8 @@ ZPKView {
 
     BINDINGS = [
         Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B"),
-        Binding("ctrl+u", "download_ui_file", "下载UI文件", key_display="U"),
-        Binding("ctrl+d", "get_zpk", "下载", key_display="D"),
+        Binding("ctrl+u", "sync_files", "同步文件", key_display="U"),
+        Binding("ctrl+d", "get_zpk", "打包ZPK", key_display="D"),
         Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F"),
         Binding("ctrl+r", "refresh_floder", "刷新", key_display="R"),
         Binding("ctrl+q", "request_quit", "退出", key_display="Q"),
@@ -1154,8 +1154,8 @@ ZPKView {
         self.customer_code = self.query_one(Customercode_Input).get_custoemr_code()
         # self.mount(Footer())
 
-    def on_load(self) -> None:
-        pass
+    async def on_load(self) -> None:
+        await self.action_sync_files()
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
@@ -1284,23 +1284,6 @@ ZPKView {
             
             copy_text_to_clipboard(self.sidebar.query_one(Input).value)
                     
-            try:
-                ssh_config = get_ssh_config()
-                ssh_client = SSH_Client(ssh_config["hostname"], \
-                                        ssh_config["port"],     \
-                                        ssh_config["username"], \
-                                        ssh_config["key_path"], \
-                                        ssh_config["password"] )
-                await ssh_client.connect()
-                remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
-                await git_service.pull_remote_repo(ssh_client, remote_template_path)
-                await sync_currencys_xml(ssh_client);
-            except Exception as e:
-                logging.error(f"Sync currency XML Error: {e}")
-            finally:
-                if ssh_client:
-                    await ssh_client.close()
-                    
             sidebar.remove_class("-hidden100")
         else:
             if sidebar.query("*:focus"):
@@ -1313,26 +1296,11 @@ ZPKView {
         self.app.push_screen("FileBrower")
         # self.query_one(FileBrowser).refresh_filetree()
 
-    async def action_download_ui_file(self) -> None:
-        try:
-            ssh_config = get_ssh_config()
-            ssh_client = SSH_Client(ssh_config["hostname"], \
-                                    ssh_config["port"],     \
-                                    ssh_config["username"], \
-                                    ssh_config["key_path"], \
-                                    ssh_config["password"] )
-            await ssh_client.connect()
-            
-            remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
-            await git_service.pull_remote_repo(ssh_client, remote_template_path)
-            await sync_ui_files(ssh_client);
-        except Exception as e:
-            logging.error(f"Sync currency XML Error: {e}")
-        finally:
-            if ssh_client:
-                await ssh_client.close()
-        
-        self.ui_view.update_by_folder(str(self.remote_folder))
+    async def action_sync_files(self) -> None:
+        """Sync files. 从远程同步文件到本地."""
+        screen = DownloadScreen()
+        await self.push_screen(screen)
+        await screen.sync_files()
 
     def action_upload_ui_file(self) -> None:
         """Upload ui file."""
