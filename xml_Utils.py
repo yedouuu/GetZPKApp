@@ -134,7 +134,7 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
         try:
             """ 区分对应的服务器, 获取对应服务器上的目录 """
             if ("remote_directory" in tag) or ("remote_template_path" in tag) or \
-               ("remote_currency_template_path" in tag) or ("remote_ui_file_path" in tag):
+               ("remote_currency_template_path" in tag) or ("remote_ui_file_template_path" in tag):
                 server = get_server()
                 return [dir.text for dir in server.findall(tag)]
             
@@ -698,7 +698,7 @@ async def sync_ui_files(ssh_client:SSH_Client):
     updated = False
     
     sftp = await ssh_client.get_sftp()
-    remote_ui_file_path = get_text('remote_ui_file_path', config_tree="remote_config")
+    remote_ui_file_path = get_text('remote_ui_file_template_path', config_tree="remote_config")
     remote_ui_file_path = remote_ui_file_path[0]  # 取第一个路径
     remote_ui_file_path = os.path.join(remote_ui_file_path).replace('\\', '/')
     
