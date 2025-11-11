@@ -1281,8 +1281,6 @@ ZPKView {
         if sidebar.has_class("-hidden100"):
             self.sidebar.query_one(Input).value = " ".join(get_open_country(self.remote_folder)[2:])
             self.sidebar.query_one(Input).focus(True)
-            
-            copy_text_to_clipboard(self.sidebar.query_one(Input).value)
                     
             sidebar.remove_class("-hidden100")
         else:
