@@ -248,10 +248,9 @@ def GL18_modify_user_config(src, dst):
 
     for child in src_root.findall("item"):
         for key, val in child.attrib.items():
-            # print(key, val)
             if key == 'name':
                 print(f"{key} = {val}")
-                el_list = dst_tree.xpath(f'/item[@name="{val}"]')
+                el_list = dst_tree.xpath(f'item[@name="{val}"]')
                 if el_list:
                     element = el_list[0]
                 else:
