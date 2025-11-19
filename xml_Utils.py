@@ -604,8 +604,8 @@ async def set_auto_currency(ssh_client:SSH_Client ,remote_directory:str, currenc
         namespaces = {'ns': 'AK47-BK1'}
         currency_list = currency_list.replace("AUT,MIX,", "")
         
-        # 限制国家数量, 取前32个国家
-        currency_list = ','.join(currency_list.split(',')[:32])
+        # 限制国家数量, 取前64个国家
+        currency_list = ','.join(currency_list.split(',')[:64])
 
         element = remote_sys_config_tree.xpath('//ns:Auto_Currency', namespaces=namespaces)
         if (element):
