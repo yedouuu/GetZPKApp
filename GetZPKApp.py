@@ -1228,8 +1228,6 @@ ZPKView {
         check_mag_para(self.information.get_country_code(), self.remote_folder)
 
         if ( get_scheme(self.remote_folder) == "GL18" ):
-            print("GL18 pull repo")
-            git_service.pull_repo(get_text("gl18_local_repo_path"))
             print("【INFO】 PACK GL18 GIN")
             image_app_path = os.path.abspath(GL18_get_image_app_path(str(self.remote_folder)))
             mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))

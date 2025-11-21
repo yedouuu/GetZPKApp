@@ -10,6 +10,7 @@
     <item name="sort_cfg_list" type="str" value="CLOSE,FACE,ORIENT,F_O" range="CLOSE,FACE,ORIENT,F_O,ISSURE" />
     <item name="default_language" type="str" value="LANGUAGE_ENGLISH" />
     <item name="default_smotor_type" type="str" value="N12" range="N09,N12" />
+    <item name="double_recount" type="bool" value="true" range="true,false" />
     <item name="OCR_ENABLE" type="str" value="ALL" range="ALL,USD,EUR,HKD,GBP,JPY,CAD,KRW,TWD,SGD,AUD,MOP,INR,CHF,NOK,GHS,BRL,NZD,VND,MNT,RUB,AED,SAR,THB,IDR,DKK,SEK,MYR,PHP,ZAR,KHR,MXN,TRL" />
     
 

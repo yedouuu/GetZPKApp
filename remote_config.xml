@@ -151,6 +151,7 @@
     <IMG_DesignScheme val="A33">
         <template>GL20</template>
         <icc_xml_type>2</icc_xml_type>
+        <auto_detect_num>64</auto_detect_num>
         
         <local_mag_xml_file_path>./currencys/A33_mag_para.xml</local_mag_xml_file_path>
         <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>

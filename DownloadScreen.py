@@ -139,6 +139,10 @@ class DownloadScreen(ModalScreen):
             await git_service.pull_remote_repo(self.ssh_client, remote_template_path)
 
             self.query_one("#progress").advance(15)
+            self.change_status("同步GL18仓库中...")
+            await git_service.pull_repo(get_text("gl18_local_repo_path"))
+            
+            self.query_one("#progress").advance(30)
             self.change_status("同步货币文件中...")
             await sync_currencys_xml(self.ssh_client)
             

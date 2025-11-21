@@ -35,7 +35,7 @@ async def pull_remote_repo(ssh_client: SSH_Client, repo_path_on_server: str):
         print(f"【ERROR】在服务器上执行 git pull 时出错: {e}")
 
 
-def pull_repo(repo_path, remote_name="origin", branch_name="master"):
+async def pull_repo(repo_path, remote_name="origin", branch_name="master"):
     """
     使用 Dulwich 实现类似于 `git pull` 的功能。
     
