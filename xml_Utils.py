@@ -806,7 +806,7 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
     try:
         contents = await sftp.listdir(remote_bin_path)
         for content in contents:
-            if not content.endswith('.txt') and content not in ['.', '..', 'USD']:
+            if not content.endswith('.txt') and content not in ['.', '..']:
                 full_path = os.path.join(remote_bin_path, content).replace('\\', '/')
                 print(f"Remove {full_path}")
                 try:
@@ -1043,10 +1043,10 @@ async def main():
     await ssh_client.connect()
     
     # remote_directory = "/home/zpk/UN220M_ENRU/"
-    remote_directory = "/home/lin/Desktop/UN220M_ENRU/"
-    # await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
+    remote_directory = "/home/lin/Desktop/UN60M_ENRU/"
+    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
     # print(await sync_currencys_xml(ssh_client))
-    await sync_ui_files(ssh_client)
+    # await sync_ui_files(ssh_client)
 
 if __name__ == '__main__':
     asyncio.run(main())

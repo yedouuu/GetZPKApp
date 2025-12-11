@@ -482,11 +482,9 @@ def select_country(input_str:str, remote_folder:str):
         # 在这里可以继续处理已解析的XML数据
     except ET.ParseError as e:
         print(f"XML解析错误：{e}")
-        input("按任意键退出...")
         exit()
     except IOError as e:
         print(f"文件读取错误：{e}")
-        input("按任意键退出...")
         exit()
     root = tree.getroot()
     root_attrib = root.attrib
