@@ -327,7 +327,9 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
 
     """ 6.1 获取ZPK版本 """
     directory_ver = get_remote_directory_version(remote_directory, "full")
-    directory_ver = directory_ver.replace("_", "")
+    
+    """ 只取机型部分 UN60M_ENRU -> UN60M """
+    directory_ver = directory_ver.split("_")[0]
 
     if customer_path:
         download_zpk_path = customer_path
@@ -338,8 +340,10 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
     """ 生成新的文件名 """
     current_date = datetime.date.today().strftime("%y%m%d")
     ver = get_version(remote_directory, download_zpk_path, current_date)
+    motor_type = get_motor_type()
+    language_code = get_language_code(get_language())
 
-    file_name = f'{customer_code}_{directory_ver}_{get_motor_type()}_{current_date}' + ver
+    file_name = f'{customer_code}_{directory_ver}_{motor_type}_{language_code}_{current_date}' + ver
     print(f"【DEBUG】new file name = {file_name}")
     return file_name
 
@@ -428,6 +432,16 @@ def get_language() -> str:
         if child.get("name") == "default_language":
             return child.get("value")
     return "LANGUAGE_ENGLISH"
+
+def get_language_code(language:str) -> str:
+    """ 
+    根据语言代码获取语言标识
+    <language_code_map code="EN">LANGUAGE_ENGLISH</language_code_map>
+    """
+    user_config_root = open_xml("./user_config.xml").getroot()
+    for child in user_config_root.findall("language_code_map"):
+        if child.text == language:
+            return child.get("code")
 
 def set_motor_type(motor:str):
     user_config_root = open_xml("./user_config.xml").getroot()
@@ -1034,17 +1048,21 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
     return latest_file
 
 async def main():
-    ssh_config = get_ssh_config()
-    ssh_client = SSH_Client(ssh_config["hostname"], \
-                            ssh_config["port"],     \
-                            ssh_config["username"], \
-                            ssh_config["key_path"], \
-                            ssh_config["password"] )
-    await ssh_client.connect()
+    # ssh_config = get_ssh_config()
+    # ssh_client = SSH_Client(ssh_config["hostname"], \
+    #                         ssh_config["port"],     \
+    #                         ssh_config["username"], \
+    #                         ssh_config["key_path"], \
+    #                         ssh_config["password"] )
+    # await ssh_client.connect()
     
-    # remote_directory = "/home/zpk/UN220M_ENRU/"
-    remote_directory = "/home/lin/Desktop/UN60M_ENRU/"
-    await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
+    # # remote_directory = "/home/zpk/UN220M_ENRU/"
+    # remote_directory = "/home/lin/Desktop/UN60M_ENRU/"
+    # await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
+    
+    print(get_language_code("LANGUAGE_RUSSIAN"))
+    print(get_language_code("LANGUAGE_ENGLISH"))
+    print(get_language_code("LANGUAGE_POLISH"))
     # print(await sync_currencys_xml(ssh_client))
     # await sync_ui_files(ssh_client)
 

@@ -19,6 +19,12 @@
     <language_config name="UN200_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
     <language_config name="UN220_ENRU" range="LANGUAGE_ENGLISH, LANGUAGE_RUSSIAN" />
 
+    <language_code_map code="EN">LANGUAGE_ENGLISH</language_code_map>
+    <language_code_map code="CN">LANGUAGE_CHINESES</language_code_map>
+    <language_code_map code="RU">LANGUAGE_RUSSIAN</language_code_map>
+    <language_code_map code="PL">LANGUAGE_POLISH</language_code_map>
+    <language_code_map code="TR">LANGUAGE_TURKISH</language_code_map>
+
     <currency_map redirect="TRY">土耳其 TRL 土耳其里拉</currency_map>
     <currency_map redirect="UGS">乌干达 UGX</currency_map>
     <currency_map redirect="MGA">马达加斯加</currency_map>
