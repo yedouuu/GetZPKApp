@@ -197,20 +197,94 @@ def map_ui_file_name(remote_directory):
 
 def scan_ui_files(remote_directory):
     """ 
-    根据选择的remote_directory, 返回所有ui_resource_xxx.bin文件 
-    1. UN60_NEW      --> ui_resource_WLGL20.bin
-    2. UN60_XXX      --> ui_resource_UN60_XXX.bin
-    3. UN200_XXX    --> ui_resource_UN200_XXX.bin
+    扫描本地目录，查找与特定远程目录模式匹配的UI二进制文件（.bin），
+    并过滤掉属于更高级别目录版本的文件。
+    此函数执行以下步骤：
+    1. 从配置中检索本地文件夹路径。
+    2. 列出该本地文件夹中的所有文件。
+    3. 将提供的 `remote_directory` 映射到特定的UI文件名模式。
+    4. 识别类似的远程文件夹，并确定当前 `remote_directory` 的版本级别。
+    5. 选择包含 '.bin' 和映射的UI文件名的初始候选文件。
+    6. 过滤掉实际上属于类似文件夹的“更高级别”（更具体或更新）版本的文件，以避免歧义。
+    参数：
+        remote_directory (str): 用于确定目标UI文件名模式的远程目录标识符或路径字符串。
+    返回：
+        list: 在本地目录中找到的符合给定远程目录级别标准的文件名（字符串）列表。
     """
+    
     # 获取当前文件夹下的所有文件
     current_folder = get_text("local_ui_file_path")
     contents = os.listdir(current_folder)
     ui_file_name = map_ui_file_name(remote_directory)
+    simular_folders = [get_remote_directory_version(f, "full") for f in get_remote_directorys() if remote_directory in f]
+    level = get_remote_directory_level(remote_directory)
+    
+    print(f"current_folder = {current_folder}")
+    print(f"ui_file_name = {ui_file_name}")
+    print(f"simular_folders = {simular_folders}")
+    print(f"level = {level}")
+    
+    # 获取当前目录对应的ui文件
     ret = [content for content in contents if '.bin' in content and f"{ui_file_name}" in content]
+
+    print(f"Found ui files({len(ret)})")
+
+    # 移除高级别目录对应的ui文件    
+    for folder in simular_folders:
+        folder_level = get_remote_directory_level(folder)
+        if folder_level > level:
+            alt_ui_file_name = map_ui_file_name(folder)
+            alt_files = [content for content in contents if '.bin' in content and f"{alt_ui_file_name}" in content]
+            for alt_files in alt_files:
+                if alt_files in ret:
+                    ret.remove(alt_files)
+        
+    print(f"After filter ui files({len(ret)})")
+    
     return ret
 
 def get_remote_directorys():
-	return get_text("remote_directory", "all", config_tree="remote_config")
+    """ 获取所有远端目录列表 """
+    # server = get_server()
+    # paths  = []
+    
+    # for _remote_folder in server.findall("remote_directory"):
+    #         print(f"Model: {_remote_folder.get('model')}")
+    #         for path in _remote_folder.findall("path"):
+    #             print(f"  Path: {path.text}")
+    #             paths.append(path.text)
+    # return paths
+    return get_text("remote_directory", "all", config_tree="remote_config")
+
+def get_remote_directory_level(remote_directory: str) -> int:
+    """
+    Docstring for get_remote_directory_level
+    获取远端目录的级别
+    <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN60/</remote_directory>
+    <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_ZH/</remote_directory>
+    
+    Example: 
+    UN60    -> level 1,
+    UN60_ZH -> level 2
+    
+    :param remote_directory: Description
+    :type remote_directory: str
+    :return: Description
+    :rtype: int
+    """
+    server = get_server()
+    level = ""
+    
+    for _remote_folder in server.findall("remote_directory"):
+        if remote_directory == get_remote_directory_version(_remote_folder.text, "full"):
+            level = _remote_folder.get("level")
+    
+    if level == "":
+        print_red_text(f"【ERROR】无法获取远端目录级别：{remote_directory}")
+        print_red_text("将使用默认值level=1, 请检查remote_config.xml中的remote_directory配置")
+        level = "1"
+        
+    return int(level)
 
 def get_remote_directory_version(remote_directory, type="ver"):
     """ 获取远端目录版本
@@ -303,6 +377,22 @@ def get_scheme(remote_folder:str):
             print(_remote_folder.text, "   ", _remote_folder.attrib["IMGDesignScheme"])
             return _remote_folder.attrib["IMGDesignScheme"]
     return None
+
+def get_SyncICC(remote_folder:str) -> bool:
+    """ 获取远端目录的SyncICC属性 """
+    remote_folder = str(remote_folder)
+    sync_icc = True
+
+    server = get_server()
+    for _remote_folder in server.findall("remote_directory"):
+        if remote_folder in _remote_folder.text:
+            tmp = _remote_folder.attrib.get("SyncICC", "True")
+            print(f"{remote_folder} SyncICC = {tmp}")
+            if (tmp.upper() == "FALSE"):
+                sync_icc = False
+                break
+    
+    return sync_icc
 
 
 def get_download_zpk_path(remote_directory:str):
@@ -1060,9 +1150,21 @@ async def main():
     # remote_directory = "/home/lin/Desktop/UN60M_ENRU/"
     # await create_currency_templates(ssh_client, remote_directory, "GBP,CNY,EUR,USD")
     
-    print(get_language_code("LANGUAGE_RUSSIAN"))
-    print(get_language_code("LANGUAGE_ENGLISH"))
-    print(get_language_code("LANGUAGE_POLISH"))
+    # print(get_language_code("LANGUAGE_RUSSIAN"))
+    # print(get_language_code("LANGUAGE_ENGLISH"))
+    # print(get_language_code("LANGUAGE_POLISH"))
+    
+    # get_SyncICC("/home/lin/Desktop/UN60_NQS/")
+    
+    # remote_list = get_remote_directorys()
+    # for remote_directory in remote_list:
+    #     print(f"remote_directory = {remote_directory}")
+    #     print(f"scheme = {get_scheme(remote_directory)}")
+    #     print(f"level = {get_remote_directory_level(remote_directory)}")
+    
+    
+    scan_ui_files("UN60")
+    
     # print(await sync_currencys_xml(ssh_client))
     # await sync_ui_files(ssh_client)
 

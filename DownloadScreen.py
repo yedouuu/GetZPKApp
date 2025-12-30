@@ -6,6 +6,7 @@ from textual.widgets import Button, Footer, Header, Label, ProgressBar, Static
 import logging
 import asyncio
 from xml_Utils import (
+    get_SyncICC,
     get_text,
     sync_currencys_xml,
     sync_ui_files,
@@ -96,16 +97,20 @@ class DownloadScreen(ModalScreen):
 
     async def download(self, remote_folder, ui_file, currency_list:str, customer_path=None, customer_code="WL") -> str:
         try:
-            self.change_status("更新文件中...")
-            self.query_one("#progress").advance(5)
-            remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
-            await git_service.pull_remote_repo(self.ssh_client, remote_template_path)
+            sync_icc = get_SyncICC(remote_folder)
             
-            self.change_status("创建对应的货币文件...")
-            self.query_one("#progress").advance(5)
-            await create_currency_templates(self.ssh_client, remote_folder, currency_list)
+            if sync_icc:
+                self.change_status("更新文件中...")
+                self.query_one("#progress").advance(5)
+                remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
+                
+                await git_service.pull_remote_repo(self.ssh_client, remote_template_path)
+                
+                self.change_status("创建对应的货币文件...")
+                self.query_one("#progress").advance(5)
+                await create_currency_templates(self.ssh_client, remote_folder, currency_list)
             
-            self.change_status("上传currencys.xml...")
+            self.change_status("上传currencys.xml, mag.xml ...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
             await set_auto_currency(self.ssh_client, remote_folder, currency_list)
             await upload_mag_para_xml(self.ssh_client, remote_folder)
