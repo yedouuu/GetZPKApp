@@ -789,7 +789,7 @@ async def sync_currencys_xml(ssh_client:SSH_Client) -> bool:
 
 
 async def sync_ui_files(ssh_client:SSH_Client):
-    """ 同步远端的currencys.xml到本地
+    """ 同步远端的ui.bin到本地
     
     比较remote_ui_file_path 下所有文件和本地文件的修改时间, 只下载更新的文件
     
@@ -797,6 +797,7 @@ async def sync_ui_files(ssh_client:SSH_Client):
     2. 逐个与本地bin文件对比
     3. 若远端文件修改时间更新, 则下载覆盖本地文件, 包含元信息
     4. 若本地文件不存在, 则直接下载
+    5. 若有多余的文件，则删除
     
     return: 有无文件更新
     """
@@ -834,6 +835,13 @@ async def sync_ui_files(ssh_client:SSH_Client):
                     await sftp.get(remote_file_path, local_file_path, preserve=True)
                 else:
                     print(f"Local file is up-to-date: {remote_file}")
+        
+        for local_file in os.listdir(local_ui_file_path):
+            if local_file.endswith('.bin') and local_file not in remote_files:
+                local_file_path = os.path.join(local_ui_file_path, local_file)
+                print(f"Removing extra local file: {local_file}")
+                os.remove(local_file_path)
+
         return updated
     except Exception as e:
         print(f"Error syncing UI files: {e}")
