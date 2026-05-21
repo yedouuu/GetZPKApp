@@ -12,6 +12,30 @@
 		<rsm_thred val="64" />
 		<selecttion val="Y" />
 	</Country>
+	<Country tag="ALL">
+		<denom_1 val="10000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_1>
+		<denom_2 val="5000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_2>
+		<denom_3 val="2000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_3>
+		<denom_4 val="1000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_4>
+		<denom_5 val="500">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_5>
+		<denom_6 val="200">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_6>
+		<mm_thred val="64" />
+		<lsm_thred val="64" />
+		<rsm_thred val="64" />
+		<selecttion val="N" />
+	</Country>
 	<Country tag="XCD">
 		<denom_1 val="100">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
@@ -139,28 +163,28 @@
 		<selecttion val="Y" />
 	</Country>
 	<Country tag="KGS">
-		<denom_1 val="20">
+		<denom_1 val="5000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_1>
-		<denom_2 val="50">
+		<denom_2 val="2000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_2>
-		<denom_3 val="100">
+		<denom_3 val="1000">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_3>
-		<denom_4 val="200">
+		<denom_4 val="500">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_4>
-		<denom_5 val="500">
+		<denom_5 val="200">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_5>
-		<denom_6 val="1000">
+		<denom_6 val="100">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_6>
-		<denom_7 val="2000">
+		<denom_7 val="50">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_7>
-		<denom_8 val="5000">
+		<denom_8 val="20">
 			<mag_sensitivity bm_en="N" bm_level="3" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
 		</denom_8>
 		<mm_thred val="64" />
@@ -647,10 +671,10 @@
 	</Country>
 	<Country tag="USD">
 		<denom_1 val="100">
-			<mag_sensitivity bm_en="Y" bm_level="3" bm_max="4" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="10" sm_min="0" ver="1" />
-			<mag_sensitivity bm_en="Y" bm_level="3" bm_max="8" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="2" sm_min="0" ver="2" />
-			<mag_sensitivity bm_en="Y" bm_level="3" bm_max="2" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="10" sm_min="0" ver="3" />
-			<mag_sensitivity bm_en="Y" bm_level="3" bm_max="2" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="2" sm_min="0" ver="12" />
+			<mag_sensitivity bm_en="Y" bm_level="4" bm_max="4" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="10" sm_min="0" ver="1" />
+			<mag_sensitivity bm_en="Y" bm_level="4" bm_max="8" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="2" sm_min="0" ver="2" />
+			<mag_sensitivity bm_en="Y" bm_level="4" bm_max="2" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="10" sm_min="0" ver="3" />
+			<mag_sensitivity bm_en="Y" bm_level="4" bm_max="2" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="2" sm_min="0" ver="12" />
 		</denom_1>
 		<denom_2 val="50">
 			<mag_sensitivity bm_en="Y" bm_level="3" bm_max="2" bm_min="0" bm_thred="220" sm_en="N" sm_level="3" sm_max="8" sm_min="0" ver="1" />
@@ -1420,27 +1444,66 @@
 		<selecttion val="N" />
 	</Country>
 	<Country tag="SYP">
-		<denom_1 val="50">
+		<denom_1 val="10">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_1>
-		<denom_2 val="100">
+		<denom_2 val="25">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_2>
-		<denom_3 val="200">
+		<denom_3 val="50">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_3>
-		<denom_4 val="500">
+		<denom_4 val="100">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_4>
-		<denom_5 val="1000">
+		<denom_5 val="200">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_5>
-		<denom_6 val="2000">
+		<denom_6 val="500">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_6>
-		<denom_7 val="5000">
+		<denom_7 val="1000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_7>
+		<denom_8 val="2000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_8>
+		<denom_9 val="5000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_9>
+		<mm_thred val="64" />
+		<lsm_thred val="64" />
+		<rsm_thred val="64" />
+		<selecttion val="N" />
+	</Country>
+	<Country tag="SYR">
+		<denom_1 val="10">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_1>
+		<denom_2 val="25">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_2>
+		<denom_3 val="50">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_3>
+		<denom_4 val="100">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_4>
+		<denom_5 val="200">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_5>
+		<denom_6 val="500">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_6>
+		<denom_7 val="1000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_7>
+		<denom_8 val="2000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_8>
+		<denom_9 val="5000">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="255" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_9>
 		<mm_thred val="64" />
 		<lsm_thred val="64" />
 		<rsm_thred val="64" />
@@ -2562,10 +2625,6 @@
 			<mag_sensitivity bm_en="N" bm_level="0" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="0" sm_max="5" sm_min="0" ver="1" />
 			<mag_sensitivity bm_en="N" bm_level="0" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="0" sm_max="5" sm_min="0" ver="2" />
 		</denom_7>
-		<denom_8 val="10000">
-			<mag_sensitivity bm_en="N" bm_level="0" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="0" sm_max="5" sm_min="0" ver="1" />
-			<mag_sensitivity bm_en="N" bm_level="0" bm_max="5" bm_min="0" bm_thred="220" sm_en="N" sm_level="0" sm_max="5" sm_min="0" ver="2" />
-		</denom_8>
 		<mm_thred val="64" />
 		<lsm_thred val="64" />
 		<rsm_thred val="64" />
@@ -3007,21 +3066,24 @@
 		<selecttion val="N" />
 	</Country>
 	<Country tag="JMD">
-		<denom_1 val="2000">
+		<denom_1 val="5000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="10" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_1>
-		<denom_2 val="1000">
+		<denom_2 val="2000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="10" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_2>
-		<denom_3 val="500">
+		<denom_3 val="1000">
 			<mag_sensitivity bm_en="N" bm_level="5" bm_max="10" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_3>
-		<denom_4 val="100">
-			<mag_sensitivity bm_en="N" bm_level="5" bm_max="12" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		<denom_4 val="500">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="10" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_4>
-		<denom_5 val="50">
-			<mag_sensitivity bm_en="N" bm_level="3" bm_max="11" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		<denom_5 val="100">
+			<mag_sensitivity bm_en="N" bm_level="5" bm_max="12" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
 		</denom_5>
+		<denom_6 val="50">
+			<mag_sensitivity bm_en="N" bm_level="3" bm_max="11" bm_min="0" bm_thred="220" sm_en="N" sm_level="5" sm_max="255" sm_min="0" ver="1" />
+		</denom_6>
 		<mm_thred val="64" />
 		<lsm_thred val="64" />
 		<rsm_thred val="64" />
@@ -3133,6 +3195,60 @@
         <denom_8 val="500">
             <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
         </denom_8>
+        <mm_thred val="64"/>
+        <lsm_thred val="64" />
+        <rsm_thred val="64" />
+        <selecttion val="N"/>
+    </Country>
+    <Country tag="PYG">
+        <denom_1 val="100000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_1>
+        <denom_2 val="50000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_2>
+        <denom_3 val="20000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_3>
+        <denom_4 val="10000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_4>
+        <denom_5 val="5000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_5>
+        <denom_6 val="2000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_6>
+        <denom_7 val="1000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_7>
+        <mm_thred val="64"/>
+        <lsm_thred val="64" />
+        <rsm_thred val="64" />
+        <selecttion val="N"/>
+    </Country>
+    <Country tag="GYD">
+        <denom_1 val="5000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_1>
+        <denom_2 val="2000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_2>
+        <denom_3 val="1000">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_3>
+        <denom_4 val="500">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_4>
+        <denom_5 val="100">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_5>
+        <denom_6 val="50">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_6>
+        <denom_7 val="20">
+            <mag_sensitivity ver="1" bm_en="N" bm_min="0" sm_level="5" bm_level="5" bm_thred="220" sm_en="N" sm_max="255" bm_max="255" sm_min="0"/>
+        </denom_7>
         <mm_thred val="64"/>
         <lsm_thred val="64" />
         <rsm_thred val="64" />
