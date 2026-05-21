@@ -27,31 +27,54 @@ class SSH_Client:
     async def run_command_with_progress(self, command, total, progress_callback):
         """执行命令并提供实时输出到回调函数，以更新进度条。"""
         async with self.conn.create_process(command, term_type='xterm') as process:
-            buffered_updates = 0
-            last_update_time = asyncio.get_event_loop().time()
-            data_buffer = ''
-            async for data_chunk in process.stdout:
-                # print(data_chunk)
-                data_buffer += data_chunk
-                while '\n' in data_buffer:
-                    line, data_buffer = data_buffer.split('\n', 1)
-                    if line.strip():  # 如果处理的行有效
-                        buffered_updates += 1
-                        #print(line.strip())  # 这里可以替换成你想要处理的输出
+            stderr_data = ''
+            stdout_lines = []
 
-                # 用时间控制刷新频率，例如每0.5秒刷新一次
-                current_time = asyncio.get_event_loop().time()
-                if current_time - last_update_time >= 0.5:
-                    progress_callback(buffered_updates, total)
-                    # print(f"Processed {buffered_updates} lines so far")
-                    buffered_updates = 0
-                    last_update_time = current_time
+            async def collect_stderr():
+                nonlocal stderr_data
+                try:
+                    async for chunk in process.stderr:
+                        stderr_data += chunk
+                except Exception:
+                    pass
 
-            # 确保退出前最后一次更新
-            progress_callback(buffered_updates, total)
+            stderr_task = asyncio.ensure_future(collect_stderr())
+
+            try:
+                buffered_updates = 0
+                last_update_time = asyncio.get_event_loop().time()
+                data_buffer = ''
+                async for data_chunk in process.stdout:
+                    data_buffer += data_chunk
+                    while '\n' in data_buffer:
+                        line, data_buffer = data_buffer.split('\n', 1)
+                        stripped = line.strip()
+                        if stripped:
+                            buffered_updates += 1
+                            stdout_lines.append(stripped)
+
+                    current_time = asyncio.get_event_loop().time()
+                    if current_time - last_update_time >= 0.5:
+                        progress_callback(buffered_updates, total)
+                        buffered_updates = 0
+                        last_update_time = current_time
+
+                progress_callback(buffered_updates, total)
+            finally:
+                stderr_task.cancel()
+                try:
+                    await stderr_task
+                except asyncio.CancelledError:
+                    pass
 
             if process.exit_status != 0:
-                raise Exception(f"Command failed with exit status {process.exit_status}")
+                error_msg = f"Command failed with exit status {process.exit_status}"
+                if stderr_data.strip():
+                    error_msg += f"\nStderr: {stderr_data.strip()}"
+                if stdout_lines:
+                    tail = stdout_lines[-20:]
+                    error_msg += f"\nStdout (last {len(tail)} lines):\n" + "\n".join(tail)
+                raise Exception(error_msg)
     
     async def upload_file(self, local_path, remote_path):
         await self.conn.put(local_path, remote_path)

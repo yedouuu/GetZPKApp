@@ -1132,9 +1132,10 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path,
     # 生成新的文件名
     # file_name = generate_new_name(remote_directory)
     remote_run_script = get_text('remote_run_script', scheme=get_scheme(remote_directory), config_tree="remote_config")
-    command = f"cd {remote_directory}; sh {remote_run_script} {file_name}"
+    command = f"cd {remote_directory}; {remote_run_script} {file_name}"
 
     # 执行打包脚本
+    print(f"run cmd {command}")
     await ssh_client.run_command_with_progress(command, file_count, callback)
     print(f"打包完成")
 

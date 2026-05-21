@@ -210,7 +210,7 @@
             <custom_sensit_folder model="UN220">01_YKB_Configuration</custom_sensit_folder> -->
         </remote_template_folder>
 
-        <remote_run_script>./hengli_zpk_repack.sh </remote_run_script>
+        <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/bin/IMG_AUTO/</remote_mag_xml_path>
         <remote_overlap_manager_xml_path>upgrade/part/IMG_AUTO/</remote_overlap_manager_xml_path>
         <remote_currencys_xml_path>upgrade/bin/IMG_AUTO/</remote_currencys_xml_path>
