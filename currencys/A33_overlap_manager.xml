@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OverlapManager version="1">
+    <Currency code="EGP">
+        <Denomination value="200">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="100">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="50">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="20">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="3" default_tir_mean="60" set_tir_mean="60" />
+        </Denomination>
+        <Denomination value="10">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="3" default_tir_mean="60" set_tir_mean="60" />
+        </Denomination>
+        <Denomination value="5">
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="1">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+    </Currency>
+</OverlapManager>

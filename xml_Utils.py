@@ -419,7 +419,7 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
     directory_ver = get_remote_directory_version(remote_directory, "full")
     
     """ 只取机型部分 UN60M_ENRU -> UN60M """
-    directory_ver = directory_ver.split("_")[0]
+    model_name = directory_ver.split("_")[0]
 
     if customer_path:
         download_zpk_path = customer_path
@@ -434,8 +434,10 @@ def generate_new_name(remote_directory:str, customer_path="", customer_code="WL"
     language_code = get_language_code(get_language())
 
     file_name = f'{customer_code}_{directory_ver}_{motor_type}_{language_code}_{current_date}' + ver
+    version_name = f'{customer_code}_{model_name}_{current_date}' + ver
     print(f"【DEBUG】new file name = {file_name}")
-    return file_name
+    print(f"【DEBUG】version name = {version_name}")
+    return file_name, version_name
 
 def get_languages(remote_floder_name: str) -> list:
     """ 获取语言列表 """
@@ -610,6 +612,18 @@ def need_mag_para(remote_folder):
     return False
 
 
+def need_overlay_manager(remote_folder):
+    """
+    Check if the specified remote folder requires OverlayManager.xml processing
+    :param remote_folder: 远程文件夹(UN60_XXX, UN200)
+    :return: True if OverlayManager.xml processing is needed, False otherwise
+    """
+    scheme = get_scheme(remote_folder)
+    if scheme in ["A33", "GL20"]:
+        return True
+    return False
+
+
 async def upload_mag_para_xml(ssh_client:SSH_Client ,remote_directory:str):
     """ 上传mag_para.xml """
     if ( need_mag_para(remote_directory) == False ):
@@ -632,6 +646,20 @@ async def upload_currencys_xml(ssh_client:SSH_Client ,remote_directory:str):
         await sftp.put(local_currencys_xml_path+'currencys.xml', remote_directory+remote_currencys_xml_path+'currencys.xml')
     except Exception as e:
         print(f"【Error】上传货币配置文件失败：{e}")
+
+async def upload_overlap_manager_xml(ssh_client:SSH_Client ,remote_directory:str):
+    """ 上传overlap_manager.xml """
+    if ( need_overlay_manager(remote_directory) == False ):
+        print("No need to upload overlap_manager.xml")
+        return
+    
+    try:
+        sftp = await ssh_client.get_sftp()
+        remote_overlap_manager_xml_path = get_text('remote_overlap_manager_xml_path',  scheme=get_scheme(remote_directory), config_tree="remote_config")
+        local_new_overlap_manager_xml_file_path = get_text("local_new_overlap_manager_xml_file_path", scheme=get_scheme(remote_directory), config_tree="remote_config")
+        await sftp.put(local_new_overlap_manager_xml_file_path, remote_directory+remote_overlap_manager_xml_path+'overlap_manager.xml')
+    except Exception as e:
+        print(f"【Error】上传overlap_manager.xml失败：{e}")
 
 async def get_remote_ui_file_name(ssh_client:SSH_Client, remote_ui_file_path):
     try:
@@ -1083,17 +1111,17 @@ async def create_currency_templates(ssh_client: SSH_Client, remote_directory: st
 
 async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path, customer_code, callback):
     """打包zpk文件并下载"""
-    sftp = await ssh_client.get_sftp()
+    # sftp = await ssh_client.get_sftp()
     
     # 如果有输入客户代码，则下载到客户代码文件夹下
     if customer_path:
-        file_name = generate_new_name(remote_directory, customer_path, customer_code)
+        file_name, version_name = generate_new_name(remote_directory, customer_path, customer_code)
     elif customer_code:
-        file_name = generate_new_name(remote_directory, customer_code=customer_code)
+        file_name, version_name = generate_new_name(remote_directory, customer_code=customer_code)
     else:
-        file_name = generate_new_name(remote_directory)
+        file_name, version_name = generate_new_name(remote_directory)
 
-    await modify_user_config(ssh_client, remote_directory, file_name)
+    await modify_user_config(ssh_client, remote_directory, version_name)
 
     # 构建并执行命令来获取文件数量
     cmd_get_file_amount = f'cd {remote_directory}/upgrade; find . -type f | wc -l'
@@ -1112,12 +1140,15 @@ async def pack_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path,
 
 
 async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_path, update_progress) -> str:
-    # 建立 SFTP 客户端连接
-    sftp = await ssh_client.get_sftp()
-
     # 执行命令获取最新的文件名
     get_latest_file_cmd = "ls -lt | head -n 2 | tail -n 1 | awk '{print $9}'"
     latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
+
+    # 如果获取到的名字为空，延时500ms后再次获取一次，避免偶尔出现的获取不到文件名的情况
+    if not latest_file.strip():
+        print("第一次获取文件名失败，正在重试...")
+        await asyncio.sleep(0.5)  # 延时500ms
+        latest_file = await ssh_client.run_command(f"cd {remote_directory}; {get_latest_file_cmd}")
 
     # remote_file_path = f"{remote_directory}{latest_file}"  # 注意路径分隔符
     remote_file_path = os.path.join(remote_directory, latest_file)
@@ -1130,9 +1161,9 @@ async def download_zpk(ssh_client: SSH_Client, remote_directory: str, customer_p
         local_file_path = os.path.join(download_zpk_path, latest_file)
 
     print(f"【DEBUG】local_file_path = {local_file_path}")
-    # 获取远程文件的大小
-    # remote_file_stat = await sftp.stat(remote_file_path)
-    # total_size = remote_file_stat.size
+
+    # 建立 SFTP 客户端连接（在 shell 命令之后，避免 ChannelOpenError）
+    sftp = await ssh_client.get_sftp()
 
     # 使用 SFTP 的 get 方法下载文件
     await sftp.get(remote_file_path, localpath=local_file_path, progress_handler=update_progress)

@@ -326,7 +326,7 @@ def create_rootfs_image(bat_path: str = "") -> bool:
         # Restore original working directory
         os.chdir(current_dir)
 
-def GL18_create_rootfs_image(new_file_name:str, customer_code: str = ""):
+def GL18_create_rootfs_image(new_file_name:str, version_name: str, customer_code: str = ""):
     """ 创建 GL18 rootfs """
 
     src = xml_Utils.get_text("local_main_rootfs_path")
@@ -336,7 +336,7 @@ def GL18_create_rootfs_image(new_file_name:str, customer_code: str = ""):
     user_config_src = "./user_config.xml"
     user_config_dst = os.path.join(dst, "IMG_AUTO", "user_config.xml")
     GL18_modify_user_config(user_config_src, user_config_dst)
-    GL18_modify_ZPK_version(new_file_name, user_config_dst)
+    GL18_modify_ZPK_version(version_name, user_config_dst)
 
     create_rootfs_image_path = xml_Utils.get_text("local_create_rootfs_image_bat_path")
     rootfs_image_path = dst + ".bin"
@@ -356,5 +356,5 @@ if __name__ == '__main__':
     # select_and_upload_file("D:\\200_WL\\210_GL20双CIS")
     # show_message()
 
-    file_system = GL18_create_rootfs_image("WL_UN60WENRU_250425B")
+    file_system = GL18_create_rootfs_image("WL_UN60WENRU_250425B", "WL_UN60W_250425B")
     print(f"file system = {file_system}")

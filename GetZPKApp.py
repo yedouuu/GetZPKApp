@@ -49,7 +49,11 @@ from CopyFile import (
     copy_to_clipboard, 
     GL18_create_rootfs_image
 )
-from SelectCountry import check_mag_para, select_country
+from SelectCountry import (
+    check_mag_para, 
+    select_country, 
+    check_overlap_para
+)
 from textual.widgets import (
     Static, 
     Button, 
@@ -1226,15 +1230,16 @@ ZPKView {
         
         select_country(currency_list_str, self.remote_folder)
         check_mag_para(self.information.get_country_code(), self.remote_folder)
-
+        check_overlap_para(self.information.get_country_code(), self.remote_folder)
+        
         if ( get_scheme(self.remote_folder) == "GL18" ):
             print("【INFO】 PACK GL18 GIN")
             image_app_path = os.path.abspath(GL18_get_image_app_path(str(self.remote_folder)))
             mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))
             boot_path = os.path.abspath(GL18_get_boot_path(str(self.remote_folder)))
 
-            GIN_name = generate_new_name(self.remote_folder_path, customer_path, self.customer_code)
-            file_system_path = os.path.abspath(GL18_create_rootfs_image(GIN_name, self.customer_path))
+            GIN_name, version_name = generate_new_name(self.remote_folder_path, customer_path, self.customer_code)
+            file_system_path = os.path.abspath(GL18_create_rootfs_image(GIN_name, version_name, self.customer_path))
             ui_file_path = os.path.abspath(get_text("local_ui_file_path") + self.ui_file)
             print(f"Paths:\r\n"
                   f"  image_app_path:   {image_app_path}\r\n"

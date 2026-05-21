@@ -326,7 +326,7 @@ def pack_GIN(PACK_INFO):
   factory_code     = PACK_INFO["factory_code"]
   customer_path    = PACK_INFO["customer_path"]
 
-  GIN_name = xml_Utils.generate_new_name(remote_path, customer_path, factory_code)
+  GIN_name, version_name = xml_Utils.generate_new_name(remote_path, customer_path, factory_code)
   print(GIN_name)
 
   handler = PywinautoHandler()

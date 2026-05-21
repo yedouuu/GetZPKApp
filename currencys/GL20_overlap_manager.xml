@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OverlapManager version="1">
+    <Currency code="USD">
+        <Denomination value="100">
+            <Version ver="0" default_tir_mean="20" set_tir_mean="20" />
+            <Version ver="1" default_tir_mean="22" set_tir_mean="22" />
+        </Denomination>
+        <Denomination value="50">
+            <Version ver="0" default_tir_mean="18" set_tir_mean="18" />
+        </Denomination>
+    </Currency>
+
+    <Currency code="EUR">
+        <Denomination value="100">
+            <Version ver="0" default_tir_mean="19" set_tir_mean="19" />
+        </Denomination>
+        <Denomination value="50">
+            <Version ver="2" default_tir_mean="17" set_tir_mean="17" />
+        </Denomination>
+    </Currency>
+
+    <Currency code="CNY">
+        <Denomination value="100">
+            <Version ver="0" default_tir_mean="16" set_tir_mean="16" />
+        </Denomination>
+    </Currency>
+    
+    <Currency code="EGP">
+        <Denomination value="200">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="100">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="50">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="20">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="3" default_tir_mean="60" set_tir_mean="60" />
+        </Denomination>
+        <Denomination value="10">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+            <Version ver="3" default_tir_mean="60" set_tir_mean="60" />
+        </Denomination>
+        <Denomination value="5">
+            <Version ver="2" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+        <Denomination value="1">
+            <Version ver="1" default_tir_mean="45" set_tir_mean="45" />
+        </Denomination>
+    </Currency>
+    
+    <Currency code="MXN">
+        <Denomination value="200">
+            <Version ver="5" default_tir_mean="40" set_tir_mean="40" />
+            <Version ver="3" default_tir_mean="30" set_tir_mean="30" />
+        </Denomination>
+        <Denomination value="100">
+            <Version ver="0" default_tir_mean="16" set_tir_mean="16" />
+        </Denomination>
+    </Currency>
+</OverlapManager>

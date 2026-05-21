@@ -4,7 +4,7 @@ import os
 import msvcrt
 from fuzzywuzzy import process
 from colorama import Fore, Style, init
-from xml_Utils import get_text, need_mag_para, open_xml, get_scheme
+from xml_Utils import get_text, need_mag_para, need_overlay_manager, open_xml, get_scheme
 
 country_currency_map = {
     '自动AUT':  'AUT' ,
@@ -766,6 +766,98 @@ def check_mag_para(currency_code_list: list, remote_folder: str):
     # mag_xml_tree.write(new_mag_xml_path, encoding="utf-8", xml_declaration=True)
 
 
+def check_overlap_para(currency_code_list: list, remote_folder: str):
+    """
+    Check if overlap_manager.xml contains the correct tags for the currency codes in currency_code_list
+    1. If a currency code from currency_code_list is not found in overlap_manager.xml:
+        then add a new <Currency code="XXX">...</Currency> section with denominations that match currencys.xml
+
+    2. Resort the <Currency code="XXX">...</Currency> sections in overlap_manager.xml according to the order in currency_code_list
+
+    3. Resort the <Denomination value="xxx">...<Denomination value="xxx"> elements within each <Currency> section
+
+    4. Save the modified overlap_manager.xml
+    """
+    scheme = get_scheme(remote_folder)
+    print(f"Start to check overlap_manager.xml for {remote_folder}, scheme={scheme}")
+
+    if ( need_overlay_manager(remote_folder) == False ):
+        print_yellow_text(f"【Warning】check_overlap_para Unsupported scheme: {scheme}. Only A33 and GL20 are supported in overlap_manager.xml.")
+        return
+
+    local_overlap_xml_file_path = get_text("local_overlap_manager_xml_file_path", scheme=scheme, config_tree="remote_config")
+    local_currencys_xml_path = get_text("local_currencys_xml_path")
+    local_currencys_xml_file_path = get_text("local_currencys_xml_path") + "/currencys.xml"
+    overlap_xml_tree = open_xml(local_overlap_xml_file_path)
+    currencys_xml_tree = open_xml(local_currencys_xml_file_path)
+
+    if overlap_xml_tree is None or currencys_xml_tree is None:
+        print_red_text("【Error】Failed to open overlap_manager.xml or currencys.xml")
+        return
+
+    overlap_xml_root = overlap_xml_tree.getroot()
+    currencys_xml_root = currencys_xml_tree.getroot()
+
+    # Step 1: Check and add missing currency sections
+    existing_currency_codes = {currency.get('code') for currency in overlap_xml_root.findall('Currency')}
+    for code in currency_code_list:
+        if code in ['AUT','MIX']:
+            continue
+        if code not in existing_currency_codes:
+            # Find the corresponding country in currencys.xml
+            country_elem = currencys_xml_root.find(f".//Country[@tag='{code}']")
+            if country_elem is not None:
+                # Create a new currency element
+                new_currency_elem = ET.Element('Currency', attrib={'code': code})
+
+                # Add denomination elements
+                default_overlap_val_zhibi = get_text("default_overlap_val_zhibi", config_tree="remote_config", scheme=scheme)
+                default_overlap_val_suliaobi = get_text("default_overlap_val_suliaobi", config_tree="remote_config", scheme=scheme)
+                for denom in __parse_country(country_elem):
+                    new_denom_elem = ET.Element('Denomination', attrib={'value': denom["denom_val"]})
+                    for mag_para in denom["mag_sensitivity"]:
+                        # print(f"Adding overlap_para for {code} denom {denom['denom_val']}: {mag_para}")
+                        new_ver_elem = ET.Element('Version', attrib={'ver': f"{mag_para["ver"]}", 'default_tir_mean': f"{default_overlap_val_zhibi}", 'set_tir_mean': f"{default_overlap_val_zhibi}"})
+                        new_denom_elem.append(new_ver_elem)
+                    new_currency_elem.append(new_denom_elem)
+
+                # Append the new currency element to overlap_xml_root
+                overlap_xml_root.append(new_currency_elem)
+                print_green_text(f"【Info】Added missing currency section for {code}")
+            else:
+                print_red_text(f"【Error】Currency code {code} not found in currencys.xml")
+
+    # Step 2: Resort currency sections in overlap_manager.xml
+    overlap_xml_root[:] = sorted(overlap_xml_root, key=lambda x: get_priority(currency_code_list, x.get('code')))
+
+    # Step 3: Resort denomination elements within each currency section
+    for currency in overlap_xml_root.findall('Currency'):
+        if ( existing_currency_codes.__contains__(currency.get('code')) == False ):
+            continue
+
+        denominations = [denom for denom in currency if denom.tag == 'Denomination']
+        denominations.sort(key=lambda x: int(x.get('value')), reverse=True)
+
+        # Clear existing denomination elements
+        for denom in currency.findall('Denomination'):
+            currency.remove(denom)
+
+        # Re-add sorted denomination elements
+        for denom in denominations:
+            currency.append(denom)
+
+    # Step 4: Create a new overlap_manager.xml file only containing the currency sections in currency_code_list
+    new_overlap_xml_root = ET.Element('OverlapManager', attrib={'version': "1"})
+    for currency in overlap_xml_root.findall('Currency'):
+        if currency.get('code') in currency_code_list:
+            new_overlap_xml_root.append(currency)
+
+    # save after adding missing sections
+    new_overlap_xml_path = os.path.join(os.path.dirname(local_currencys_xml_path), "overlap_manager.xml")
+    ET.indent(new_overlap_xml_root, space="\t", level=0)
+    new_overlap_xml_tree = ET.ElementTree(new_overlap_xml_root)
+    new_overlap_xml_tree.write(new_overlap_xml_path, encoding="utf-8", xml_declaration=True)
+
 def press_any_key_to_continue():
     print("按任意键继续, 按q键退出...")
     user_input = msvcrt.getch().decode()  # 获取用户按键的输入
@@ -778,7 +870,9 @@ if __name__ == "__main__":
     while True:
         init()
         # select_country("USD EUR KES BWP MGA", "UN60M")
-        check_mag_para(['KES', 'USD', 'EUR'], "UN220")
+        # check_mag_para(['KES', 'USD', 'EUR'], "UN220")
+        
+        check_overlap_para(['AED', 'USD', 'EUR'], "UN220M")
 
         press_any_key_to_continue()
         # input("Press Any Key")

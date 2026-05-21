@@ -18,6 +18,7 @@ from xml_Utils import (
     get_ssh_config,
     set_auto_currency,
     create_currency_templates,
+    upload_overlap_manager_xml,
 )
 from SSHClient import SSH_Client
 import git_service
@@ -110,10 +111,11 @@ class DownloadScreen(ModalScreen):
                 self.query_one("#progress").advance(5)
                 await create_currency_templates(self.ssh_client, remote_folder, currency_list)
             
-            self.change_status("上传currencys.xml, mag.xml ...")
+            self.change_status("上传currencys.xml, mag.xml, overlay_manager.xml ...")
             await upload_currencys_xml(self.ssh_client, remote_folder)
             await set_auto_currency(self.ssh_client, remote_folder, currency_list)
             await upload_mag_para_xml(self.ssh_client, remote_folder)
+            await upload_overlap_manager_xml(self.ssh_client, remote_folder)
             self.query_one("#progress").advance(5)
 
             self.change_status("上传ui_file...")
