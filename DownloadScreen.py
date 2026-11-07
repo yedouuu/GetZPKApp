@@ -66,7 +66,7 @@ class DownloadScreen(ModalScreen):
     def change_status(self, status:str):
         self.query_one("#question").update(f"{status}")
 
-    last_update_time = asyncio.get_event_loop().time()
+    last_update_time = 0.0
     def download_progress_handler(self, srcpath, dstpath, bytes_transferred, total_bytes):
         # print(f"Transferring {srcpath} to {dstpath}")
         # print(f"Transferred {bytes_transferred} of {total_bytes} bytes")

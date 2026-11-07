@@ -214,7 +214,10 @@ def scan_ui_files(remote_directory):
     
     # 获取当前文件夹下的所有文件
     current_folder = get_text("local_ui_file_path")
-    contents = os.listdir(current_folder)
+    try:
+        contents = os.listdir(current_folder)
+    except FileNotFoundError:
+        return []
     ui_file_name = map_ui_file_name(remote_directory)
     simular_folders = [get_remote_directory_version(f, "full") for f in get_remote_directorys() if remote_directory in f]
     level = get_remote_directory_level(remote_directory)
@@ -847,6 +850,7 @@ async def sync_ui_files(ssh_client:SSH_Client):
     
     print(f"Syncing UI files from {remote_ui_file_path} to {local_ui_file_path}")
     try:
+        os.makedirs(local_ui_file_path, exist_ok=True)
         remote_files = await sftp.listdir(remote_ui_file_path)
         for remote_file in remote_files:
             if remote_file.endswith('.bin'):

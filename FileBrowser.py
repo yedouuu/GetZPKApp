@@ -7,7 +7,6 @@ Run with:
 """
 
 import os
-import asyncio
 from pathlib import Path
 from rich.syntax import Syntax
 from rich.traceback import Traceback
@@ -24,6 +23,7 @@ from textual.widgets import DirectoryTree, Footer, Header, Static, Button, Input
 from textual.screen import Screen
 from textual.reactive import reactive
 from textual.binding import Binding
+from textual.timer import Timer
 from CopyFile import copy_to_clipboard, open_file_path
 
 class ZPKView(Static):
@@ -83,13 +83,9 @@ class ZPKView(Static):
 
 class FilteredDirectoryTree(DirectoryTree):
 
-    def __init__ (self, path: str, keywords: str, *args, **kwargs) -> None:
+    def __init__(self, path: str, keywords: str = "", *args, **kwargs) -> None:
         super().__init__(path, *args, **kwargs)
         self.keywords = keywords
-
-    # def watch_keywords(self, keywords: str) -> None:
-    #     """Called when keywords is modified."""
-    #     self.query_one(DirectoryTree).path = self.path
 
     def filter_paths(self, paths: Iterable[Path]) -> Iterable[Path]:
         path_list = []
@@ -158,16 +154,16 @@ ZPKView {
     BINDINGS = [
         ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),
-        Binding("ctrl+b", "toggle_sidebar", "选择币种", key_display="B", show=False),
-        Binding("ctrl+d", "get_zpk", "下载", key_display="D", show=False),
-        Binding("ctrl+u", "upload_ui_file", "上传UI文件", key_display="U", show=False),
-        Binding("ctrl+f", "toggle_file_browser", "查看文件", key_display="F", show=False),
-        Binding("ctrl+r", "refresh_floder", "刷新", key_display="R", show=False),
-        Binding("ctrl+q", "request_quit", "退出", key_display="Q", show=False),
+        Binding("ctrl+b", "app.toggle_sidebar", "选择币种", key_display="B", show=False),
+        Binding("ctrl+d", "app.get_zpk", "下载", key_display="D", show=False),
+        Binding("ctrl+u", "app.upload_ui_file", "上传UI文件", key_display="U", show=False),
+        Binding("ctrl+f", "app.toggle_file_browser", "查看文件", key_display="F", show=False),
+        Binding("ctrl+r", "app.refresh_floder", "刷新", key_display="R", show=False),
+        Binding("ctrl+q", "app.request_quit", "退出", key_display="Q", show=False),
     ]
 
     show_tree = var(True)
-    filter_text = var("")
+    _filter_timer: Timer | None = None
     path = "./ZPK/"
     current_line_idx = var(0)
 
@@ -181,7 +177,7 @@ ZPKView {
         yield Header()
         with Container():
             yield Input(id="file_filter_input", placeholder="请输入要搜索的文件夹名称, 若值为空则刷新目录树...")
-            yield FilteredDirectoryTree(self.path, self.filter_text, id="tree-view")
+            yield FilteredDirectoryTree(self.path, id="tree-view")
             with ScrollableContainer(id="code-view"):
                 yield Static(id="code", expand=True)
             yield ZPKView(self.path)
@@ -200,27 +196,27 @@ ZPKView {
         self.query_one("#file_filter_input", Input).value = ""
         # self.on_input_submitted(input.Submitted(value=""))
 
-    async def on_input_changed(self, event: Input.Changed) -> None:
-        """Called when the user types in the input."""
-        self.filter_text = event.value
-        # 取消已有的延时任务，如果存在
-        if hasattr(self, 'delay_task') and not self.delay_task.done():
-            self.delay_task.cancel()
-        # 创建一个新的延时任务
-        self.delay_task = asyncio.create_task(self.handle_delayed_update(event.value))
+    @on(Input.Changed, "#file_filter_input")
+    @on(Input.Submitted, "#file_filter_input")
+    def handle_filter_input(self, event: Input.Changed | Input.Submitted) -> None:
+        value = event.value
+        if value != event.input.value:
+            return
+        if self._filter_timer is not None:
+            self._filter_timer.stop()
+            self._filter_timer = None
+        if isinstance(event, Input.Submitted):
+            self._apply_filter(value, refresh=not value)
+        else:
+            self._filter_timer = self.set_timer(0.3, lambda: self._apply_filter(value))
 
-    async def handle_delayed_update(self, value):
-        """Handle the update with a delay."""
-        await asyncio.sleep(0.3)  # 非阻塞延时1秒
-        # 执行需要延时后处理的任务
-        self.query_one(FilteredDirectoryTree).remove()
-        self.query_one(Container).mount(FilteredDirectoryTree(self.path, value, id="tree-view"))
-
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        """Called when the user presses enter in the input."""
-        self.filter_text = event.value
-        self.query_one("#tree-view", FilteredDirectoryTree).remove()
-        self.query_one(Container).mount(FilteredDirectoryTree(self.path, self.filter_text, id="tree-view"))
+    def _apply_filter(self, value: str, *, refresh: bool = False) -> None:
+        if value != self.query_one("#file_filter_input", Input).value:
+            return
+        tree = self.query_one(FilteredDirectoryTree)
+        if value != tree.keywords or refresh:
+            tree.keywords = value
+            tree.reload()
 
 
     def on_directory_tree_directory_selected(self, event: DirectoryTree.DirectorySelected):
@@ -343,7 +339,7 @@ ZPKView {
     def highlight_line(self, line_number: int):
         """Highlight a specific line in the code view."""
         code_view = self.query_one("#code", Static)
-        syntax = code_view.renderable
+        syntax = code_view.content
 
         if isinstance(syntax, Syntax):
             code_lines = syntax.code.split('\n')

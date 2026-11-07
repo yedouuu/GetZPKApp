@@ -107,7 +107,7 @@ class FolderContainer(VerticalScroll):
         self.select(self.folder_list[0])
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
-        self.select(event.button.label)
+        self.select(event.button.id)
 
     async def on_input_changed(self, event: Input.Changed) -> None:
         """Called when the user types in the input."""
@@ -169,17 +169,12 @@ class FolderContainer(VerticalScroll):
         """Mount remote folder."""
         for folder in list:
             self.mount(RemoteFloder(folder, variant="primary", id=f"{folder}"))
-        self.select(self.selected)
-
-    def folder_clear(self):
-        """Clear remote folder."""
-        for widget in self.query(RemoteFloder):
-            widget.remove()
 
     def folder_refresh(self):
-        """Refresh remote folder."""
-        self.folder_clear()
-        self.folder_mount(self.folder_list)
+        """Show all folders and refresh the selected folder's resources."""
+        self.query_one(Input).value = ""
+        self.filter("")
+        self.select(self.selected)
 
 ROWS = [
         ("Date", "Title", "Note"),
@@ -207,8 +202,8 @@ class UIView(DataTable):
         # table.add_style(ROWS[1:])
         # table.add_rows(ROWS[1:])
 
-    def update_by_folder(self, folder: str, requires_ui: bool) -> str:
-        """Refresh the picker and return the default selection for this folder."""
+    def update_by_folder(self, folder: str, requires_ui: bool, selected_file: str = "") -> str:
+        """Refresh the picker and return a selection from the current folder."""
         self.clear()
         self.files_by_row = {}
         self.display = requires_ui
@@ -219,6 +214,9 @@ class UIView(DataTable):
             title = filename.replace("ui_resource_", "", 1).replace(".bin", " ", 1)
             key = self.add_row(get_ui_file_time(filename), title, "", label=label)
             self.files_by_row[key] = filename
+        if selected_file in files:
+            self.move_cursor(row=files.index(selected_file))
+            return selected_file
         return files[0] if files else ""
 
 class Customercode_Input(Static):
@@ -555,17 +553,18 @@ class ErrorMessage(Static):
 
 class DarkSwitch(Horizontal):
     def compose(self) -> ComposeResult:
-        yield Switch(value=self.app.dark)
+        yield Switch(value=self.app.current_theme.dark)
         yield Static("Dark mode toggle", classes="label")
 
     def on_mount(self) -> None:
-        self.watch(self.app, "dark", self.on_dark_change, init=False)
+        self.watch(self.app, "theme", self.on_theme_change, init=False)
 
-    def on_dark_change(self) -> None:
-        self.query_one(Switch).value = self.app.dark
+    def on_theme_change(self) -> None:
+        self.query_one(Switch).value = self.app.current_theme.dark
 
     def on_switch_changed(self, event: Switch.Changed) -> None:
-        self.app.dark = event.value
+        if event.value != self.app.current_theme.dark:
+            self.app.theme = "textual-dark" if event.value else "textual-light"
 
 MESSAGE = """
 We hope you enjoy using Textual.
@@ -1126,10 +1125,7 @@ ZPKView {
         self.language = self.query_one(Language)
         self.customer_path = None
         self.customer_code = self.query_one(Customercode_Input).get_custoemr_code()
-        # self.mount(Footer())
-
-    async def on_load(self) -> None:
-        await self.action_sync_files()
+        self.call_after_refresh(self.action_sync_files)
 
     def action_refresh_floder(self):
         """Refresh remote folders."""
@@ -1277,6 +1273,7 @@ ZPKView {
         screen = DownloadScreen()
         await self.push_screen(screen)
         await screen.sync_files()
+        self.refresh_ui_files(self.ui_file)
 
     def action_upload_ui_file(self) -> None:
         """Upload ui file."""
@@ -1287,13 +1284,13 @@ ZPKView {
         select_and_upload_file(ui_path, self.remote_folder)
         self.action_refresh_floder()
 
-    def action_toggle_dark(self):
-        """Toggle dark mode."""
-        self.dark = not self.dark
-    
     def update_mag_para(self, currency_code, remote_folder):
         """Update mag_para file."""
         check_mag_para(currency_code, remote_folder)
+
+    def refresh_ui_files(self, selected_file: str = "") -> None:
+        self.ui_file = self.ui_view.update_by_folder(self.remote_folder, self.requires_ui, selected_file)
+        self.information.set_ui_file(self.ui_description)
 
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
@@ -1301,8 +1298,7 @@ ZPKView {
         self.remote_folder_path = message.selected_path
         self.query_one(Information).set_remote_folder(message.selected) 
         self.requires_ui = has_ui(self.remote_folder_path)
-        self.ui_file = self.ui_view.update_by_folder(self.remote_folder, self.requires_ui)
-        self.information.set_ui_file(self.ui_description)
+        self.refresh_ui_files()
         self.query_one("#upload_ui_btn", Button).disabled = not self.requires_ui
         self.information.refresh_country_code(self.remote_folder)
         self.information.set_mode(get_mode(self.remote_folder))

@@ -1,0 +1,8 @@
+# UI runtime
+textual==8.2.8
+rich==15.0.0
+Pygments==2.21.0
+
+# Windows executable build
+PyInstaller==6.12.0
+pyinstaller-hooks-contrib==2026.2
