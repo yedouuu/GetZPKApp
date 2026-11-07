@@ -8,6 +8,7 @@ import asyncio
 from xml_Utils import (
     get_SyncICC,
     get_text,
+    has_ui,
     sync_currencys_xml,
     sync_ui_files,
     upload_currencys_xml,
@@ -98,6 +99,12 @@ class DownloadScreen(ModalScreen):
 
     async def download(self, remote_folder, ui_file, currency_list:str, customer_path=None, customer_code="WL") -> str:
         try:
+            requires_ui = has_ui(remote_folder)
+            if requires_ui and not ui_file:
+                self.change_status("当前机型需要 UI 文件，请选择文件后重新打包。")
+                self.query_one("#ok").disabled = False
+                return ""
+
             sync_icc = get_SyncICC(remote_folder)
             
             if sync_icc:
@@ -118,8 +125,9 @@ class DownloadScreen(ModalScreen):
             await upload_overlap_manager_xml(self.ssh_client, remote_folder)
             self.query_one("#progress").advance(5)
 
-            self.change_status("上传ui_file...")
-            await upload_ui_file(self.ssh_client, remote_folder, ui_file)
+            if requires_ui:
+                self.change_status("上传ui_file...")
+                await upload_ui_file(self.ssh_client, remote_folder, ui_file)
             self.query_one("#progress").advance(5)
 
             self.change_status("打包zpk...")

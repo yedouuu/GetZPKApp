@@ -378,6 +378,13 @@ def get_scheme(remote_folder:str):
             return _remote_folder.attrib["IMGDesignScheme"]
     return None
 
+def has_ui(remote_directory: str) -> bool:
+    """机型目录显式配置 has_ui="false" 时跳过 UI 上传。"""
+    for directory in get_server().findall("remote_directory"):
+        if directory.text == remote_directory:
+            return directory.get("has_ui", "true").strip().lower() != "false"
+    return True
+
 def get_SyncICC(remote_folder:str) -> bool:
     """ 获取远端目录的SyncICC属性 """
     remote_folder = str(remote_folder)

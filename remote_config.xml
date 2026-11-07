@@ -39,6 +39,7 @@
         <remote_directory IMGDesignScheme="GL20MULTI" level="2">/home/lin/Desktop/UN60M/</remote_directory>
         <remote_directory IMGDesignScheme="GL20MULTI" level="1">/home/lin/Desktop/UN70M/</remote_directory>
         <remote_directory IMGDesignScheme="A33" level="1">/home/lin/Desktop/UN220M/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" has_ui="false" level="1">/home/lin/Desktop/UN260/</remote_directory>
         <remote_directory IMGDesignScheme="A33" level="2">/home/lin/Desktop/UN220M_TEST/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN60/</remote_directory>
         <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_ZH/</remote_directory>
@@ -212,7 +213,7 @@
 
         <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/bin/IMG_AUTO/</remote_mag_xml_path>
-        <remote_overlap_manager_xml_path>upgrade/part/IMG_AUTO/</remote_overlap_manager_xml_path>
+        <remote_overlap_manager_xml_path>upgrade/bin/IMG_AUTO/</remote_overlap_manager_xml_path>
         <remote_currencys_xml_path>upgrade/bin/IMG_AUTO/</remote_currencys_xml_path>
         <remote_xml_path>upgrade/bin/IMG_AUTO/</remote_xml_path>
         <remote_sensit_path>upgrade/bin/IMG_SENS/</remote_sensit_path>

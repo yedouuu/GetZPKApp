@@ -36,6 +36,7 @@ from xml_Utils import (
     get_mode,
     get_local_currencyXML_path,
     get_scheme,
+    has_ui,
     GL18_get_image_app_path,
     GL18_get_boot_path,
     GL18_get_mainboard_app_path,
@@ -195,10 +196,6 @@ class UIView(DataTable):
     def compose(self) -> ComposeResult:
         yield Static("当前文件夹下没有对应的ui文件", id="ui_message", classes="error_message hidden")
     
-    ui_files = []
-    origin_rows = []
-    ui_file_idx = 0
-
     def on_mount(self) -> None:
         table = self
         table.cursor_type = "row"
@@ -210,53 +207,19 @@ class UIView(DataTable):
         # table.add_style(ROWS[1:])
         # table.add_rows(ROWS[1:])
 
-    def add_rows_with_Idx(self, rows=None):
-        """Add rows to table."""
-        for number, row in enumerate(rows, start=1):
-            label = Text(str(number), style="#B0FC38 italic")
-            self.add_row(*row, label=label, height=1, key=f"row_{number}")
-
-    class Selected(Message):
-        """pass selected message."""
-        def __init__(self, file_name) -> None:
-            self.selected = file_name
-            super().__init__()
-
-    def on_data_table_row_selected(self, message:DataTable.RowSelected) -> None:
-        """pass seleted row message"""
-        row_idx = message.cursor_row
-        self.post_message(self.Selected(self.origin_rows[row_idx]))
-
-    def get_date(self, ui):
-        """Get date from ui file."""
-        return get_ui_file_time(ui)
-    
-    def get_ui_note(self, ui):
-        """Get note from ui filename"""
-        return ui.split("_")[-1]
-
-    def list2view(self, list):
-        """list to view"""
-        self.origin_rows = list
-        self.coverted_rows = []
-        # 将ui文件列表转换为DataTable的行数据
-        for ui in list:
-            date = self.get_date(ui)
-            ui = ui.replace("ui_resource_", "", 1).replace(".bin", " ", 1)
-            row = (date, ui, "")
-            self.coverted_rows.append(row)
-        self.add_rows_with_Idx(self.coverted_rows)
-
-    def update_by_folder(self, folder=None):
-        """Update table by folder."""
+    def update_by_folder(self, folder: str, requires_ui: bool) -> str:
+        """Refresh the picker and return the default selection for this folder."""
         self.clear()
-        list = scan_ui_files(str(folder))
-        self.list2view(list)
-        if not list:
-            self.query_one("#ui_message").remove_class("hidden")
-        else:
-            self.query_one("#ui_message").add_class("hidden")
-            self.post_message(self.Selected(self.origin_rows[0]))
+        self.files_by_row = {}
+        self.display = requires_ui
+        files = scan_ui_files(folder) if requires_ui else []
+        self.query_one("#ui_message").set_class(bool(files) or not requires_ui, "hidden")
+        for number, filename in enumerate(files, start=1):
+            label = Text(str(number), style="#B0FC38 italic")
+            title = filename.replace("ui_resource_", "", 1).replace(".bin", " ", 1)
+            key = self.add_row(get_ui_file_time(filename), title, "", label=label)
+            self.files_by_row[key] = filename
+        return files[0] if files else ""
 
 class Customercode_Input(Static):
     customer_code = reactive("WL")
@@ -639,6 +602,13 @@ class Sidebar(Container):
 
 class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
+
+    ui_file = ""
+    requires_ui = True
+
+    @property
+    def ui_description(self) -> str:
+        return self.ui_file if self.requires_ui else "无需 UI 文件"
 
     # CSS_PATH = "./tcss/getzpk_app.tcss"
     CSS = """
@@ -1189,7 +1159,7 @@ ZPKView {
                 f"""
 # 文件名: {latest_file}
 - 时间: {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))}
-- UI文件: {self.ui_file}
+- UI文件: {self.ui_description}
 - 模式:  {get_mode()}
 - 语言: {get_language()}
 - 小电机: {get_motor_type(self.remote_folder)}
@@ -1199,6 +1169,9 @@ ZPKView {
 
     async def action_get_zpk(self):
         """Get ZPK."""
+        if self.requires_ui and not self.ui_file:
+            self.notify("当前机型需要 UI 文件，请先选择或上传 UI 文件。", severity="error")
+            return
         print("Get ZPK Start Processing...")
         zpk_path = get_text("local_zpk_path")
         self.note.analyze_note()
@@ -1272,6 +1245,8 @@ ZPKView {
                                               currency_list_str, 
                                               customer_path, 
                                               self.customer_code)
+            if not latest_file:
+                return
         # latest_file = "WLGL20_20230316_1532_1.ZPK"
         
         self.create_readme(customer_path, latest_file)
@@ -1305,6 +1280,8 @@ ZPKView {
 
     def action_upload_ui_file(self) -> None:
         """Upload ui file."""
+        if not self.requires_ui:
+            return
         ui_path = get_text("local_ui_file_path")
         print(f"upload ui path = {ui_path},  remote_folder = {self.remote_folder}")
         select_and_upload_file(ui_path, self.remote_folder)
@@ -1323,7 +1300,10 @@ ZPKView {
         self.remote_folder = str(message.selected)
         self.remote_folder_path = message.selected_path
         self.query_one(Information).set_remote_folder(message.selected) 
-        self.ui_view.update_by_folder(message.selected)
+        self.requires_ui = has_ui(self.remote_folder_path)
+        self.ui_file = self.ui_view.update_by_folder(self.remote_folder, self.requires_ui)
+        self.information.set_ui_file(self.ui_description)
+        self.query_one("#upload_ui_btn", Button).disabled = not self.requires_ui
         self.information.refresh_country_code(self.remote_folder)
         self.information.set_mode(get_mode(self.remote_folder))
 
@@ -1333,12 +1313,13 @@ ZPKView {
         self.information.set_language(get_language())
         
 
-    @on(UIView.Selected)
-    def handle_ui_view_selected(self, message:UIView.Selected) -> None:
-        """ ui_resource_UN60_NEW.bin """
-        self.ui_file = message.selected
-        self.query_one(Information).set_ui_file(message.selected)
-        self.information.set_motor(get_motor_type(self.remote_folder))
+    @on(DataTable.RowSelected, "#top")
+    def handle_ui_view_selected(self, message: DataTable.RowSelected) -> None:
+        filename = self.ui_view.files_by_row.get(message.row_key)
+        if filename:
+            self.ui_file = filename
+            self.information.set_ui_file(self.ui_description)
+            self.information.set_motor(get_motor_type(self.remote_folder))
 
     @on(Sidebar.Submitted)
     async def handle_sidebar_submitted(self, message:Sidebar.Submitted) -> None:
