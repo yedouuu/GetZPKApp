@@ -9,6 +9,7 @@ from xml_Utils import (
     get_SyncICC,
     get_text,
     has_ui,
+    sync_remote_config,
     sync_currencys_xml,
     sync_ui_files,
     upload_currencys_xml,
@@ -53,7 +54,14 @@ class DownloadScreen(ModalScreen):
                                      ssh_config["key_path"], \
                                      ssh_config["password"]
                                     )
-        await self.ssh_client.connect()
+        try:
+            await self.ssh_client.connect()
+        except Exception as e:
+            self.ssh_client = None
+            logging.exception("连接服务器失败")
+            self.change_status(f"连接失败，继续使用本地配置：{e}")
+            self.query_one("#ok").disabled = False
+            return
         self.query_one("#question").update(f"连接成功")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -98,6 +106,8 @@ class DownloadScreen(ModalScreen):
 
 
     async def download(self, remote_folder, ui_file, currency_list:str, customer_path=None, customer_code="WL") -> str:
+        if self.ssh_client is None:
+            return ""
         try:
             requires_ui = has_ui(remote_folder)
             if requires_ui and not ui_file:
@@ -147,11 +157,22 @@ class DownloadScreen(ModalScreen):
                 await self.ssh_client.close()
                 
     async def sync_files(self):
+        if self.ssh_client is None:
+            return
+        config_notice = ""
         try:
             self.change_status("更新文件中...")
             self.query_one("#progress").advance(5)
             remote_template_path = get_text("remote_template_path", config_tree="remote_config")[0]
-            await git_service.pull_remote_repo(self.ssh_client, remote_template_path)
+            if await git_service.pull_remote_repo(self.ssh_client, remote_template_path):
+                self.change_status("同步机型配置中...")
+                try:
+                    await sync_remote_config(self.ssh_client)
+                except Exception as e:
+                    logging.exception("机型配置同步失败")
+                    config_notice = f"机型配置沿用本地版本：{e}"
+            else:
+                config_notice = "模板仓库更新失败，机型配置沿用本地版本"
 
             self.query_one("#progress").advance(15)
             self.change_status("同步GL18仓库中...")
@@ -166,12 +187,13 @@ class DownloadScreen(ModalScreen):
             await sync_ui_files(self.ssh_client)
             
             self.query_one("#progress").update(total=100, progress=100)
-            self.query_one("#ok").disabled = False
-            self.change_status("同步完成...")
+            self.change_status(config_notice or "同步完成...")
             
         except Exception as e:
             logging.exception(e)
+            self.change_status(f"同步失败：{e}" + (f"\n{config_notice}" if config_notice else ""))
         finally:
+            self.query_one("#ok").disabled = False
             if self.ssh_client:
                 await self.ssh_client.close()
 

@@ -1,4 +1,5 @@
 import asyncio
+import shlex
 from dulwich import porcelain
 from dulwich.repo import Repo
 import os
@@ -7,7 +8,7 @@ from SSHClient import SSH_Client
 from xml_Utils import get_ssh_config
 
 
-async def pull_remote_repo(ssh_client: SSH_Client, repo_path_on_server: str):
+async def pull_remote_repo(ssh_client: SSH_Client, repo_path_on_server: str) -> bool:
     """
     在远程服务器上对指定的 Git 仓库执行 git pull。
 
@@ -18,7 +19,7 @@ async def pull_remote_repo(ssh_client: SSH_Client, repo_path_on_server: str):
     # 构造要在服务器上执行的命令
     # 1. cd 到仓库目录
     # 2. 执行 git pull
-    command = f"cd {repo_path_on_server} && git pull"
+    command = f"cd {shlex.quote(repo_path_on_server)} && git pull"
     
     print(f"【INFO】将在服务器上执行: {command}")
     
@@ -29,10 +30,12 @@ async def pull_remote_repo(ssh_client: SSH_Client, repo_path_on_server: str):
         
         print("--- Git 输出 ---")
         print(result)
+        return True
     
 
     except Exception as e:
         print(f"【ERROR】在服务器上执行 git pull 时出错: {e}")
+        return False
 
 
 async def pull_repo(repo_path, remote_name="origin", branch_name="master"):

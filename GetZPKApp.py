@@ -89,9 +89,8 @@ class FolderContainer(VerticalScroll):
     """A container to display remote folders."""
     folder_list = []
     folder_path_list = []
-    filtered_folder_list = []
     selected = ""
-    selected_pat = ""
+    selected_path = ""
 
     def compose(self) -> ComposeResult:
         """Create child widgets of a stopwatch."""
@@ -99,15 +98,12 @@ class FolderContainer(VerticalScroll):
         # yield Label("当前：", id="current_folder")
         
 
-    def on_mount(self) -> None:
-        """Initialize the container."""
-        self.folder_path_list = get_remote_directorys()
-        self.folder_list = [ get_remote_directory_version(folder, "full") for folder in self.folder_path_list ]
-        self.folder_mount(self.folder_list)
-        self.select(self.folder_list[0])
+    async def on_mount(self) -> None:
+        self.post_message(await self.reload_folders())
 
     def on_button_pressed(self, event:Button.Pressed) -> None:
-        self.select(event.button.id)
+        if event.button.id in self.folder_list:
+            self.select(event.button.id)
 
     async def on_input_changed(self, event: Input.Changed) -> None:
         """Called when the user types in the input."""
@@ -138,37 +134,46 @@ class FolderContainer(VerticalScroll):
 
     def filter(self, key):
         """Filter remote folders."""
-        for folder in self.folder_list:
-            self.query_one(f"#{folder}").remove_class("filtered")
-
-        self.filtered_folder_list = [folder for folder in self.folder_list if key not in folder]
-        # self.print(self.filtered_folder_list)
-        for folder in self.filtered_folder_list:
-            self.query_one(f"#{folder}").add_class("filtered")
+        for button in self.query(RemoteFloder):
+            button.set_class(key not in button.id, "filtered")
 
     class Selected(Message):
         """Color selected message."""
-        def __init__(self, folder:str, folder_path:str) -> None:
+        def __init__(self, folder: str, folder_path: str, reloaded: bool) -> None:
             self.selected = folder
             self.selected_path = folder_path
+            self.reloaded = reloaded
             super().__init__()
 
-    def select(self, selected):
-        if not selected:
-            return
-        if self.selected:
-            self.query_one(f"#{self.selected}").remove_class("selected")
+    def select(self, selected: str) -> None:
+        self.post_message(self.set_selection(selected))
 
+    def set_selection(self, selected: str, *, reloaded: bool = False) -> Selected:
         self.selected = selected
-        self.selected_path = self.folder_path_list[self.folder_list.index(str(selected))]
-        # self.query_one("#current_folder").update(f"当前：{self.selected}")
-        self.query_one(f"#{self.selected}").add_class("selected")
-        self.post_message(self.Selected(self.selected, self.selected_path))
+        self.selected_path = self.folder_path_list[self.folder_list.index(selected)] if selected else ""
+        for button in self.query(RemoteFloder):
+            button.set_class(button.id == selected, "selected")
+        return self.Selected(selected, self.selected_path, reloaded)
 
-    def folder_mount(self, list):
-        """Mount remote folder."""
-        for folder in list:
-            self.mount(RemoteFloder(folder, variant="primary", id=f"{folder}"))
+    async def reload_folders(self) -> Selected:
+        """Display the current server's folders in configuration order."""
+        paths = get_remote_directorys()
+        folders = [get_remote_directory_version(path, "full") for path in paths]
+        if folders != self.folder_list:
+            await self.query(RemoteFloder).remove()
+            if folders:
+                await self.mount(*(RemoteFloder(name, variant="primary", id=name) for name in folders))
+        self.folder_path_list = paths
+        self.folder_list = folders
+
+        if self.selected_path in paths:
+            selected = folders[paths.index(self.selected_path)]
+        elif self.selected in folders:
+            selected = self.selected
+        else:
+            selected = folders[0] if folders else ""
+        self.filter(self.query_one(Input).value)
+        return self.set_selection(selected, reloaded=True)
 
     def folder_refresh(self):
         """Show all folders and refresh the selected folder's resources."""
@@ -259,6 +264,8 @@ class DownloadDesc(Widget):
     motor = reactive("")
     
     def render(self) -> str:
+        if not self.remote_folder:
+            return Text("当前服务器没有可用机型。按 Ctrl+U 同步配置后重试。")
         text = Text()
         styles = {
             "Error": "bold red",
@@ -603,6 +610,7 @@ class GetZPKApp(App):
     """A GetZPK app to manage ZPK Version."""
 
     ui_file = ""
+    remote_folder = ""
     requires_ui = True
 
     @property
@@ -1130,9 +1138,7 @@ ZPKView {
     def action_refresh_floder(self):
         """Refresh remote folders."""
         self.folder_container.folder_refresh()
-        self.information.refresh_country_code(self.remote_folder)
         self.note.refresh_note()
-        self.information.set_motor(get_motor_type(self.remote_folder))
         # self.mount(Note())
 
     def action_request_quit(self) -> None:
@@ -1165,6 +1171,8 @@ ZPKView {
 
     async def action_get_zpk(self):
         """Get ZPK."""
+        if isinstance(self.screen, DownloadScreen) or not self.remote_folder:
+            return
         if self.requires_ui and not self.ui_file:
             self.notify("当前机型需要 UI 文件，请先选择或上传 UI 文件。", severity="error")
             return
@@ -1201,7 +1209,7 @@ ZPKView {
         check_mag_para(self.information.get_country_code(), self.remote_folder)
         check_overlap_para(self.information.get_country_code(), self.remote_folder)
         
-        if ( get_scheme(self.remote_folder) == "GL18" ):
+        if get_scheme(self.remote_folder_path) == "GL18":
             print("【INFO】 PACK GL18 GIN")
             image_app_path = os.path.abspath(GL18_get_image_app_path(str(self.remote_folder)))
             mainboard_path = os.path.abspath(GL18_get_mainboard_app_path(str(self.remote_folder)))
@@ -1249,6 +1257,8 @@ ZPKView {
         self.note.refresh_note()
 
     async def action_toggle_sidebar(self) -> None:
+        if not self.remote_folder:
+            return
         sidebar = self.query_one(Sidebar)
         print("currency sidebar")
         self.set_focus(None)
@@ -1270,10 +1280,12 @@ ZPKView {
 
     async def action_sync_files(self) -> None:
         """Sync files. 从远程同步文件到本地."""
+        if isinstance(self.screen, DownloadScreen):
+            return
         screen = DownloadScreen()
         await self.push_screen(screen)
         await screen.sync_files()
-        self.refresh_ui_files(self.ui_file)
+        self.handle_folder_selected(await self.folder_container.reload_folders())
 
     def action_upload_ui_file(self) -> None:
         """Upload ui file."""
@@ -1294,16 +1306,26 @@ ZPKView {
 
     @on(FolderContainer.Selected)
     def handle_folder_selected(self, message:FolderContainer.Selected) -> None:
+        if message.selected_path != self.folder_container.selected_path:
+            return
+        previous_folder = self.remote_folder
+        selected_file = self.ui_file if message.reloaded and previous_folder == message.selected else ""
         self.remote_folder = str(message.selected)
         self.remote_folder_path = message.selected_path
-        self.query_one(Information).set_remote_folder(message.selected) 
-        self.requires_ui = has_ui(self.remote_folder_path)
-        self.refresh_ui_files()
-        self.query_one("#upload_ui_btn", Button).disabled = not self.requires_ui
+        self.information.set_remote_folder(self.remote_folder)
+        self.requires_ui = bool(self.remote_folder) and has_ui(self.remote_folder_path)
+        self.refresh_ui_files(selected_file)
+        self.function_area.query_one("#upload_ui_btn", Button).disabled = not self.requires_ui
+        self.function_area.query_one("#information_download_btn", Button).disabled = not self.remote_folder
+        self.function_area.query_one("#information_country_btn", Button).disabled = not self.remote_folder
+        self.language.clear_languages()
+        if not self.remote_folder:
+            return
+        if message.reloaded and previous_folder and previous_folder != self.remote_folder:
+            self.notify(f"配置已移除 {previous_folder}，已选择 {self.remote_folder}。")
         self.information.refresh_country_code(self.remote_folder)
         self.information.set_mode(get_mode(self.remote_folder))
 
-        self.language.clear_languages()
         self.language.add_languages(get_languages(self.remote_folder))
         self.information.set_motor(get_motor_type(self.remote_folder))
         self.information.set_language(get_language())

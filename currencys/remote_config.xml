@@ -1,70 +1,53 @@
 <Remote_Configuration>
 
     <Server hostname="192.168.1.250">
-
-        <!-- <remote_directory IMGDesignScheme="GL18" model="UN60D" >
-            <path level="1">./1_WLGL18_240411/UN60D/</path>
-        </remote_directory>
-
-        <remote_directory IMGDesignScheme="GL18" model="UN70D" >
-            <path level="1">./1_WLGL18_240411/UN70D/</path>
-        </remote_directory>
-
-        <remote_directory IMGDesignScheme="GL20" model="UN60" >
-            <path level="1">/home/lin/Desktop/UN60/</path>
-            <path level="2">/home/lin/Desktop/UN60_TOUCH/</path>
-            <path level="2">/home/lin/Desktop/UN60_ZH/</path>
-        </remote_directory>
-
-        <remote_directory IMGDesignScheme="GL20_OLD" model="UN60" >
-            <path level="2" SyncICC="False">/home/lin/Desktop/UN60_NQS/</path>
-        </remote_directory>
-
-        <remote_directory IMGDesignScheme="GL20" model="UN200" >
-            <path level="1">/home/lin/Desktop/UN200/</path>
-            <path level="2">/home/lin/Desktop/UN200_TEST/</path>
-        </remote_directory>
-
-        <remote_directory IMGDesignScheme="GL20MULTI" >
-            <path level="1" >/home/lin/Desktop/UN60M/</path>
-            <path level="2" >/home/lin/Desktop/UN60M_TOUCH/</path>
-            <path level="1" >/home/lin/Desktop/UN70M/</path>
-        </remote_directory>
-        
-        <remote_directory IMGDesignScheme="A33" >
-            <path level="1" >/home/lin/Desktop/UN220M/</path>
-            <path level="2" >/home/lin/Desktop/UN220M_TEST/</path>
-        </remote_directory> -->
-
         <remote_directory IMGDesignScheme="GL20MULTI" level="2">/home/lin/Desktop/UN60M/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="3">/home/lin/Desktop/UN60M_TOUCH/</remote_directory>
         <remote_directory IMGDesignScheme="GL20MULTI" level="1">/home/lin/Desktop/UN70M/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="2">/home/lin/Desktop/UN70M_V2/</remote_directory>
         <remote_directory IMGDesignScheme="A33" level="1">/home/lin/Desktop/UN220M/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="2">/home/lin/Desktop/UN220M_V2/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="3">/home/lin/Desktop/UN220M_V2_ZH/</remote_directory>
         <remote_directory IMGDesignScheme="A33" has_ui="false" level="1">/home/lin/Desktop/UN260/</remote_directory>
-        <remote_directory IMGDesignScheme="A33" level="2">/home/lin/Desktop/UN220M_TEST/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN60/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_ZH/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_TOUCH/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20_OLD" level="2" SyncICC="true">/home/lin/Desktop/UN60_NQS/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN200A/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN200/</remote_directory>
         <remote_directory IMGDesignScheme="GL18" level="2">./1_WLGL18_240411/UN60D/</remote_directory>
         <remote_directory IMGDesignScheme="GL18" level="2">./1_WLGL18_240411/UN60W/</remote_directory>
         <remote_directory IMGDesignScheme="GL18" level="1">./1_WLGL18_240411/UN70D/</remote_directory>
-        
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_DEV/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="1">/home/lin/Desktop/UN60/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_ZH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_OLD/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_TOUCH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="3">/home/lin/Desktop/UN60_TOUCH_ZH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/lin/Desktop/UN60_NQS/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="2">/home/lin/Desktop/UN220M_Cassida_Middleeast/</remote_directory>
+
         <remote_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/</remote_template_path>
         <remote_currency_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/01_Currencys</remote_currency_template_path>
         <remote_ui_file_template_path IMGDesignScheme="">/home/lin/Desktop/TEST_ICC/WL_ICC_Template/20_UI</remote_ui_file_template_path>
     </Server>
 
     <Server hostname="git.yedou.top">
-        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN60D_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="GL18" >./1_WLGL18_240411/UN70D_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20MULTI" >/home/zpk/UN60M_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_OLD/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20" >/home/zpk/UN60_TOUCH/</remote_directory>
-        <remote_directory IMGDesignScheme="GL20_OLD" >/home/zpk/UN200_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220_ENRU/</remote_directory>
-        <remote_directory IMGDesignScheme="A33" >/home/zpk/UN220M_ENRU/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="2">/home/zpk/UN60M/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="3">/home/zpk/UN60M_TOUCH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="1">/home/zpk/UN70M/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20MULTI" level="2">/home/zpk/UN70M_V2/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="1">/home/zpk/UN220M/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="2">/home/zpk/UN220M_V2/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="3">/home/zpk/UN220M_V2_ZH/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" has_ui="false" level="1">/home/zpk/UN260/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="1">/home/zpk/UN200/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="1">/home/zpk/UN60/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/zpk/UN60_ZH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/zpk/UN60_TOUCH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="3">/home/zpk/UN60_TOUCH_ZH/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/zpk/UN60_OLD/</remote_directory>
+        <remote_directory IMGDesignScheme="GL18" level="2">./1_WLGL18_240411/UN60D/</remote_directory>
+        <remote_directory IMGDesignScheme="GL18" level="1">./1_WLGL18_240411/UN70D/</remote_directory>
+        <remote_directory IMGDesignScheme="GL18" level="2">./1_WLGL18_240411/UN60W/</remote_directory>
+        <remote_directory IMGDesignScheme="GL20" level="2">/home/zpk/UN60_NQS/</remote_directory>
+        <remote_directory IMGDesignScheme="A33" level="2">/home/zpk/UN220M_Cassida_Middleeast/</remote_directory>
+        
         <remote_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/</remote_template_path>
         <remote_currency_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/01_Currencys</remote_currency_template_path>
         <remote_ui_file_template_path IMGDesignScheme="">/home/zpk/WL_ICC_Template/20_UI</remote_ui_file_template_path>
@@ -74,12 +57,12 @@
     <IMG_DesignScheme val="GL20">
         <template>GL20</template>
         <icc_xml_type>2</icc_xml_type>
+        <!-- 纸币42 塑料币60 -->
+        <default_overlap_val_zhibi>35</default_overlap_val_zhibi>
+        <default_overlap_val_suliaobi>60</default_overlap_val_suliaobi>
 
         <local_overlap_manager_xml_file_path>./currencys/GL20_overlap_manager.xml</local_overlap_manager_xml_file_path>
         <local_new_overlap_manager_xml_file_path>./new_currencys/overlap_manager.xml</local_new_overlap_manager_xml_file_path>
-        <!-- 纸币42 塑料币60 -->
-        <default_overlap_val_zhibi>42</default_overlap_val_zhibi>
-        <default_overlap_val_suliaobi>60</default_overlap_val_suliaobi>
 
         <!-- 对应 remote_template_path 下的文件 -->
         <remote_template_folder>
@@ -90,10 +73,11 @@
             <sensit_folder>02_Configuration_NEW</sensit_folder>
         </remote_template_folder>
 
-        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <!-- <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script> -->
+        <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
-        <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
         <remote_overlap_manager_xml_path>upgrade/part/IMG_AUTO/</remote_overlap_manager_xml_path>
+        <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
         <remote_sensit_path>upgrade/part/IMG_SENS/</remote_sensit_path>
         <remote_ocr_path>upgrade/part/OCR_PARA/</remote_ocr_path>
         <remote_bin_path>upgrade/part/CashTemplate_NEW/</remote_bin_path>
@@ -116,7 +100,8 @@
             <sensit_folder>02_Configuration_NEW</sensit_folder>
         </remote_template_folder>
 
-        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <!-- <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script> -->
+        <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
         <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
         <remote_sensit_path>upgrade/part/IMG_SENS/</remote_sensit_path>
@@ -132,19 +117,19 @@
         <template>GL18</template>
         <icc_xml_type>1</icc_xml_type>
 
+        <local_template_rootfs_path>
+            <path model="UN60D">./1_WLGL18_240411/rootfs/rootfs_20011b_template</path>
+            <path model="UN70D">./1_WLGL18_240411/rootfs/rootfs_20011b_template</path>
+            <path model="UN60W">./1_WLGL18_240411/rootfs/rootfs_20011b_template_UN60W</path>
+        </local_template_rootfs_path>
+
         <local_mag_xml_file_path>./currencys/GL18_mag_para.xml</local_mag_xml_file_path>
         <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
-
-        <local_template_rootfs_path>
-            <path model="UN60D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
-            <path model="UN70D">./WL_GL18_PackProj/rootfs/rootfs_20011b_template</path>
-            <path model="UN60W">./WL_GL18_PackProj/rootfs/rootfs_20011b_template_UN60W</path>
-        </local_template_rootfs_path>
 
         <!-- <local_GL18_base_proj_path>./WL_GL18_PackProj/</local_GL18_base_proj_path>
         <local_GLTool_path>./WL_GL18_PackProj/GLTooL_V2.10.exe</local_GLTool_path>
         <local_main_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main</local_main_rootfs_path> -->
-        <local_main_rootfs_bin_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_main/CashTemplate_NEW</local_main_rootfs_bin_path>
+        <local_main_rootfs_bin_path>./1_WLGL18_240411/rootfs/rootfs_20011b_main/CashTemplate_NEW</local_main_rootfs_bin_path>
         <!-- <local_template_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b_template</local_template_rootfs_path>
         <local_rootfs_path>./WL_GL18_PackProj/rootfs/rootfs_20011b</local_rootfs_path>
         <local_create_rootfs_image_bat_path>./WL_GL18_PackProj/rootfs/create_rootfs_image.bat</local_create_rootfs_image_bat_path>
@@ -173,7 +158,8 @@
             <sensit_folder>02_Configuration_NEW</sensit_folder>
         </remote_template_folder>
 
-        <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script>
+        <!-- <remote_run_script>./02_genzpk_GL20PRO_IMG6.sh </remote_run_script> -->
+        <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>
         <remote_mag_xml_path>upgrade/part/IMG_AUTO/</remote_mag_xml_path>
         <remote_currencys_xml_path>upgrade/part/IMG_AUTO/</remote_currencys_xml_path>
         <remote_xml_path>upgrade/part/IMG_AUTO/</remote_xml_path>
@@ -191,9 +177,9 @@
         <icc_xml_type>2</icc_xml_type>
         <auto_detect_num>64</auto_detect_num>
         <!-- 纸币42 塑料币60 -->
-        <default_overlap_val_zhibi>42</default_overlap_val_zhibi>
+        <default_overlap_val_zhibi>35</default_overlap_val_zhibi>
         <default_overlap_val_suliaobi>60</default_overlap_val_suliaobi>
-        
+
         <local_mag_xml_file_path>./currencys/A33_mag_para.xml</local_mag_xml_file_path>
         <local_overlap_manager_xml_file_path>./currencys/A33_overlap_manager.xml</local_overlap_manager_xml_file_path>
         <local_new_mag_xml_file_path>./new_currencys/mag_para.xml</local_new_mag_xml_file_path>
@@ -207,8 +193,8 @@
             <xml_folder>02_Configuration_NEW</xml_folder>
             <sensit_folder>02_Configuration_NEW</sensit_folder>
             
-            <!-- <custom_xml_folder model="UN220">01_YKB_Configuration</custom_xml_folder>
-            <custom_sensit_folder model="UN220">01_YKB_Configuration</custom_sensit_folder> -->
+            <custom_xml_folder model="UN220M">01_YKB_Configuration</custom_xml_folder>
+            <custom_sensit_folder model="UN220M">01_YKB_Configuration</custom_sensit_folder>
         </remote_template_folder>
 
         <remote_run_script>./01_wanlian_zpk_repack.sh </remote_run_script>

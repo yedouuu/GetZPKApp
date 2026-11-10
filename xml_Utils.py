@@ -1,7 +1,11 @@
 import asyncio
 import datetime
 import os
+import posixpath
+import re
+import tempfile
 import xml.etree.ElementTree as ET
+from pathlib import Path
 import lxml.etree as LXML_ET
 from colorama import Fore, Style, init
 import time
@@ -44,7 +48,6 @@ def save_xml(tree, filename):
 
 
 # ssh_config_tree = open_xml('./ssh_config.xml')
-# remote_config_tree = open_xml('./remote_config.xml')
 # def get_text(tag, type="one", param=None, config_tree=ssh_config_tree):
 #     """ 查找指定tag的text值
 # 	one:(默认值)返回一个元素的text
@@ -65,15 +68,21 @@ def save_xml(tree, filename):
 ssh_config_tree = open_xml('./ssh_config.xml')
 ssh_config_root = ssh_config_tree.getroot()
 
-remote_config_tree = open_xml('./remote_config.xml')
-remote_config_root = remote_config_tree.getroot()
+REMOTE_CONFIG_NAME = "remote_config.xml"
+REMOTE_CONFIG_PATH = (Path(ssh_config_root.findtext("local_original_currencys_xml_path")) / REMOTE_CONFIG_NAME).resolve()
+try:
+    _active_remote_config = REMOTE_CONFIG_PATH.read_bytes()
+except FileNotFoundError:
+    # 旧版安装用根目录配置定位远端模板，首次同步后使用新目录。
+    _active_remote_config = Path(REMOTE_CONFIG_NAME).read_bytes()
+remote_config_tree = ET.ElementTree(ET.fromstring(_active_remote_config))
 
 def get_server():
     """ 获取对应服务器上的配置信息 """
     try:
         hostname = ssh_config_root.find("hostname").text
         xpath = f"./Server[@hostname='{hostname}']"
-        server = remote_config_root.find(xpath)
+        server = remote_config_tree.find(xpath)
         return server
     except AttributeError as e:
         print_red_text(f"【ERROR】文件读取错误：{e}")
@@ -140,7 +149,7 @@ def get_text(tag, type="one", scheme=None, config_tree="ssh_config"):
             
             if scheme is not None:
                 xpath_expr = f"./IMG_DesignScheme[@val='{scheme}']"
-                scheme_node = remote_config_root.find(xpath_expr)
+                scheme_node = remote_config_tree.find(xpath_expr)
                 #print(scheme_node)
                 return scheme_node.find(tag).text
             else:
@@ -280,7 +289,7 @@ def get_remote_directory_level(remote_directory: str) -> int:
     
     for _remote_folder in server.findall("remote_directory"):
         if remote_directory == get_remote_directory_version(_remote_folder.text, "full"):
-            level = _remote_folder.get("level")
+            level = _remote_folder.get("level", "1")
     
     if level == "":
         print_red_text(f"【ERROR】无法获取远端目录级别：{remote_directory}")
@@ -775,6 +784,68 @@ def get_remote_currency_template_path():
     remote_currency_template_path = remote_currency_template_path[0]  # 取第一个路径
     return remote_currency_template_path
 
+def _parse_remote_config(content: bytes) -> ET.ElementTree:
+    """校验新配置中当前服务器的模板位置和可选机型。"""
+    try:
+        root = ET.fromstring(content)
+    except (ET.ParseError, LookupError, ValueError) as exc:
+        raise ValueError(f"{REMOTE_CONFIG_NAME} XML 解析失败：{exc}") from exc
+    hostname = get_text("hostname")
+    server = root.find(f"./Server[@hostname='{hostname}']")
+    if root.tag != "Remote_Configuration" or server is None:
+        raise ValueError(f"{REMOTE_CONFIG_NAME} 缺少当前服务器 {hostname} 的配置")
+    for tag in ("remote_template_path", "remote_currency_template_path", "remote_ui_file_template_path"):
+        if not (server.findtext(tag) or "").strip():
+            raise ValueError(f"{hostname} 缺少 {tag}")
+
+    schemes = {scheme.get("val") for scheme in root.findall("IMG_DesignScheme") if scheme.get("val")}
+    models = set()
+    for directory in server.findall("remote_directory"):
+        path = directory.text or ""
+        if not path.endswith("/"):
+            raise ValueError(f"{hostname} 的机型目录应以 / 结尾：{path!r}")
+        model = get_remote_directory_version(path, "full")
+        if not re.fullmatch(r"[A-Z_-][A-Z0-9_-]*", model) or model in models:
+            raise ValueError(f"{hostname} 的机型名称无效或重复：{model!r}")
+        if directory.get("IMGDesignScheme") not in schemes:
+            raise ValueError(f"{model} 的 IMGDesignScheme 未定义")
+        try:
+            int(directory.get("level", "1"))
+        except ValueError as exc:
+            raise ValueError(f"{model} 的 level 不是整数") from exc
+        models.add(model)
+    if not models:
+        raise ValueError(f"{hostname} 没有配置机型目录")
+    return ET.ElementTree(root)
+
+async def sync_remote_config(ssh_client: SSH_Client) -> bool:
+    """从当前服务器读取配置，有变化时原子替换本地文件并启用新配置。"""
+    global remote_config_tree, _active_remote_config
+    remote_path = posixpath.join(get_remote_currency_template_path().replace("\\", "/"), REMOTE_CONFIG_NAME)
+    sftp = await ssh_client.get_sftp()
+    async with sftp.open(remote_path, "rb") as remote_file:
+        content = await remote_file.read()
+    tree = _parse_remote_config(content)
+    try:
+        local_content = REMOTE_CONFIG_PATH.read_bytes()
+    except FileNotFoundError:
+        local_content = None
+    if content == local_content == _active_remote_config:
+        return False
+
+    if content != local_content:
+        REMOTE_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        temp = tempfile.NamedTemporaryFile(dir=REMOTE_CONFIG_PATH.parent, delete=False)
+        try:
+            with temp:
+                temp.write(content)
+            os.replace(temp.name, REMOTE_CONFIG_PATH)
+        finally:
+            Path(temp.name).unlink(missing_ok=True)
+    remote_config_tree = tree
+    _active_remote_config = content
+    return True
+
 async def sync_currencys_xml(ssh_client:SSH_Client) -> bool:
     """ 同步远端的currencys.xml到本地
     
@@ -800,7 +871,7 @@ async def sync_currencys_xml(ssh_client:SSH_Client) -> bool:
     try:
         remote_files = await sftp.listdir(remote_currency_template_path)
         for remote_file in remote_files:
-            if remote_file.endswith('.xml'):
+            if remote_file.endswith('.xml') and remote_file.lower() != REMOTE_CONFIG_NAME:
                 remote_file_path = os.path.join(remote_currency_template_path, remote_file).replace('\\', '/')
                 local_file_path = os.path.join(local_currencys_xml_path, remote_file)
                 
